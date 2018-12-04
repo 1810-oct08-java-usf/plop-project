@@ -15,7 +15,6 @@ import com.revature.models.AppUser;
 import com.revature.models.Project;
 
 @RestController
-@RequestMapping("/")
 public class ProjectController {
 
 	private Environment env;

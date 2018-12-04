@@ -4,28 +4,35 @@ import java.util.List;
 
 public class Project {
 
+	@Id
 	private String id;
 	  
 	private String name;
 	private String batch;
-	private List<AppUser> user;
+	
+	// TODO: These values should be retrieved from the auth-service. 
+	// TODO: There is a possibility that there can be more than one trainer per batch. Such as a Co-Trainer. This should be refactored for that option.
+	private String userFirstName;
+	private String userLastName;
+	
 	private List<String> groupMembers;
 	private List<String> screenShots;
 	private List<String> zipLinks;
 	private String description;
 	private String techStack;
-	private int status;
+	private String status;
 	
 	public Project() {
 		super();
 	}
 
-	public Project(String name, String batch, List<AppUser> user, List<String> groupMembers,
-			List<String> screenShots, List<String> zipLinks, String description, String techStack, int status) {
+	public Project(String name, String batch, String userFirstName, String userLastName, List<String> groupMembers,
+			List<String> screenShots, List<String> zipLinks, String description, String techStack, String status) {
 		super();
 		this.name = name;
 		this.batch = batch;
-		this.user = user;
+		this.userFirstName = userFirstName;
+		this.userLastName = userLastName;
 		this.groupMembers = groupMembers;
 		this.screenShots = screenShots;
 		this.zipLinks = zipLinks;
@@ -58,12 +65,20 @@ public class Project {
 		this.batch = batch;
 	}
 
-	public List<AppUser> getTrainer() {
-		return user;
+	public String getUserFirstName() {
+		return userFirstName;
 	}
 
-	public void setTrainer(List<AppUser> user) {
-		this.user = user;
+	public void setUserFirstName(String userFirstName) {
+		this.userFirstName = userFirstName;
+	}
+
+	public String getUserLastName() {
+		return userLastName;
+	}
+
+	public void setUserLastName(String userLastName) {
+		this.userLastName = userLastName;
 	}
 
 	public List<String> getGroupMembers() {
@@ -106,11 +121,11 @@ public class Project {
 		this.techStack = techStack;
 	}
 
-	public int getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
@@ -124,9 +139,10 @@ public class Project {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((screenShots == null) ? 0 : screenShots.hashCode());
-		result = prime * result + status;
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((techStack == null) ? 0 : techStack.hashCode());
-		result = prime * result + ((user == null) ? 0 : user.hashCode());
+		result = prime * result + ((userFirstName == null) ? 0 : userFirstName.hashCode());
+		result = prime * result + ((userLastName == null) ? 0 : userLastName.hashCode());
 		result = prime * result + ((zipLinks == null) ? 0 : zipLinks.hashCode());
 		return result;
 	}
@@ -170,17 +186,25 @@ public class Project {
 				return false;
 		} else if (!screenShots.equals(other.screenShots))
 			return false;
-		if (status != other.status)
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
 			return false;
 		if (techStack == null) {
 			if (other.techStack != null)
 				return false;
 		} else if (!techStack.equals(other.techStack))
 			return false;
-		if (user == null) {
-			if (other.user != null)
+		if (userFirstName == null) {
+			if (other.userFirstName != null)
 				return false;
-		} else if (!user.equals(other.user))
+		} else if (!userFirstName.equals(other.userFirstName))
+			return false;
+		if (userLastName == null) {
+			if (other.userLastName != null)
+				return false;
+		} else if (!userLastName.equals(other.userLastName))
 			return false;
 		if (zipLinks == null) {
 			if (other.zipLinks != null)
@@ -192,11 +216,10 @@ public class Project {
 
 	@Override
 	public String toString() {
-		return "Project [id=" + id + ", name=" + name + ", batch=" + batch + ", user=" + user + ", groupMembers="
-				+ groupMembers + ", screenShots=" + screenShots + ", zipLinks=" + zipLinks + ", description="
-				+ description + ", techStack=" + techStack + ", status=" + status + "]";
+		return "Project [id=" + id + ", name=" + name + ", batch=" + batch + ", userFirstName=" + userFirstName
+				+ ", userLastName=" + userLastName + ", groupMembers=" + groupMembers + ", screenShots=" + screenShots
+				+ ", zipLinks=" + zipLinks + ", description=" + description + ", techStack=" + techStack + ", status="
+				+ status + "]";
 	}
-
-	
 	
 }
