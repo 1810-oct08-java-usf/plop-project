@@ -18,7 +18,6 @@ public class Project {
 	
 	public Project() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Project(String name, String batch, List<AppUser> user, List<String> groupMembers,
