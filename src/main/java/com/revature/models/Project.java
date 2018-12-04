@@ -2,12 +2,9 @@ package com.revature.models;
 
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-
 public class Project {
 
-	@Id
-	public String id;
+	private String id;
 	  
 	private String name;
 	private String batch;
