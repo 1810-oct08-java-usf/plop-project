@@ -8,33 +8,32 @@ public class Project {
 
 	@Id
 	private String id;
-	  
+
 	private String name;
 	private String batch;
-	
-	// TODO: These values should be retrieved from the auth-service. 
-	// TODO: There is a possibility that there can be more than one trainer per batch. Such as a Co-Trainer. This should be refactored for that option.
-	private String userFirstName;
-	private String userLastName;
-	
+
+	// TODO: This value should be retrieved from the auth-service.
+	// TODO: There is a possibility that there can be more than one trainer per
+	// batch. Such as a co-trainer. This should be refactored for that option.
+	private String fullName;
+
 	private List<String> groupMembers;
 	private List<String> screenShots;
 	private List<String> zipLinks;
 	private String description;
 	private String techStack;
 	private String status;
-	
+
 	public Project() {
 		super();
 	}
 
-	public Project(String name, String batch, String userFirstName, String userLastName, List<String> groupMembers,
-			List<String> screenShots, List<String> zipLinks, String description, String techStack, String status) {
+	public Project(String name, String batch, String fullName, List<String> groupMembers, List<String> screenShots,
+			List<String> zipLinks, String description, String techStack, String status) {
 		super();
 		this.name = name;
 		this.batch = batch;
-		this.userFirstName = userFirstName;
-		this.userLastName = userLastName;
+		this.fullName = fullName;
 		this.groupMembers = groupMembers;
 		this.screenShots = screenShots;
 		this.zipLinks = zipLinks;
@@ -67,20 +66,12 @@ public class Project {
 		this.batch = batch;
 	}
 
-	public String getUserFirstName() {
-		return userFirstName;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setUserFirstName(String userFirstName) {
-		this.userFirstName = userFirstName;
-	}
-
-	public String getUserLastName() {
-		return userLastName;
-	}
-
-	public void setUserLastName(String userLastName) {
-		this.userLastName = userLastName;
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 	public List<String> getGroupMembers() {
@@ -137,14 +128,13 @@ public class Project {
 		int result = 1;
 		result = prime * result + ((batch == null) ? 0 : batch.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
 		result = prime * result + ((groupMembers == null) ? 0 : groupMembers.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((screenShots == null) ? 0 : screenShots.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((techStack == null) ? 0 : techStack.hashCode());
-		result = prime * result + ((userFirstName == null) ? 0 : userFirstName.hashCode());
-		result = prime * result + ((userLastName == null) ? 0 : userLastName.hashCode());
 		result = prime * result + ((zipLinks == null) ? 0 : zipLinks.hashCode());
 		return result;
 	}
@@ -167,6 +157,11 @@ public class Project {
 			if (other.description != null)
 				return false;
 		} else if (!description.equals(other.description))
+			return false;
+		if (fullName == null) {
+			if (other.fullName != null)
+				return false;
+		} else if (!fullName.equals(other.fullName))
 			return false;
 		if (groupMembers == null) {
 			if (other.groupMembers != null)
@@ -198,16 +193,6 @@ public class Project {
 				return false;
 		} else if (!techStack.equals(other.techStack))
 			return false;
-		if (userFirstName == null) {
-			if (other.userFirstName != null)
-				return false;
-		} else if (!userFirstName.equals(other.userFirstName))
-			return false;
-		if (userLastName == null) {
-			if (other.userLastName != null)
-				return false;
-		} else if (!userLastName.equals(other.userLastName))
-			return false;
 		if (zipLinks == null) {
 			if (other.zipLinks != null)
 				return false;
@@ -218,10 +203,9 @@ public class Project {
 
 	@Override
 	public String toString() {
-		return "Project [id=" + id + ", name=" + name + ", batch=" + batch + ", userFirstName=" + userFirstName
-				+ ", userLastName=" + userLastName + ", groupMembers=" + groupMembers + ", screenShots=" + screenShots
-				+ ", zipLinks=" + zipLinks + ", description=" + description + ", techStack=" + techStack + ", status="
-				+ status + "]";
+		return "Project [id=" + id + ", name=" + name + ", batch=" + batch + ", fullName=" + fullName
+				+ ", groupMembers=" + groupMembers + ", screenShots=" + screenShots + ", zipLinks=" + zipLinks
+				+ ", description=" + description + ", techStack=" + techStack + ", status=" + status + "]";
 	}
-	
+
 }

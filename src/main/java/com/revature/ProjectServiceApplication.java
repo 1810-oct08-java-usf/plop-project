@@ -41,7 +41,7 @@ public class ProjectServiceApplication implements CommandLineRunner{
 		
 		// Save projects into repository
 		projectRepo.save(new Project("Backend","Bunker Batch",
-				"Wezley", "Singleton",groupMembers,screenShots, zipLinks, "DESCRiPTION","Java/J2EE", "Pending"));
+				"Wezley Singleton",groupMembers,screenShots, zipLinks, "DESCRiPTION","Java/J2EE", "Pending"));
 		
 		
 		List<String> groupMembers2 = new ArrayList<String>();
@@ -53,7 +53,7 @@ public class ProjectServiceApplication implements CommandLineRunner{
 		groupMembers2.add("Andrew");
 		// Save projects into repository
 		projectRepo.save(new Project("Frontend","Bunker Batch",
-				"Wezley", "Singleton",groupMembers2,screenShots, zipLinks, "DESCRiPTION","Java/J2EE", "Pending"));
+				"Wezley Singleton",groupMembers2,screenShots, zipLinks, "DESCRiPTION","Java/J2EE", "Pending"));
 		
 		// Get all projects
 		System.out.println("Projects found with findAll()");
