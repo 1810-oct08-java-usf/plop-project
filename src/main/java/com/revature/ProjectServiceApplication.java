@@ -1,10 +1,5 @@
 package com.revature;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
@@ -74,6 +69,5 @@ public class ProjectServiceApplication implements CommandLineRunner{
 		for(Project project : projectRepo.findByBatch("Bunker Batch")) {
 			System.out.println(project);
 		}
-	
 	}
 }
