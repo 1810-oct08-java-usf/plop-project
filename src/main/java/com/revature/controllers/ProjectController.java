@@ -15,33 +15,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.models.Project;
-import com.revature.repositories.ProjectRepository;
+import com.revature.service.ProjectService;
 
 @RestController
 public class ProjectController {
 
 	private Environment env;
 	
-	private ProjectRepository projectRepo;
+	private ProjectService projectService;
 
 	@Autowired
-	public ProjectController(Environment env, ProjectRepository projectRepo) {
+	public ProjectController(Environment env, ProjectService projectService) {
 		this.env = env;
-		this.projectRepo = projectRepo;
-	}
-
-	// Add new project
-	@PostMapping("/add")
-	@ResponseStatus(HttpStatus.OK)
-	public Boolean addProject(@RequestBody Project project) {
-		if(project != null) {
-			projectRepo.save(project);
-			return true;
-		}else
-		{
-			return false;
-		}
-		
+		this.projectService = projectService;
 	}
 	
 	// Get all projects
@@ -56,33 +42,47 @@ public class ProjectController {
 		
 		if(name != null) {
 			System.out.println(name);
-			return projectRepo.findByName(name);
+			return projectService.findByName(name);
 		} 
 		else if(batch != null) {
-			return projectRepo.findByBatch(batch);
+			return projectService.findByBatch(batch);
 		} 
 		else if (fullName != null) {
-			return projectRepo.findByFullName(fullName);
+			return projectService.findByFullName(fullName);
 		}
 		else if (techStack != null) {
-			return projectRepo.findByTechStack(techStack);
+			return projectService.findByTechStack(techStack);
 		}
 		else if(status != null) {
-			return projectRepo.findByStatus(status);
+			return projectService.findByStatus(status);
 		}
 		else {
-			return projectRepo.findAll();
+			return projectService.findAllProjects();
 		}
 	
 	}
 	
+	
+	// Add new project
+	@PostMapping("/add")
+	@ResponseStatus(HttpStatus.OK)
+	public Boolean addProject(@RequestBody Project project) {
+		if(project != null) {
+			projectService.addProject(project);
+			return true;
+		}else
+		{
+			return false;
+		}
+		
+	}
 	
 	// Delete by ID
 	@DeleteMapping("/delete/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean deleteById(@PathVariable String id) {
 		if(id != null) {
-			projectRepo.deleteById(id);
+			projectService.deleteById(id);
 			return true;
 		}else {
 			return false;
@@ -92,9 +92,9 @@ public class ProjectController {
 	// Update Project
 	@PostMapping("/update")
 	@ResponseStatus(HttpStatus.OK)
-	public Boolean updateByName(@RequestBody Project project) {
+	public Boolean updateProject(@RequestBody Project project) {
 		if(project != null) {
-			projectRepo.save(project);
+			projectService.updateProject(project);
 			return true;
 		} else {
 			return false;
