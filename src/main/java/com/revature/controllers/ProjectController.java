@@ -1,6 +1,7 @@
 package com.revature.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -76,4 +77,12 @@ public class ProjectController {
 	public Boolean updateProject(@RequestBody Project project) {
 		return projectService.updateProject(project);
 	}
+	
+	// Update Project
+		@GetMapping("/{id}")
+		@ResponseStatus(HttpStatus.OK)
+		public Project updateProject(@PathVariable String id) {
+			return projectService.findById(id);
+			
+		}
 }
