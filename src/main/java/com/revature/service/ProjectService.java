@@ -1,22 +1,26 @@
 package com.revature.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.revature.models.Project;
+import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
-
-// TODO: Do we need @Transactional?
 
 @Service
 public class ProjectService {
 
 	ProjectRepository projectRepo;
-
-	public ProjectService(ProjectRepository projectRepo) {
+	
+	StorageService s3StorageServiceImpl;
+	
+	public ProjectService(ProjectRepository projectRepo, StorageService s3StorageServiceImpl) {
 		this.projectRepo = projectRepo;
+		this.s3StorageServiceImpl = s3StorageServiceImpl;
 	}
 
 	public List<Project> findByName(String name) {
@@ -60,16 +64,44 @@ public class ProjectService {
 			return false;
 		}
 	}
+	
+//	public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+//		storageService.store(file);
+//		return "ok";
+//	}
+	
+	
+	
+	public Project createProjectFromDTO(ProjectDTO projectDTO) {
+		Project newProject = new Project();
+		
+		newProject.setName(projectDTO.getName());
+		newProject.setBatch(projectDTO.getBatch());
+		newProject.setFullName(projectDTO.getUserFullName());
+		newProject.setGroupMembers(projectDTO.getGroupMembers());
+		newProject.setZipLinks(projectDTO.getZipLinks());
+		newProject.setDescription(projectDTO.getDescription());
+		newProject.setTechStack(projectDTO.getTechStack());
+		newProject.setStatus(projectDTO.getStatus());
+		
 
-	public Boolean addProject(Project project) {
-		if (project != null) {
-			projectRepo.save(project);
-			return true;
-		} else {
-			return false;
+		List<String> screenShotsList = new ArrayList<>();
+				
+		for (MultipartFile multipart: projectDTO.getScreenShots() ){
+			String endPoint = s3StorageServiceImpl.store(multipart);
+			screenShotsList.add(endPoint);
+			
+			System.out.println(endPoint);
+			System.out.println("Added s3 image url to screenshotsList");
 		}
-
+		
+		newProject.setScreenShots(screenShotsList);
+		
+		projectRepo.save(newProject);
+		return newProject;	
 	}
+	
+	
 
 	public Project findById(String id) {
 		
