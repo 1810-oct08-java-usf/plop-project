@@ -17,6 +17,7 @@ public class ProjectDTO {
 	private List<String> groupMembers;
 	private List<MultipartFile> screenShots;
 	private List<String> zipLinks;
+	private String repoURI;
 	private String description;
 	private String techStack;
 	private String status;
@@ -38,6 +39,15 @@ public class ProjectDTO {
 		this.description = description;
 		this.techStack = techStack;
 		this.status = status;
+	}
+
+	// TODO remove
+	public String getRepoURI() {
+		return repoURI;
+	}
+
+	public void setRepoURI(String repoURI) {
+		this.repoURI = repoURI;
 	}
 
 	public String getName() {
