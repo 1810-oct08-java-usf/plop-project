@@ -102,7 +102,7 @@ public class ProjectController {
 			return projectService.findById(id);
 		}
 	
-
+	//Exception Handler for Response Status Not found which is  used for findById() [/{id}] & deleteById() [delete/{id}]
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnfe) {
@@ -112,7 +112,7 @@ public class ProjectController {
 		error.setTimmeStamp(System.currentTimeMillis());
 		return error;
 	}
-
+	//Exception Handler for Response Status Bad Request which is  used for addProject() [/add]
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ProjectErrorResponse handleExceptions(ProjectNotAddedException pnae) {
