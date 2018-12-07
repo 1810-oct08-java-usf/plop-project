@@ -110,3 +110,5 @@ application.yml
 
 # Target Directory
 target/
+
+.vscode/

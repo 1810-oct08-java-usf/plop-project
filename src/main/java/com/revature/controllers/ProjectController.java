@@ -2,7 +2,6 @@ package com.revature.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
-import com.revature.service.ProjectService;
+import com.revature.services.ProjectService;
 
 @RestController
 @CrossOrigin // TODO remove
@@ -63,7 +62,6 @@ public class ProjectController {
 
 	// Add new project
 	
-//	public Project addProject(@RequestBody ProjectDTO projectDTO) {
 	@PostMapping("/add")
 	@ResponseStatus(HttpStatus.OK)
 	public Project addProject(
@@ -72,18 +70,19 @@ public class ProjectController {
 		@RequestParam String userFullName,
 //		@RequestParam List<String> groupMembers,
 		@RequestParam List<MultipartFile> screenShots,
+		@RequestParam String repoURI,
 //		@RequestParam List<String> zipLinks,
 		@RequestParam String description,
 		@RequestParam String techStack,
 		@RequestParam String status
 	) {
-		System.out.println("hefeef");
 		ProjectDTO projectDTO = new ProjectDTO();
-//		
+
 		projectDTO.setName(name);
 		projectDTO.setBatch(batch);
 		projectDTO.setUserFullName(userFullName);
 		projectDTO.setScreenShots(screenShots);
+		projectDTO.setRepoURI(repoURI);
 //		projectDTO.setGroupMembers(groupMembers);
 //		projectDTO.setZipLinks(zipLinks);
 		projectDTO.setDescription(description);
