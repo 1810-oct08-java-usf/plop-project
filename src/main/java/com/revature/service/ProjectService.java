@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
 import com.revature.repositories.ProjectRepository;
 
@@ -43,12 +44,12 @@ public class ProjectService {
 		return projectRepo.findAll();
 	}
 
-	public Boolean deleteById(String id) {
+	public boolean deleteById(String id) {
 		if (id != null) {
 			projectRepo.deleteById(id);
 			return true;
 		} else {
-			return false;
+			return  false;
 		}
 	}
 
