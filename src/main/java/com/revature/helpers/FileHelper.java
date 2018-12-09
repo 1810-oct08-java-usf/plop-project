@@ -17,8 +17,8 @@ public class FileHelper {
 		return convFile;
 	}
 
-	public static File convert(byte[] byteArray) throws IOException {
-		File convFile = new File("temp");
+	public static File convert(byte[] byteArray, String fileName) throws IOException {
+		File convFile = new File(fileName);
 		convFile.createNewFile();
 		FileOutputStream fos = new FileOutputStream(convFile);
 		fos.write(byteArray);

@@ -1,5 +1,6 @@
 package com.revature.controllers;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.core.env.Environment;
@@ -21,7 +22,6 @@ import com.revature.models.ProjectDTO;
 import com.revature.services.ProjectService;
 
 @RestController
-@CrossOrigin // TODO remove
 public class ProjectController {
 
 	private Environment env;
@@ -62,16 +62,15 @@ public class ProjectController {
 
 	// Add new project
 	
-	@PostMapping("/add")
+	@PostMapping("/")
 	@ResponseStatus(HttpStatus.OK)
 	public Project addProject(
 		@RequestParam String name,
 		@RequestParam String batch,
 		@RequestParam String userFullName,
-//		@RequestParam List<String> groupMembers,
+		@RequestParam List<String> groupMembers,
 		@RequestParam List<MultipartFile> screenShots,
-		@RequestParam String repoURI,
-//		@RequestParam List<String> zipLinks,
+		@RequestParam List<String> zipLinks,
 		@RequestParam String description,
 		@RequestParam String techStack,
 		@RequestParam String status
@@ -82,9 +81,8 @@ public class ProjectController {
 		projectDTO.setBatch(batch);
 		projectDTO.setUserFullName(userFullName);
 		projectDTO.setScreenShots(screenShots);
-		projectDTO.setRepoURI(repoURI);
-//		projectDTO.setGroupMembers(groupMembers);
-//		projectDTO.setZipLinks(zipLinks);
+		projectDTO.setGroupMembers(groupMembers);
+		projectDTO.setZipLinks(zipLinks);
 		projectDTO.setDescription(description);
 		projectDTO.setTechStack(techStack);
 		projectDTO.setStatus(status);
@@ -93,24 +91,24 @@ public class ProjectController {
 	}
 
 	// Delete by ID
-	@DeleteMapping("/delete/{id}")
+	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean deleteById(@PathVariable String id) {
 		return projectService.deleteById(id);
 	}
 
 	// Update Project
-	@PutMapping("/update")
+	@PutMapping("/")
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean updateProject(@RequestBody Project project) {
 		return projectService.updateProject(project);
 	}
 	
-	// Update Project
-		@GetMapping("/{id}")
-		@ResponseStatus(HttpStatus.OK)
-		public Project updateProject(@PathVariable String id) {
-			return projectService.findById(id);
-			
-		}
+	// get a specific Project
+	@GetMapping("/{id}")
+	@ResponseStatus(HttpStatus.OK)
+	public Project updateProject(@PathVariable String id) {
+		return projectService.findById(id);
+		
+	}
 }

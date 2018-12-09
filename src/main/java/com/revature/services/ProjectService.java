@@ -1,18 +1,17 @@
 package com.revature.services;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ProjectService {
@@ -71,15 +70,11 @@ public class ProjectService {
 	
 	public Project createProjectFromDTO(ProjectDTO projectDTO) {
 		Project newProject = new Project();
-		
-		// TODO remove
-		newProject.setRepoURI(projectDTO.getRepoURI());
 
 		newProject.setName(projectDTO.getName());
 		newProject.setBatch(projectDTO.getBatch());
 		newProject.setFullName(projectDTO.getUserFullName());
 		newProject.setGroupMembers(projectDTO.getGroupMembers());
-		newProject.setZipLinks(projectDTO.getZipLinks());
 		newProject.setDescription(projectDTO.getDescription());
 		newProject.setTechStack(projectDTO.getTechStack());
 		newProject.setStatus(projectDTO.getStatus());
@@ -87,24 +82,23 @@ public class ProjectService {
 		// drop screenshot images in s3 and populate project with links to those images
 		List<String> screenShotsList = new ArrayList<>();
 				
-		for (MultipartFile multipart: projectDTO.getScreenShots() ){
-			String endPoint = s3StorageServiceImpl.store(multipart, "rpm-img");
+		for (MultipartFile multipartFile: projectDTO.getScreenShots() ){
+			String endPoint = s3StorageServiceImpl.store(multipartFile);
 			screenShotsList.add(endPoint);
-			
-			System.out.println(endPoint);
-			System.out.println("Added s3 image url to screenshotsList");
 		}
 		
 		newProject.setScreenShots(screenShotsList);
 
-		// retrieve the specified project's zip archive from github, drop it in s3, and populate project with link to that zip (in s3)
-		System.out.println("about to make a request for " + projectDTO.getRepoURI() + "/archive/master.zip");
-		ResponseEntity<byte[]> dlResponse = fileService.download(projectDTO.getRepoURI() + "/archive/master.zip");
-
-		if (dlResponse.getStatusCode().equals(HttpStatus.OK)) {
-			System.out.println("filename from github content disposition: " + dlResponse.getHeaders().getContentDisposition());
-			String s3Endpoint = s3StorageServiceImpl.store(dlResponse.getBody(), "rpm-zip", dlResponse.getHeaders().getContentDisposition().getFilename());
-			newProject.setRepoURI(s3Endpoint);
+		// download a zip archive for each repo from github and store them in our s3 bucket,
+		// populating the project object with links to those zip files
+		for (String zipLink: projectDTO.getZipLinks()) {
+			try {
+				// TODO produce an http status code for error getting project zip and ABORT
+				File zipArchive = fileService.download(zipLink + "/archive/master.zip");
+				newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		projectRepo.save(newProject);
@@ -119,8 +113,7 @@ public class ProjectService {
 		
 		if(currProject.isPresent()) {
 			return currProject.get();
-		}else
-		{
+		} else {
 			return null;
 		}
 	}
