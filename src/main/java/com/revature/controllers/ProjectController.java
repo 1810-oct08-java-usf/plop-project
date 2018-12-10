@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -35,7 +36,7 @@ public class ProjectController {
 	}
 
 	// Get all projects
-	@GetMapping("/")
+	@GetMapping("/projects")
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getSpecifiedProjects(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "batch", required = false) String batch,
@@ -61,7 +62,7 @@ public class ProjectController {
 	}
 
 	// Add new project
-	@PostMapping("/add")
+	@PostMapping("projects/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean addProject(@RequestBody Project project) {
 		if (project.getBatch() == null)
@@ -74,7 +75,7 @@ public class ProjectController {
 	}
 
 	// Delete by ID
-	@DeleteMapping("/delete/{id}")
+	@DeleteMapping("projects/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean deleteById(@PathVariable String id) {
 		Project ID = projectService.findById(id);
@@ -85,14 +86,14 @@ public class ProjectController {
 	}
 
 	// Update Project
-	@PostMapping("/update")
+	@PutMapping("projects/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public Boolean updateProject(@RequestBody Project project) {
-		return projectService.updateProject(project);
+	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
+		return projectService.updateProject(project, id);
 	}
 
 	// Find By ID
-	@GetMapping("/{id}")
+	@GetMapping("projects/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Project updateProject(@PathVariable String id) {
 		Project ID = projectService.findById(id);
