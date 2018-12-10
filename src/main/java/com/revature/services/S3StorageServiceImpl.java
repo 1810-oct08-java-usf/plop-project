@@ -27,7 +27,7 @@ public class S3StorageServiceImpl implements StorageService {
 	 @Value("${aws.config.bucket-name}")
 	 private String bucketName;
 
-	@Value("${aws.config.img-bucket-region}")
+	@Value("${aws.config.bucket-region}")
 	private String bucketRegion;
 	
 	@Value("${aws.config.s3-endpoint}")
