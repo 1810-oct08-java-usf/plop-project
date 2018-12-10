@@ -12,6 +12,9 @@ public class Project {
 	private String name;
 	private String batch;
 
+	// TODO remove
+	private String repoURI;
+
 	// TODO: This value should be retrieved from the auth-service.
 	// TODO: There is a possibility that there can be more than one trainer per
 	// batch. Such as a co-trainer. This should be refactored for that option.
@@ -40,6 +43,14 @@ public class Project {
 		this.description = description;
 		this.techStack = techStack;
 		this.status = status;
+	}
+
+	public String getRepoURI() {
+		return repoURI;
+	}
+
+	public void setRepoURI(String repoURI) {
+		this.repoURI = repoURI;
 	}
 
 	public String getId() {

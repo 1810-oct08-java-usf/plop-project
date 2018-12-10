@@ -2,9 +2,9 @@ package com.revature.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,21 +15,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
+
 import com.revature.models.ProjectErrorResponse;
-import com.revature.service.ProjectService;
+import com.revature.models.ProjectDTO;
+import com.revature.services.ProjectService;
 
 @RestController
+@CrossOrigin // TODO remove
 public class ProjectController {
 
 	private Environment env;
 
 	private ProjectService projectService;
 
-	@Autowired
+	// @Autowired
 	public ProjectController(Environment env, ProjectService projectService) {
 		this.env = env;
 		this.projectService = projectService;
@@ -62,16 +66,35 @@ public class ProjectController {
 	}
 
 	// Add new project
-	@PostMapping("/projects")
+
+	@PostMapping("/add")
 	@ResponseStatus(HttpStatus.OK)
-	public Boolean addProject(@RequestBody Project project) {
-		if (project.getBatch() == null)
+	public Project addProject(@RequestParam String name, @RequestParam String batch, @RequestParam String userFullName,
+			// @RequestParam List<String> groupMembers,
+			@RequestParam List<MultipartFile> screenShots, @RequestParam String repoURI,
+			// @RequestParam List<String> zipLinks,
+			@RequestParam String description, @RequestParam String techStack, @RequestParam String status) {
+		ProjectDTO projectDTO = new ProjectDTO();
+
+		projectDTO.setName(name);
+		projectDTO.setBatch(batch);
+		projectDTO.setUserFullName(userFullName);
+		projectDTO.setScreenShots(screenShots);
+		projectDTO.setRepoURI(repoURI);
+		// projectDTO.setGroupMembers(groupMembers);
+		// projectDTO.setZipLinks(zipLinks);
+		projectDTO.setDescription(description);
+		projectDTO.setTechStack(techStack);
+		projectDTO.setStatus(status);
+
+		if (projectDTO.getBatch() == null)
 			throw new ProjectNotAddedException("The 'batch' input cannot be null when adding project");
-		if (project.getName() == null)
+		if (projectDTO.getName() == null)
 			throw new ProjectNotAddedException("The 'name' input cannot be null when adding project");
-		if (project.getTechStack() == null)
+		if (projectDTO.getTechStack() == null)
 			throw new ProjectNotAddedException("The 'tech stack' input cannot be null when adding project");
-		return projectService.addProject(project);
+
+		return projectService.createProjectFromDTO(projectDTO);
 	}
 
 	// Delete by ID
@@ -101,13 +124,14 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.OK)
 	public Project updateProject(@PathVariable String id) {
 		Project ID = projectService.findById(id);
-			if (ID == null) {
-				throw new ProjectNotFoundException("ID entered cannot be found");
-			}
-			return projectService.findById(id);
+		if (ID == null) {
+			throw new ProjectNotFoundException("ID entered cannot be found");
 		}
-	
-	//Exception Handler for Response Status Not found which is  used for findById() [/{id}] & deleteById() [delete/{id}]
+		return projectService.findById(id);
+	}
+
+	// Exception Handler for Response Status Not found which is used for findById()
+	// [/{id}] & deleteById() [delete/{id}]
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnfe) {
@@ -117,7 +141,9 @@ public class ProjectController {
 		error.setTimmeStamp(System.currentTimeMillis());
 		return error;
 	}
-	//Exception Handler for Response Status Bad Request which is  used for addProject() [/add]
+
+	// Exception Handler for Response Status Bad Request which is used for
+	// addProject() [/add]
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ProjectErrorResponse handleExceptions(ProjectNotAddedException pnae) {
