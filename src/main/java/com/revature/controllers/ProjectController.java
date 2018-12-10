@@ -62,7 +62,7 @@ public class ProjectController {
 	}
 
 	// Add new project
-	@PostMapping("projects/{id}")
+	@PostMapping("/projects")
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean addProject(@RequestBody Project project) {
 		if (project.getBatch() == null)
@@ -89,6 +89,10 @@ public class ProjectController {
 	@PutMapping("projects/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
+		Project ID = projectService.findById(id);
+		if (ID == null) {
+			throw new ProjectNotFoundException("ID entered cannot be found");
+		}
 		return projectService.updateProject(project, id);
 	}
 
