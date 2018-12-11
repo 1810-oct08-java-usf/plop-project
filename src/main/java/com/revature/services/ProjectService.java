@@ -14,6 +14,7 @@ import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
 
+// TODO include transactional annotations to specify propagation and isolation levels
 @Service
 public class ProjectService {
 
@@ -36,8 +37,8 @@ public class ProjectService {
 		return projectRepo.findByBatch(batch);
 	}
 
-	public List<Project> findByFullName(String fullName) {
-		return projectRepo.findByFullName(fullName);
+	public List<Project> findByTrainer(String trainer) {
+		return projectRepo.findByTrainer(trainer);
 	}
 
 	public List<Project> findByTechStack(String techStack) {
@@ -71,8 +72,8 @@ public class ProjectService {
             if (project.getBatch() != null) {
                 currentProject.setBatch(project.getBatch());
             }
-            if (project.getFullName() != null) {
-                currentProject.setFullName(project.getFullName());
+            if (project.getTrainer() != null) {
+                currentProject.setTrainer(project.getTrainer());
             }
             if (project.getGroupMembers() != null) {
                 currentProject.setGroupMembers(project.getGroupMembers());
@@ -105,7 +106,7 @@ public class ProjectService {
 
 		newProject.setName(projectDTO.getName());
 		newProject.setBatch(projectDTO.getBatch());
-		newProject.setFullName(projectDTO.getUserFullName());
+		newProject.setTrainer(projectDTO.getTrainer());
 		newProject.setGroupMembers(projectDTO.getGroupMembers());
 		newProject.setDescription(projectDTO.getDescription());
 		newProject.setTechStack(projectDTO.getTechStack());
@@ -136,17 +137,13 @@ public class ProjectService {
 		projectRepo.save(newProject);
 		return newProject;	
 	}
-	
-	
 
 	public Project findById(String id) {
 		
 		Optional<Project> currProject = projectRepo.findById(id);
 		
-		if(currProject.isPresent()) {
-			return currProject.get();
-		} else {
-			return null;
-		}
+		if(currProject.isPresent()) return currProject.get();
+		else return null;
 	}
+
 }

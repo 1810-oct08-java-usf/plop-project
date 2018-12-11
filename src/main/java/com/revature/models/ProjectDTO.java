@@ -12,7 +12,7 @@ public class ProjectDTO {
 	// TODO: This value should be retrieved from the auth-service.
 	// TODO: There is a possibility that there can be more than one trainer per
 	// batch. Such as a co-trainer. This should be refactored for that option.
-	private String userFullName;
+	private String trainer;
 
 	private List<String> groupMembers;
 	private List<MultipartFile> screenShots;
@@ -25,13 +25,14 @@ public class ProjectDTO {
 		super();
 	}
 
-	public ProjectDTO(String name, String batch, String userFullName, List<String> groupMembers,
+	// TODO implement builder pattern to reduce the complexity of this object's creation
+	public ProjectDTO(String name, String batch, String trainer, List<String> groupMembers,
 			List<MultipartFile> screenShots, List<String> zipLinks, String description, String techStack,
 			String status) {
 		super();
 		this.name = name;
 		this.batch = batch;
-		this.userFullName = userFullName;
+		this.trainer = trainer;
 		this.groupMembers = groupMembers;
 		this.screenShots = screenShots;
 		this.zipLinks = zipLinks;
@@ -56,12 +57,12 @@ public class ProjectDTO {
 		this.batch = batch;
 	}
 
-	public String getUserFullName() {
-		return userFullName;
+	public String getTrainer() {
+		return trainer;
 	}
 
-	public void setUserFullName(String userFullName) {
-		this.userFullName = userFullName;
+	public void setTrainer(String trainer) {
+		this.trainer = trainer;
 	}
 
 	public List<String> getGroupMembers() {
@@ -111,6 +112,5 @@ public class ProjectDTO {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
 	
 }
