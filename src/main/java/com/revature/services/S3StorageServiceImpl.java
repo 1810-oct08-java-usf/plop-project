@@ -24,8 +24,8 @@ public class S3StorageServiceImpl implements StorageService {
 	@Value("${aws.config.aws-secret-access-key}")
 	private String awsSecretAccessKey;
 
-	 @Value("${aws.config.bucket-name}")
-	 private String bucketName;
+	@Value("${aws.config.bucket-name}")
+	private String bucketName;
 
 	@Value("${aws.config.bucket-region}")
 	private String bucketRegion;

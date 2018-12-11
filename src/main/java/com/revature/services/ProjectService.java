@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,7 @@ public class ProjectService {
 	StorageService s3StorageServiceImpl;
 	FileService fileService;
 
+	@Autowired
 	public ProjectService(ProjectRepository projectRepo, StorageService s3StorageServiceImpl, FileService fileService) {
 		this.projectRepo = projectRepo;
 		this.s3StorageServiceImpl = s3StorageServiceImpl;
