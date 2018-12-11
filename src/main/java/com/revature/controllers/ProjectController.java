@@ -114,7 +114,7 @@ public class ProjectController {
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
 		Project ID = projectService.findById(id);
 		if (ID == null) {
-			throw new ProjectNotFoundException("ID entered cannot be found");
+			throw new ProjectNotFoundException("ID entered cannot be found to complete update.");
 		}
 		return projectService.updateProject(project, id);
 	}

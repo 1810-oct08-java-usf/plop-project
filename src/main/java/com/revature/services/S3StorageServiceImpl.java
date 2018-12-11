@@ -17,10 +17,10 @@ import com.revature.helpers.FileHelper;
 
 @Service
 public class S3StorageServiceImpl implements StorageService {
-	@Value("${aws.config.aws-access-key-id}")
+	@Value("AKIAJXRTFBTJ43NMUOIA")
 	private String awsAccessKeyId;
 
-	@Value("${aws.config.aws-secret-access-key}")
+	@Value("5XQ0PVxKpkrIdzijX//bRKD4aIT9MtP+oB127jhj")
 	private String awsSecretAccessKey;
 
 	// @Value("${aws.config.img-bucket-name}")
