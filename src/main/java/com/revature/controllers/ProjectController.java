@@ -1,11 +1,10 @@
 package com.revature.controllers;
 
-import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
-
-import com.revature.models.ProjectErrorResponse;
 import com.revature.models.ProjectDTO;
+import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 
 @RestController
@@ -33,14 +31,14 @@ public class ProjectController {
 
 	private ProjectService projectService;
 
-	// @Autowired
+	 @Autowired
 	public ProjectController(Environment env, ProjectService projectService) {
 		this.env = env;
 		this.projectService = projectService;
 	}
 
 	// Get all projects
-	@GetMapping("/projects")
+	@GetMapping("/")
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getSpecifiedProjects(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "batch", required = false) String batch,
