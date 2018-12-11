@@ -2,9 +2,9 @@ package com.revature.controllers;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,27 +20,25 @@ import org.springframework.web.multipart.MultipartFile;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
-
-import com.revature.models.ProjectErrorResponse;
 import com.revature.models.ProjectDTO;
+import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 
 @RestController
-@CrossOrigin // TODO remove
 public class ProjectController {
 
 	private Environment env;
 
 	private ProjectService projectService;
 
-	// @Autowired
+	 @Autowired
 	public ProjectController(Environment env, ProjectService projectService) {
 		this.env = env;
 		this.projectService = projectService;
 	}
 
 	// Get all projects
-	@GetMapping("/projects")
+	@GetMapping("/")
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getSpecifiedProjects(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "batch", required = false) String batch,
@@ -66,23 +64,28 @@ public class ProjectController {
 	}
 
 	// Add new project
-
-	@PostMapping("/add")
+	
+	@PostMapping("/")
 	@ResponseStatus(HttpStatus.OK)
-	public Project addProject(@RequestParam String name, @RequestParam String batch, @RequestParam String userFullName,
-			// @RequestParam List<String> groupMembers,
-			@RequestParam List<MultipartFile> screenShots, @RequestParam String repoURI,
-			// @RequestParam List<String> zipLinks,
-			@RequestParam String description, @RequestParam String techStack, @RequestParam String status) {
+	public Project addProject(
+		@RequestParam String name,
+		@RequestParam String batch,
+		@RequestParam String userFullName,
+		@RequestParam List<String> groupMembers,
+		@RequestParam List<MultipartFile> screenShots,
+		@RequestParam List<String> zipLinks,
+		@RequestParam String description,
+		@RequestParam String techStack,
+		@RequestParam String status
+	) {
 		ProjectDTO projectDTO = new ProjectDTO();
 
 		projectDTO.setName(name);
 		projectDTO.setBatch(batch);
 		projectDTO.setUserFullName(userFullName);
 		projectDTO.setScreenShots(screenShots);
-		projectDTO.setRepoURI(repoURI);
-		// projectDTO.setGroupMembers(groupMembers);
-		// projectDTO.setZipLinks(zipLinks);
+		projectDTO.setGroupMembers(groupMembers);
+		projectDTO.setZipLinks(zipLinks);
 		projectDTO.setDescription(description);
 		projectDTO.setTechStack(techStack);
 		projectDTO.setStatus(status);
@@ -98,7 +101,7 @@ public class ProjectController {
 	}
 
 	// Delete by ID
-	@DeleteMapping("projects/{id}")
+	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean deleteById(@PathVariable String id) {
 		Project ID = projectService.findById(id);
@@ -109,7 +112,7 @@ public class ProjectController {
 	}
 
 	// Update Project
-	@PutMapping("projects/{id}")
+	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
 		Project ID = projectService.findById(id);
@@ -120,7 +123,7 @@ public class ProjectController {
 	}
 
 	// Find By ID
-	@GetMapping("projects/{id}")
+	@GetMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Project updateProject(@PathVariable String id) {
 		Project ID = projectService.findById(id);

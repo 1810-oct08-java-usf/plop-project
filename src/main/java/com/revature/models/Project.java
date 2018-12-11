@@ -1,5 +1,6 @@
 package com.revature.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -11,9 +12,6 @@ public class Project {
 
 	private String name;
 	private String batch;
-
-	// TODO remove
-	private String repoURI;
 
 	// TODO: This value should be retrieved from the auth-service.
 	// TODO: There is a possibility that there can be more than one trainer per
@@ -44,13 +42,12 @@ public class Project {
 		this.techStack = techStack;
 		this.status = status;
 	}
-
-	public String getRepoURI() {
-		return repoURI;
-	}
-
-	public void setRepoURI(String repoURI) {
-		this.repoURI = repoURI;
+	
+	public void addZipLink(String zipLink) {
+		if (zipLinks == null) {
+			zipLinks = new ArrayList<>();
+		}
+		zipLinks.add(zipLink);
 	}
 
 	public String getId() {

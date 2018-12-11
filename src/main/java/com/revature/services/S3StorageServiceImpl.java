@@ -1,5 +1,6 @@
 package com.revature.services;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
@@ -23,13 +24,13 @@ public class S3StorageServiceImpl implements StorageService {
 	@Value("${aws.config.aws-secret-access-key}")
 	private String awsSecretAccessKey;
 
-	// @Value("${aws.config.img-bucket-name}")
-	// private String bucketName;
+	@Value("${aws.config.bucket-name}")
+	private String bucketName;
 
-	@Value("${aws.config.img-bucket-region}")
+	@Value("${aws.config.bucket-region}")
 	private String bucketRegion;
 	
-	@Value("https://s3.us-east-2.amazonaws.com/")
+	@Value("${aws.config.s3-endpoint}")
 	private String s3EndPoint;
 
 	AWSCredentials credentials;
@@ -45,10 +46,10 @@ public class S3StorageServiceImpl implements StorageService {
 			.build();
 	}
 
-	public String store(MultipartFile multipart, String bucketName) {
+	public String store(MultipartFile multipartFile) {
 		try {
-			s3Client.putObject(bucketName, multipart.getOriginalFilename(), FileHelper.convert(multipart));
-			return  s3EndPoint + '/' + bucketName + '/' + multipart.getOriginalFilename();
+			s3Client.putObject(bucketName, multipartFile.getOriginalFilename(), FileHelper.convert(multipartFile));
+			return  s3EndPoint + '/' + bucketName + '/' + multipartFile.getOriginalFilename();
 		} catch (IOException e) {
 			e.printStackTrace();
 			 return "";
@@ -56,14 +57,9 @@ public class S3StorageServiceImpl implements StorageService {
 		}
 	}
 
-	public String store(byte[] byteArray, String bucketName, String desiredKey) {
-		try {
-			s3Client.putObject(bucketName, desiredKey, FileHelper.convert(byteArray));
-			return s3EndPoint + '/' + bucketName + '/' + desiredKey;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return "";
-		}
+	public String store(File file) {
+		s3Client.putObject(bucketName, file.getName(), file);
+		return s3EndPoint + '/' + bucketName + '/' + file.getName();
 	}
 }
 
