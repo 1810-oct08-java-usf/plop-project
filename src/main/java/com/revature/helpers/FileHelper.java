@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 // https://fastfoodcoding.com/tutorials/1504810616200/how-to-convert-multipartfile-to-java-io-file-in-spring
 public class FileHelper {
+	
 	public static File convert(MultipartFile file) throws IOException {
 		File convFile = new File("temp");
 		convFile.createNewFile();
@@ -25,4 +26,5 @@ public class FileHelper {
 		fos.close();
 		return convFile;
 	}
+	
 }

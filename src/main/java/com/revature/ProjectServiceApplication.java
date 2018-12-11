@@ -20,9 +20,13 @@ import com.revature.repositories.ProjectRepository;
 @SpringBootApplication
 public class ProjectServiceApplication implements CommandLineRunner {
 
-	@Autowired
 	private ProjectRepository projectRepo;
 	
+	@Autowired
+	public ProjectServiceApplication(ProjectRepository projectRepo) {
+		this.projectRepo = projectRepo;
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(ProjectServiceApplication.class, args);
 	}
@@ -31,6 +35,7 @@ public class ProjectServiceApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		projectRepo.deleteAll();
 		
+		// TODO better fake data
 		List<String> groupMembers = new ArrayList<String>();
 		groupMembers.add("Sadiki");
 		groupMembers.add("Paul");
@@ -89,10 +94,12 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("OPTIONS");
 		config.addAllowedMethod("GET");
+		config.addExposedHeader("authorization");
 		config.addAllowedMethod("POST");
 		config.addAllowedMethod("PUT");
 		config.addAllowedMethod("DELETE");
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
 	}
+
 }

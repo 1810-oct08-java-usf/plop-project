@@ -18,6 +18,7 @@ import com.revature.helpers.FileHelper;
 
 @Service
 public class S3StorageServiceImpl implements StorageService {
+
 	@Value("${aws.config.aws-access-key-id}")
 	private String awsAccessKeyId;
 
@@ -33,8 +34,8 @@ public class S3StorageServiceImpl implements StorageService {
 	@Value("${aws.config.s3-endpoint}")
 	private String s3EndPoint;
 
-	AWSCredentials credentials;
-	AmazonS3 s3Client;
+	private AWSCredentials credentials;
+	private AmazonS3 s3Client;
 
 	@PostConstruct
 	public void init() {
@@ -61,5 +62,5 @@ public class S3StorageServiceImpl implements StorageService {
 		s3Client.putObject(bucketName, file.getName(), file);
 		return s3EndPoint + '/' + bucketName + '/' + file.getName();
 	}
-}
 
+}
