@@ -61,14 +61,44 @@ public class ProjectService {
 		}
 	}
 
-	public Boolean updateProject(Project project) {
-		if (project != null) {
-			projectRepo.save(project);
-			return true;
-		} else {
-			return false;
-		}
-	}
+	public Boolean updateProject(Project project, String id) {
+        Optional<Project> savedProject =  projectRepo.findById(id); 
+        
+        if (savedProject.isPresent()) {
+            
+            Project currentProject = savedProject.get();
+          
+            if (project.getBatch() != null) {
+                currentProject.setBatch(project.getBatch());
+            }
+            if (project.getFullName() != null) {
+                currentProject.setFullName(project.getFullName());
+            }
+            if (project.getGroupMembers() != null) {
+                currentProject.setGroupMembers(project.getGroupMembers());
+            }
+            if (project.getScreenShots() != null) {
+                currentProject.setScreenShots(project.getScreenShots());
+            }
+            if (project.getZipLinks() != null) {
+                currentProject.setZipLinks(project.getZipLinks());
+            }
+            if (project.getDescription() != null) {
+                currentProject.setDescription(project.getDescription());
+            }
+            if (project.getTechStack() != null) {
+                currentProject.setTechStack(project.getTechStack());
+            }
+            if (project.getStatus() != null) {
+                currentProject.setStatus(project.getStatus());
+            }
+            
+            projectRepo.save(currentProject);
+            return true;   
+        }
+        
+        return false;
+    }
 	
 	public Project createProjectFromDTO(ProjectDTO projectDTO) {
 		Project newProject = new Project();
