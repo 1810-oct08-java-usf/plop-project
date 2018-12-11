@@ -1,10 +1,15 @@
 package com.revature.models;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
 
-public class Project {
+// TODO this class should have JSR-303 (Bean Validator) annotations (@NotNull, @Pattern, etc.)
+public class Project implements Serializable {
+
+	private static final long serialVersionUID = -1295401907345421001L;
 
 	@Id
 	private String id;
@@ -12,13 +17,10 @@ public class Project {
 	private String name;
 	private String batch;
 
-	// TODO remove
-	private String repoURI;
-
 	// TODO: This value should be retrieved from the auth-service.
 	// TODO: There is a possibility that there can be more than one trainer per
 	// batch. Such as a co-trainer. This should be refactored for that option.
-	private String fullName;
+	private String trainer;
 
 	private List<String> groupMembers;
 	private List<String> screenShots;
@@ -31,12 +33,13 @@ public class Project {
 		super();
 	}
 
-	public Project(String name, String batch, String fullName, List<String> groupMembers, List<String> screenShots,
+	// TODO implement builder pattern to reduce the complexity of this object's construction
+	public Project(String name, String batch, String trainer, List<String> groupMembers, List<String> screenShots,
 			List<String> zipLinks, String description, String techStack, String status) {
 		super();
 		this.name = name;
 		this.batch = batch;
-		this.fullName = fullName;
+		this.trainer = trainer;
 		this.groupMembers = groupMembers;
 		this.screenShots = screenShots;
 		this.zipLinks = zipLinks;
@@ -44,13 +47,12 @@ public class Project {
 		this.techStack = techStack;
 		this.status = status;
 	}
-
-	public String getRepoURI() {
-		return repoURI;
-	}
-
-	public void setRepoURI(String repoURI) {
-		this.repoURI = repoURI;
+	
+	public void addZipLink(String zipLink) {
+		if (zipLinks == null) {
+			zipLinks = new ArrayList<>();
+		}
+		zipLinks.add(zipLink);
 	}
 
 	public String getId() {
@@ -77,12 +79,12 @@ public class Project {
 		this.batch = batch;
 	}
 
-	public String getFullName() {
-		return fullName;
+	public String getTrainer() {
+		return trainer;
 	}
 
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
+	public void setTrainer(String trainer) {
+		this.trainer = trainer;
 	}
 
 	public List<String> getGroupMembers() {
@@ -139,7 +141,7 @@ public class Project {
 		int result = 1;
 		result = prime * result + ((batch == null) ? 0 : batch.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
+		result = prime * result + ((trainer == null) ? 0 : trainer.hashCode());
 		result = prime * result + ((groupMembers == null) ? 0 : groupMembers.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -169,10 +171,10 @@ public class Project {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
-		if (fullName == null) {
-			if (other.fullName != null)
+		if (trainer == null) {
+			if (other.trainer != null)
 				return false;
-		} else if (!fullName.equals(other.fullName))
+		} else if (!trainer.equals(other.trainer))
 			return false;
 		if (groupMembers == null) {
 			if (other.groupMembers != null)
@@ -214,7 +216,7 @@ public class Project {
 
 	@Override
 	public String toString() {
-		return "Project [id=" + id + ", name=" + name + ", batch=" + batch + ", fullName=" + fullName
+		return "Project [id=" + id + ", name=" + name + ", batch=" + batch + ", trainer=" + trainer
 				+ ", groupMembers=" + groupMembers + ", screenShots=" + screenShots + ", zipLinks=" + zipLinks
 				+ ", description=" + description + ", techStack=" + techStack + ", status=" + status + "]";
 	}

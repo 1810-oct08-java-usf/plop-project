@@ -1,7 +1,10 @@
 package com.revature.services;
 
-import org.springframework.http.ResponseEntity;
+import java.io.File;
+import java.io.IOException;
 
 public interface FileService {
-	ResponseEntity<byte[]> download(String fileURI);
+	
+	File download(String fileURI) throws IOException;
+	
 }

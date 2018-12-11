@@ -8,17 +8,25 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.revature.models.Project;
 import com.revature.repositories.ProjectRepository;
 
 @EnableEurekaClient
 @SpringBootApplication
-public class ProjectServiceApplication implements CommandLineRunner{
-	
-	@Autowired
+public class ProjectServiceApplication implements CommandLineRunner {
+
 	private ProjectRepository projectRepo;
 	
+	@Autowired
+	public ProjectServiceApplication(ProjectRepository projectRepo) {
+		this.projectRepo = projectRepo;
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(ProjectServiceApplication.class, args);
 	}
@@ -27,6 +35,7 @@ public class ProjectServiceApplication implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		projectRepo.deleteAll();
 		
+		// TODO better fake data
 		List<String> groupMembers = new ArrayList<String>();
 		groupMembers.add("Sadiki");
 		groupMembers.add("Paul");
@@ -75,4 +84,22 @@ public class ProjectServiceApplication implements CommandLineRunner{
 			System.out.println(project);
 		}
 	}
+
+	@Bean
+	public CorsFilter corsFilter() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowCredentials(true);
+		config.addAllowedOrigin("*");
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("OPTIONS");
+		config.addAllowedMethod("GET");
+		config.addExposedHeader("authorization");
+		config.addAllowedMethod("POST");
+		config.addAllowedMethod("PUT");
+		config.addAllowedMethod("DELETE");
+		source.registerCorsConfiguration("/**", config);
+		return new CorsFilter(source);
+	}
+
 }
