@@ -66,8 +66,7 @@ public class ProjectController {
     }
 
 	// Add new project
-	
-	@PostMapping(value="/", produces=MediaType.APPLICATION_JSON_VALUE, consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(produces=MediaType.APPLICATION_JSON_VALUE, consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public Project addProject(
 		@RequestParam String name,
