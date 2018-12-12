@@ -3,9 +3,9 @@ package com.revature.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,16 +25,14 @@ import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 
+@CrossOrigin
 @RestController
 public class ProjectController {
-
-	private Environment env;
 
 	private ProjectService projectService;
 
 	@Autowired
-	public ProjectController(Environment env, ProjectService projectService) {
-		this.env = env;
+	public ProjectController(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 	
