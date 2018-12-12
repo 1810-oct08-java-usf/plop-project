@@ -31,6 +31,11 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		SpringApplication.run(ProjectServiceApplication.class, args);
 	}
 
+	/*
+	 * When the application launches, the MongoDB first deletes all entries and then creates and adds 5 new entries.
+	 * 
+	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	*/
 	@Override
 	public void run(String... args) throws Exception {
 		projectRepo.deleteAll();

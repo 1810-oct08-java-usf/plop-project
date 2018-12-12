@@ -62,6 +62,18 @@ public class ProjectService {
 		}
 	}
 
+	/*
+	 * Updates the project by taking in JSON values and mapping them to a Project model.
+	 * 
+	 * @param project: User entered JSON data for a project.
+	 * @param id: String data of an id.
+	 * 
+	 * Retrieves project from database through id.
+	 * Checks whether a user has entered information for a specific value in the model. If they have then that is what is updated.
+	 * 
+	 * @author Miles LaCue (1810-Oct08-Java-USF)
+	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	*/
 	public Boolean updateProject(Project project, String id) {
         Optional<Project> savedProject =  projectRepo.findById(id); 
         
@@ -104,6 +116,8 @@ public class ProjectService {
         return false;
     }
 	
+	
+
 	public Project createProjectFromDTO(ProjectDTO projectDTO) {
 		Project newProject = new Project();
 

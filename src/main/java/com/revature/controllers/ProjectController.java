@@ -37,53 +37,116 @@ public class ProjectController {
 		this.env = env;
 		this.projectService = projectService;
 	}
-	
-	@GetMapping(value="/", produces=MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public List<Project> getAllProjects() {
-        return projectService.findAllProjects();
-    }
-	
-    @GetMapping(value="/id/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public Project getProjectById(@PathVariable String id) {
-        return projectService.findById(id);
-    }
-    
-    @GetMapping(value="/name/{name}", produces=MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public List<Project> getProjectsByName(@PathVariable String name) {
-        return projectService.findByName(name);
-    }
-    
-    @GetMapping(value="/batch/{batch}", produces=MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public List<Project> getProjectsByBatch(@PathVariable String batch) {
-        return projectService.findByBatch(batch);
-    }
-    
-    @GetMapping(value="/status/{status}", produces=MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public List<Project> getProjectsByStatus(@PathVariable String status) {
-        return projectService.findByStatus(status);
-    }
 
-	// Add new project
-	
-	@PostMapping(value="/", produces=MediaType.APPLICATION_JSON_VALUE, consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
+	/*
+	  * This method retrieves all of the projects stored within embedded MongoDB Uses
+	  * HTTP method GET and only retrieves JSON data.
+	  * 
+	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 */
+	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public List<Project> getAllProjects() {
+		return projectService.findAllProjects();
+	}
+
+	/*
+	  * This method retrieves project by ID Uses HTTP method GET and only retrieves
+	  * JSON data
+	  * 
+	  * @param id: String that serves as the id for the project
+	  * 
+	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 */
+	@GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public Project getProjectById(@PathVariable String id) {
+		return projectService.findById(id);
+	}
+
+	/*
+	  * This method retrieves project by name Uses HTTP method GET and only retrieves
+	  * JSON data
+	  * 
+	  * @param name: String that serves as the name of the project
+	  * 
+	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 */
+	@GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public List<Project> getProjectsByName(@PathVariable String name) {
+		return projectService.findByName(name);
+	}
+
+	/*
+	  * This method retrieves project by batch Uses HTTP method GET and only
+	  * retrieves JSON data
+	  * 
+	  * @param batch: String that serves as the batch for the project
+	  * 
+	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 */
+	@GetMapping(value = "/batch/{batch}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public List<Project> getProjectsByBatch(@PathVariable String batch) {
+		return projectService.findByBatch(batch);
+	}
+
+	/*
+	 * This method retrieves project by status Uses HTTP method GET and only
+	 * retrieves JSON data
+	 * 
+	 * @param status: String that serves as the status of the project
+	 * 
+	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	*/
+	@GetMapping(value = "/status/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public List<Project> getProjectsByStatus(@PathVariable String status) {
+		return projectService.findByStatus(status);
+	}
+
+	/*
+	 * This method adds a new project.
+	 * 
+	 * Uses HTTP method POST. Retrieves form data because this method have values that are collection.
+	 * 
+	 * @param name: Requests a String that specifies the name from whatever hits
+	 * this endpoint.
+	 * 
+	 * @param batch: Requests a String that specifies the batch from whatever hits
+	 * this endpoint.
+	 * 
+	 * @param trainer: Requests a String that specifies the trainer from whatever
+	 * hits this endpoint.
+	 * 
+	 * @param groupMembers: Requests a list collection of Strings that specifies the
+	 * groupMembers from whatever hits this endpoint.
+	 * 
+	 * @param screenShots: Requests a list collection of MultipartFile that
+	 * specifies the screenShots from whatever hits this endpoint.
+	 * 
+	 * @param zipLinks: Requests a list collection of Strings that specifies the
+	 * zipLinks from whatever hits this endpoint.
+	 * 
+	 * @param description: Requests a String that specifies the description from
+	 * whatever hits this endpoint.
+	 * 
+	 * @param techStack: Requests a String that specifies the techStack from
+	 * whatever hits this endpoint.
+	 * 
+	 * @param status: Requests a String that specifies the status from whatever hits
+	 * this endpoint.
+	 * 
+	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	*/
+	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Project addProject(
-		@RequestParam String name,
-		@RequestParam String batch,
-		// TODO should be retrieved from auth service
-		@RequestParam String trainer,
-		@RequestParam List<String> groupMembers,
-		@RequestParam List<MultipartFile> screenShots,
-		@RequestParam List<String> zipLinks,
-		@RequestParam String description,
-		@RequestParam String techStack,
-		@RequestParam String status
-	) {
+	public Project addProject(@RequestParam String name, @RequestParam String batch,
+			// TODO should be retrieved from auth service
+			@RequestParam String trainer, @RequestParam List<String> groupMembers,
+			@RequestParam List<MultipartFile> screenShots, @RequestParam List<String> zipLinks,
+			@RequestParam String description, @RequestParam String techStack, @RequestParam String status) {
 		ProjectDTO projectDTO = new ProjectDTO();
 
 		projectDTO.setName(name);
@@ -106,8 +169,14 @@ public class ProjectController {
 		return projectService.createProjectFromDTO(projectDTO);
 	}
 
-	// Delete by ID
-	@DeleteMapping(value="/id/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
+	/*
+	  * This method is used to delete an entry into the embedded MongoDB based on the ID
+	  * 
+	  * Uses HTTP method DELETE and only retrieves JSON data
+	  * @param id: String that serves as the id for the project
+	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 */
+	@DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean deleteById(@PathVariable String id) {
 		Project ID = projectService.findById(id);
@@ -117,9 +186,17 @@ public class ProjectController {
 		return projectService.deleteById(id);
 	}
 
+
+	/*
+	  * This method is used to update an entry into the embedded MongoDB based on the ID
+	  * 
+	  * Uses HTTP method PUT. Retrieves and produces JSON data
+	  * @param project: Requests that the user enters a project 
+	  * @param id: String that serves as the id for the project
+	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 */
 	// TODO should let you update screenshots and repositories
-	// Update Project
-	@PutMapping(value="/{id}", produces=MediaType.APPLICATION_JSON_VALUE, consumes=MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
 		Project ID = projectService.findById(id);
@@ -129,8 +206,19 @@ public class ProjectController {
 		return projectService.updateProject(project, id);
 	}
 
-	// Exception Handler for Response Status Not found which is used for findById()
-	// [/{id}] & deleteById() [delete/{id}]
+	/*
+	  * This method is used to send a status code into the client based on
+	  * the validity of the information sent.
+	  * 
+	  * Exception Handler for Response Status Not found which is used for findById()
+	  * [/{id}] & deleteById() [delete/{id}]
+	  *  
+	  * Uses @ExceptionHandler annotation. Creates a new error response 
+	  * error.setStatus: Defines the value of the status code returned if thrown(NOT_FOUND)
+	  * error.setMessage: Defines a custom message sent to the client if the exception is thrown
+	  * error.setTimeStamp: Defines the time this error was thrown
+	  * @author Miles LaCue (1810-Oct08-Java-USF)
+	 */
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnfe) {
@@ -141,8 +229,18 @@ public class ProjectController {
 		return error;
 	}
 
-	// Exception Handler for Response Status Bad Request which is used for
-	// addProject() [/add]
+	/*
+	  * This method is used to send a status code into the client based on
+	  * the validity of the information sent.
+	  * 
+	  * Exception Handler for Response Status Bad Request which is used for addProject() [/add]
+	  * 
+	  * Uses @ExceptionHandler annotation. Creates a new error response 
+	  * error.setStatus: Defines the value of the status code returned if thrown (BAD_REQUEST)
+	  * error.setMessage: Defines a custom message sent to the client if the exception is thrown
+	  * error.setTimeStamp: Defines the time this error was thrown
+	  * @author Miles LaCue (1810-Oct08-Java-USF)
+	 */
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ProjectErrorResponse handleExceptions(ProjectNotAddedException pnae) {
