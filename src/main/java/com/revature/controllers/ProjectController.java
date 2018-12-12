@@ -25,7 +25,6 @@ import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 
-@CrossOrigin
 @RestController
 public class ProjectController {
 
