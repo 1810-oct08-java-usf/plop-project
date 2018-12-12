@@ -68,7 +68,10 @@ public class ProjectService {
         if (savedProject.isPresent()) {
             
             Project currentProject = savedProject.get();
-          
+            
+            if(project.getName() != null) {
+            	currentProject.setName(project.getName());
+            }
             if (project.getBatch() != null) {
                 currentProject.setBatch(project.getBatch());
             }
