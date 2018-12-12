@@ -63,60 +63,62 @@ public class ProjectService {
 	}
 
 	/*
-	 * Updates the project by taking in JSON values and mapping them to a Project model.
+	 * Updates the project by taking in JSON values and mapping them to a Project
+	 * model.
 	 * 
 	 * @param project: User entered JSON data for a project.
+	 * 
 	 * @param id: String data of an id.
 	 * 
-	 * Retrieves project from database through id.
-	 * Checks whether a user has entered information for a specific value in the model. If they have then that is what is updated.
+	 * Retrieves project from database through id. Checks whether a user has entered
+	 * information for a specific value in the model. If they have then that is what
+	 * is updated.
 	 * 
 	 * @author Miles LaCue (1810-Oct08-Java-USF)
+	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
-	*/
+	 */
 	public Boolean updateProject(Project project, String id) {
-        Optional<Project> savedProject =  projectRepo.findById(id); 
-        
-        if (savedProject.isPresent()) {
-            
-            Project currentProject = savedProject.get();
-            
-            if(project.getName() != null) {
-            	currentProject.setName(project.getName());
-            }
-            if (project.getBatch() != null) {
-                currentProject.setBatch(project.getBatch());
-            }
-            if (project.getTrainer() != null) {
-                currentProject.setTrainer(project.getTrainer());
-            }
-            if (project.getGroupMembers() != null) {
-                currentProject.setGroupMembers(project.getGroupMembers());
-            }
-            if (project.getScreenShots() != null) {
-                currentProject.setScreenShots(project.getScreenShots());
-            }
-            if (project.getZipLinks() != null) {
-                currentProject.setZipLinks(project.getZipLinks());
-            }
-            if (project.getDescription() != null) {
-                currentProject.setDescription(project.getDescription());
-            }
-            if (project.getTechStack() != null) {
-                currentProject.setTechStack(project.getTechStack());
-            }
-            if (project.getStatus() != null) {
-                currentProject.setStatus(project.getStatus());
-            }
-            
-            projectRepo.save(currentProject);
-            return true;   
-        }
-        
-        return false;
-    }
-	
-	
+		Optional<Project> savedProject = projectRepo.findById(id);
+
+		if (savedProject.isPresent()) {
+
+			Project currentProject = savedProject.get();
+
+			if (project.getName() != null) {
+				currentProject.setName(project.getName());
+			}
+			if (project.getBatch() != null) {
+				currentProject.setBatch(project.getBatch());
+			}
+			if (project.getTrainer() != null) {
+				currentProject.setTrainer(project.getTrainer());
+			}
+			if (project.getGroupMembers() != null) {
+				currentProject.setGroupMembers(project.getGroupMembers());
+			}
+			if (project.getScreenShots() != null) {
+				currentProject.setScreenShots(project.getScreenShots());
+			}
+			if (project.getZipLinks() != null) {
+				currentProject.setZipLinks(project.getZipLinks());
+			}
+			if (project.getDescription() != null) {
+				currentProject.setDescription(project.getDescription());
+			}
+			if (project.getTechStack() != null) {
+				currentProject.setTechStack(project.getTechStack());
+			}
+			if (project.getStatus() != null) {
+				currentProject.setStatus(project.getStatus());
+			}
+
+			projectRepo.save(currentProject);
+			return true;
+		}
+
+		return false;
+	}
 
 	public Project createProjectFromDTO(ProjectDTO projectDTO) {
 		Project newProject = new Project();
@@ -128,20 +130,21 @@ public class ProjectService {
 		newProject.setDescription(projectDTO.getDescription());
 		newProject.setTechStack(projectDTO.getTechStack());
 		newProject.setStatus(projectDTO.getStatus());
-		
+
 		// drop screenshot images in s3 and populate project with links to those images
 		List<String> screenShotsList = new ArrayList<>();
-				
-		for (MultipartFile multipartFile: projectDTO.getScreenShots() ){
+
+		for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
 			String endPoint = s3StorageServiceImpl.store(multipartFile);
 			screenShotsList.add(endPoint);
 		}
-		
+
 		newProject.setScreenShots(screenShotsList);
 
-		// download a zip archive for each repo from github and store them in our s3 bucket,
+		// download a zip archive for each repo from github and store them in our s3
+		// bucket,
 		// populating the project object with links to those zip files
-		for (String zipLink: projectDTO.getZipLinks()) {
+		for (String zipLink : projectDTO.getZipLinks()) {
 			try {
 				// TODO produce an http status code for error getting project zip and ABORT
 				File zipArchive = fileService.download(zipLink + "/archive/master.zip");
@@ -152,15 +155,17 @@ public class ProjectService {
 		}
 
 		projectRepo.save(newProject);
-		return newProject;	
+		return newProject;
 	}
 
 	public Project findById(String id) {
-		
+
 		Optional<Project> currProject = projectRepo.findById(id);
-		
-		if(currProject.isPresent()) return currProject.get();
-		else return null;
+
+		if (currProject.isPresent())
+			return currProject.get();
+		else
+			return null;
 	}
 
 }

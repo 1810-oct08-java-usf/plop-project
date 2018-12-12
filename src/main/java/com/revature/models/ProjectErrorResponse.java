@@ -1,6 +1,5 @@
 package com.revature.models;
 
-
 public class ProjectErrorResponse {
 	private int status;
 	private String message;
@@ -79,4 +78,3 @@ public class ProjectErrorResponse {
 	
 	
 }
-

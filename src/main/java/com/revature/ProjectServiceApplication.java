@@ -21,7 +21,7 @@ import com.revature.repositories.ProjectRepository;
 public class ProjectServiceApplication implements CommandLineRunner {
 
 	private ProjectRepository projectRepo;
-	
+
 	@Autowired
 	public ProjectServiceApplication(ProjectRepository projectRepo) {
 		this.projectRepo = projectRepo;
@@ -32,14 +32,15 @@ public class ProjectServiceApplication implements CommandLineRunner {
 	}
 
 	/*
-	 * When the application launches, the MongoDB first deletes all entries and then creates and adds 5 new entries.
+	 * When the application launches, the MongoDB first deletes all entries and then
+	 * creates and adds 5 new entries.
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
-	*/
+	 */
 	@Override
 	public void run(String... args) throws Exception {
 		projectRepo.deleteAll();
-		
+
 		// Populates embedded MongoDB with mock data for testing and demo purposes
 		List<String> group1 = new ArrayList<String>();
 		group1.add("Sadiki");
@@ -58,11 +59,11 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		List<String> zipLinks = new ArrayList<String>();
 		zipLinks.add("");
 		zipLinks.add("");
-		
+
 		// Save projects into repository
-		projectRepo.save(new Project("Revature Package Manager (RPM)","1810-oct08-java-usf",
-				"Wezley Singleton",group1,screenShots, zipLinks, "An extremely detailed description","Java/J2EE", "Approved"));
-		
+		projectRepo.save(new Project("Revature Package Manager (RPM)", "1810-oct08-java-usf", "Wezley Singleton",
+				group1, screenShots, zipLinks, "An extremely detailed description", "Java/J2EE", "Approved"));
+
 		List<String> group2 = new ArrayList<String>();
 		group2.add("Barry");
 		group2.add("Larry");
@@ -77,9 +78,9 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		group2.add("Terry");
 
 		// Save projects into repository
-		projectRepo.save(new Project("Dashboard 4.0","1540-nov13-pega-usf",
-				"August Duet",group2,screenShots, zipLinks, "An extremely detailed description","PEGA", "Pending"));
-		
+		projectRepo.save(new Project("Dashboard 4.0", "1540-nov13-pega-usf", "August Duet", group2, screenShots,
+				zipLinks, "An extremely detailed description", "PEGA", "Pending"));
+
 		List<String> group3 = new ArrayList<String>();
 		group3.add("Erin");
 		group3.add("Henry");
@@ -92,9 +93,9 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		group3.add("Vanessa");
 
 		// Save projects into repository
-		projectRepo.save(new Project("ASAP","1630-mar4-javascriptmvc-usf",
-				"Trevin Chester",group3,screenShots, zipLinks, "An extremely detailed description","Javascript MVC", "Pending"));
-		
+		projectRepo.save(new Project("ASAP", "1630-mar4-javascriptmvc-usf", "Trevin Chester", group3, screenShots,
+				zipLinks, "An extremely detailed description", "Javascript MVC", "Pending"));
+
 		List<String> group4 = new ArrayList<String>();
 		group4.add("Bartholomew");
 		group4.add("Jessica");
@@ -107,9 +108,9 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		group4.add("Matthew");
 
 		// Save projects into repository
-		projectRepo.save(new Project("Business Analytics","1900-june30-net-usf",
-				"Genesis Bond",group4,screenShots, zipLinks, "An extremely detailed description",".Net", "Denied"));
-		
+		projectRepo.save(new Project("Business Analytics", "1900-june30-net-usf", "Genesis Bond", group4, screenShots,
+				zipLinks, "An extremely detailed description", ".Net", "Denied"));
+
 		List<String> group5 = new ArrayList<String>();
 		group5.add("Jacob");
 		group5.add("Liam");
@@ -122,17 +123,16 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		group5.add("Poseidon");
 
 		// Save projects into repository
-		projectRepo.save(new Project("Quizzing Game","1900-Feb-19-net-usf",
-				"Blake Kruppa",group5,screenShots, zipLinks, "An extremely detailed description","React.js", "Approved"));
-		
-			
+		projectRepo.save(new Project("Quizzing Game", "1900-Feb-19-net-usf", "Blake Kruppa", group5, screenShots,
+				zipLinks, "An extremely detailed description", "React.js", "Approved"));
+
 		// Get all projects
 		System.out.println("Projects found with findAll()");
 		System.out.println("-------------------------------");
-		for(Project project : projectRepo.findAll()) {
+		for (Project project : projectRepo.findAll()) {
 			System.out.println(project);
 		}
-		
+
 	}
 
 	@Bean

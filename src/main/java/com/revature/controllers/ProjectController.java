@@ -39,10 +39,10 @@ public class ProjectController {
 	}
 
 	/*
-	  * This method retrieves all of the projects stored within embedded MongoDB Uses
-	  * HTTP method GET and only retrieves JSON data.
-	  * 
-	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * This method retrieves all of the projects stored within embedded MongoDB Uses
+	 * HTTP method GET and only retrieves JSON data.
+	 * 
+	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 */
 	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
@@ -51,12 +51,12 @@ public class ProjectController {
 	}
 
 	/*
-	  * This method retrieves project by ID Uses HTTP method GET and only retrieves
-	  * JSON data
-	  * 
-	  * @param id: String that serves as the id for the project
-	  * 
-	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * This method retrieves project by ID Uses HTTP method GET and only retrieves
+	 * JSON data
+	 * 
+	 * @param id: String that serves as the id for the project
+	 * 
+	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 */
 	@GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
@@ -65,12 +65,12 @@ public class ProjectController {
 	}
 
 	/*
-	  * This method retrieves project by name Uses HTTP method GET and only retrieves
-	  * JSON data
-	  * 
-	  * @param name: String that serves as the name of the project
-	  * 
-	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * This method retrieves project by name Uses HTTP method GET and only retrieves
+	 * JSON data
+	 * 
+	 * @param name: String that serves as the name of the project
+	 * 
+	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 */
 	@GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
@@ -79,12 +79,12 @@ public class ProjectController {
 	}
 
 	/*
-	  * This method retrieves project by batch Uses HTTP method GET and only
-	  * retrieves JSON data
-	  * 
-	  * @param batch: String that serves as the batch for the project
-	  * 
-	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * This method retrieves project by batch Uses HTTP method GET and only
+	 * retrieves JSON data
+	 * 
+	 * @param batch: String that serves as the batch for the project
+	 * 
+	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 */
 	@GetMapping(value = "/batch/{batch}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
@@ -99,7 +99,7 @@ public class ProjectController {
 	 * @param status: String that serves as the status of the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
-	*/
+	 */
 	@GetMapping(value = "/status/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getProjectsByStatus(@PathVariable String status) {
@@ -109,7 +109,8 @@ public class ProjectController {
 	/*
 	 * This method adds a new project.
 	 * 
-	 * Uses HTTP method POST. Retrieves form data because this method have values that are collection.
+	 * Uses HTTP method POST. Retrieves form data because this method have values
+	 * that are collection.
 	 * 
 	 * @param name: Requests a String that specifies the name from whatever hits
 	 * this endpoint.
@@ -139,7 +140,7 @@ public class ProjectController {
 	 * this endpoint.
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
-	*/
+	 */
 	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public Project addProject(@RequestParam String name, @RequestParam String batch,
@@ -170,11 +171,14 @@ public class ProjectController {
 	}
 
 	/*
-	  * This method is used to delete an entry into the embedded MongoDB based on the ID
-	  * 
-	  * Uses HTTP method DELETE and only retrieves JSON data
-	  * @param id: String that serves as the id for the project
-	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * This method is used to delete an entry into the embedded MongoDB based on the
+	 * ID
+	 * 
+	 * Uses HTTP method DELETE and only retrieves JSON data
+	 * 
+	 * @param id: String that serves as the id for the project
+	 * 
+	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 */
 	@DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
@@ -186,14 +190,17 @@ public class ProjectController {
 		return projectService.deleteById(id);
 	}
 
-
 	/*
-	  * This method is used to update an entry into the embedded MongoDB based on the ID
-	  * 
-	  * Uses HTTP method PUT. Retrieves and produces JSON data
-	  * @param project: Requests that the user enters a project 
-	  * @param id: String that serves as the id for the project
-	  * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * This method is used to update an entry into the embedded MongoDB based on the
+	 * ID
+	 * 
+	 * Uses HTTP method PUT. Retrieves and produces JSON data
+	 * 
+	 * @param project: Requests that the user enters a project
+	 * 
+	 * @param id: String that serves as the id for the project
+	 * 
+	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 */
 	// TODO should let you update screenshots and repositories
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -207,17 +214,19 @@ public class ProjectController {
 	}
 
 	/*
-	  * This method is used to send a status code into the client based on
-	  * the validity of the information sent.
-	  * 
-	  * Exception Handler for Response Status Not found which is used for findById()
-	  * [/{id}] & deleteById() [delete/{id}]
-	  *  
-	  * Uses @ExceptionHandler annotation. Creates a new error response 
-	  * error.setStatus: Defines the value of the status code returned if thrown(NOT_FOUND)
-	  * error.setMessage: Defines a custom message sent to the client if the exception is thrown
-	  * error.setTimeStamp: Defines the time this error was thrown
-	  * @author Miles LaCue (1810-Oct08-Java-USF)
+	 * This method is used to send a status code into the client based on the
+	 * validity of the information sent.
+	 * 
+	 * Exception Handler for Response Status Not found which is used for findById()
+	 * [/{id}] & deleteById() [delete/{id}]
+	 * 
+	 * Uses @ExceptionHandler annotation. Creates a new error response
+	 * error.setStatus: Defines the value of the status code returned if
+	 * thrown(NOT_FOUND) error.setMessage: Defines a custom message sent to the
+	 * client if the exception is thrown error.setTimeStamp: Defines the time this
+	 * error was thrown
+	 * 
+	 * @author Miles LaCue (1810-Oct08-Java-USF)
 	 */
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.NOT_FOUND)
@@ -230,16 +239,19 @@ public class ProjectController {
 	}
 
 	/*
-	  * This method is used to send a status code into the client based on
-	  * the validity of the information sent.
-	  * 
-	  * Exception Handler for Response Status Bad Request which is used for addProject() [/add]
-	  * 
-	  * Uses @ExceptionHandler annotation. Creates a new error response 
-	  * error.setStatus: Defines the value of the status code returned if thrown (BAD_REQUEST)
-	  * error.setMessage: Defines a custom message sent to the client if the exception is thrown
-	  * error.setTimeStamp: Defines the time this error was thrown
-	  * @author Miles LaCue (1810-Oct08-Java-USF)
+	 * This method is used to send a status code into the client based on the
+	 * validity of the information sent.
+	 * 
+	 * Exception Handler for Response Status Bad Request which is used for
+	 * addProject() [/add]
+	 * 
+	 * Uses @ExceptionHandler annotation. Creates a new error response
+	 * error.setStatus: Defines the value of the status code returned if thrown
+	 * (BAD_REQUEST) error.setMessage: Defines a custom message sent to the client
+	 * if the exception is thrown error.setTimeStamp: Defines the time this error
+	 * was thrown
+	 * 
+	 * @author Miles LaCue (1810-Oct08-Java-USF)
 	 */
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
