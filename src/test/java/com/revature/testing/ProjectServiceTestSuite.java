@@ -2,7 +2,6 @@ package com.revature.testing;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +20,11 @@ import com.revature.services.FileService;
 import com.revature.services.ProjectService;
 import com.revature.services.StorageService;
 
+
+/**
+ * 
+ * @author Derek Martin
+ */
 @SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectServiceTestSuite {
@@ -28,23 +32,36 @@ public class ProjectServiceTestSuite {
 	// Do not mock the class you intend to test
 	private ProjectService classUnderTest;
 	
-	// Mock all classes necessary to functionality under test.
+	/**
+	 * A simulated ProjectRespository
+	 */
 	@Mock
 	private ProjectRepository testRepo;
 	
+	/**
+	 * A simulated StorageService
+	 */
 	@Mock
 	private StorageService testStorage;
 	
+	/**
+	 * A simulated FileService
+	 */
 	@Mock
 	private FileService testFileService;
 	
+	/**
+	 * A simulated List<Project>; this can also be accomplished using a spy.
+	 */
 	@Mock
 	private List<Project> dummyList;
 	
+	/**
+	 * A simulated Project; holds data for the test methods to access during assertion.
+	 */
 	@Mock
 	private Project dummyProject = new Project();
 	
-	// Initialize objects and mock method behaviors here, prior to testing.
 	@Before
 	public void preTestInit() {			
 		classUnderTest = new ProjectService(testRepo, testStorage, testFileService);
@@ -65,55 +82,72 @@ public class ProjectServiceTestSuite {
 		Mockito.when(dummyProject.getBatch()).thenReturn("batchin");
 	}
 	
-	
-	// findByBatch()
+	/**
+	 * Assertion to verify that findByBatch return contains the dummyProject
+	 */
 	@Test
-	public void shouldReturnTrue() {
-		assertThat(classUnderTest.findByBatch("batchin")).contains(dummyProject);
+	public void shouldReturnProjectOnGoodBatchSearch() {
+		assertThat(classUnderTest.findByBatch("batchin").contains(dummyProject));
 	}
 	
-	// findByFullName()
-	// findByTechStack()
-	// findByStatus()
-	
-	// addProject()
-	
-	// findById() returns Projects
+	/**
+	 * Assertion should verify that method returns a Project instance
+	 */
 	@Test
 	public void shouldReturnProjectOnGoodIdSearch() {
 		assertThat(classUnderTest.findById("floop")).isInstanceOf(Project.class);
 	}
 	
+	/**
+	 * Assertion should verify that searching with a bad id value returns null
+	 */
 	@Test
 	public void shouldReturnNullOnFailedIdSearch() {
 		assertThat(classUnderTest.findById("test")).isNull();
 	}
 	
+	/**
+	 *  Assert that method should return an ArrayList given a correct string parameter
+	 */
 	// findByName()
 	@Test
 	public void shouldReturnArrayListByName() {
 		assertThat(classUnderTest.findByName("string")).isInstanceOf(List.class);
 	}
 	
+	/**
+	 * Assert that method should return a value of true on a valid id parameter.
+	 */
 	// deleteById()
 	@Test
 	public void shouldReturnTrueOnValidDelete() {
 		assertThat(classUnderTest.deleteById("floop")).isEqualTo(Boolean.TRUE);
 	}
 	
+	/**
+	 * Assert that method should return a value of true on any string parameter
+	 */
 	@Test
 	public void shouldReturnTrueOnAnyString() {
 		assertThat(classUnderTest.deleteById("floop")).isEqualTo(Boolean.TRUE);
 	}
 	
+	/**
+	 * Assert that method should return false on a null parameter
+	 */
 	@Test
 	public void shouldReturnFalseOnNullParameter() {
 		assertThat(classUnderTest.deleteById(null)).isEqualTo(Boolean.FALSE);
 	}
 	
+	/**
+	 * Assert that findAllProjects returns a LinkedList
+	 */
 	// findAllProjects()
 	@Test
 	public void shouldReturnLinkedList() {
 		assertThat(classUnderTest.findAllProjects()).isInstanceOf(LinkedList.class);
 	}
+	
+	// TODO: Add additional test methods to improve coverage of the test suite as needed.
 }
