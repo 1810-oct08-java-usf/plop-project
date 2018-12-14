@@ -1,2 +1,2 @@
 # project-service
-Project microservice for the MSE supporting P3
+Project microservice for the MSE supporting RPM.
