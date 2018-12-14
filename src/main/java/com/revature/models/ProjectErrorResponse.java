@@ -1,5 +1,9 @@
 package com.revature.models;
 
+/**
+ * This project error response model is used within the exception handler to gather the http status,
+ * custom message defined in the exception models and timeStamp of the specified exception being thrown. 
+ */
 public class ProjectErrorResponse {
 	private int status;
 	private String message;

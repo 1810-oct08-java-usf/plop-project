@@ -4,6 +4,13 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * ProjectDTO represents the project information a user would initially submit.
+ * it differs from Project in that the user will submit github repo URLs in ProjectDTO.zipLinks
+ * where Project.zipLinks will contain links to their archives, and in that
+ * the user will submit MultipartFile objects in ProjectDTO.screenShots where Project.screenShots
+ * will contain remote URLs for those images where they have been stored
+ */
 public class ProjectDTO {
 
 	private String name;

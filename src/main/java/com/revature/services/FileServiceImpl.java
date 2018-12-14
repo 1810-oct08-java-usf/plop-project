@@ -15,9 +15,19 @@ import org.springframework.web.client.RestTemplate;
 
 import com.revature.helpers.FileHelper;
 
+/**
+ * FileServiceImpl implements FileService
+ */
 @Service
 public class FileServiceImpl implements FileService {
 	
+	/**
+	 * FileServiceImpl.download simply implements FileService.download
+	 * 
+	 * @param fileURI URI to the file to be downloaded
+	 * @return the downloaded File
+	 * @throws IOException if there is an issue downloading the specified file
+	 */
 	public File download(String fileURI) throws IOException {
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());    

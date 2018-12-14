@@ -37,6 +37,9 @@ public class S3StorageServiceImpl implements StorageService {
 	private AWSCredentials credentials;
 	private AmazonS3 s3Client;
 
+	/**
+	 * init draws on environment variables setting up an s3Client used to store objects
+	 */
 	@PostConstruct
 	public void init() {
 		credentials = new BasicAWSCredentials(awsAccessKeyId, awsSecretAccessKey);
@@ -47,6 +50,12 @@ public class S3StorageServiceImpl implements StorageService {
 			.build();
 	}
 
+	/**
+	 * store puts an object in the configured s3 bucket
+	 * 
+	 * @param multipartFile the file representation of the object desired to store
+	 * @return the link to the new object
+	 */
 	public String store(MultipartFile multipartFile) {
 		try {
 			s3Client.putObject(bucketName, multipartFile.getOriginalFilename(), FileHelper.convert(multipartFile));
@@ -58,6 +67,12 @@ public class S3StorageServiceImpl implements StorageService {
 		}
 	}
 
+	/**
+	 * store puts an object in the configured s3 bucket
+	 * 
+	 * @param file the file representation fo the object desired to store
+	 * @return the link to the new object
+	 */
 	public String store(File file) {
 		s3Client.putObject(bucketName, file.getName(), file);
 		return s3EndPoint + '/' + bucketName + '/' + file.getName();

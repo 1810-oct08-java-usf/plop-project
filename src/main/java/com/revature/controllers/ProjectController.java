@@ -25,6 +25,9 @@ import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 
+/*
+ * The ProjectController maps service endpoints for essential CRUD operations on Projects
+ */
 @RestController
 public class ProjectController {
 

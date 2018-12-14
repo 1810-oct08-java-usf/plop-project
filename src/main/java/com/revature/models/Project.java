@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 
+/**
+ * the Project class (implementing Serializable) represents a successfully-submitted project
+ */
 // TODO this class should have JSR-303 (Bean Validator) annotations (@NotNull, @Pattern, etc.)
 public class Project implements Serializable {
 
