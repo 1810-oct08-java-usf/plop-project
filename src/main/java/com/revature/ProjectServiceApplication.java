@@ -134,8 +134,13 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		}
 
 	}
+
 	
-	/*@Bean
+
+
+	/*
+	@Bean
+
 	public CorsFilter corsFilter() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
@@ -150,6 +155,7 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		config.addAllowedMethod("DELETE");
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
+
 	}*/
 
 }
