@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,7 @@ import com.revature.services.ProjectService;
  * The ProjectController maps service endpoints for essential CRUD operations on Projects
  */
 @RestController
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ProjectController {
 
 	private ProjectService projectService;
@@ -47,6 +49,7 @@ public class ProjectController {
 	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getAllProjects() {
+		System.out.println("In Project Controller getAllProjects");
 		return projectService.findAllProjects();
 	}
 
@@ -61,6 +64,7 @@ public class ProjectController {
 	@GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public Project getProjectById(@PathVariable String id) {
+		System.out.println("In Project Controller getProjectById "+ id);
 		return projectService.findById(id);
 	}
 
@@ -75,6 +79,7 @@ public class ProjectController {
 	@GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getProjectsByName(@PathVariable String name) {
+		System.out.println("In Project Controller getProjectsByName " + name);
 		return projectService.findByName(name);
 	}
 
@@ -89,6 +94,7 @@ public class ProjectController {
 	@GetMapping(value = "/batch/{batch}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getProjectsByBatch(@PathVariable String batch) {
+		System.out.println("In Project Controller getProjectsByBatch " + batch);
 		return projectService.findByBatch(batch);
 	}
 
@@ -103,6 +109,7 @@ public class ProjectController {
 	@GetMapping(value = "/status/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getProjectsByStatus(@PathVariable String status) {
+		System.out.println("In Project Controller getProjectsByStatus " + status);
 		return projectService.findByStatus(status);
 	}
 
