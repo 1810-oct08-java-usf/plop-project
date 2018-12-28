@@ -206,10 +206,15 @@ public class ProjectController {
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
-		Project ID = projectService.findById(id);
-		if (ID == null) {
+		System.out.println("HELLO");
+		Project backendProject = projectService.findById(id);
+		if (backendProject == null) {
 			throw new ProjectNotFoundException("ID entered cannot be found to complete update.");
 		}
+		if(project.getStatus().toLowerCase().equals("approved")) {
+			project.setOldProject(backendProject);
+		}
+		System.out.println(project.getOldProject());
 		return projectService.updateProject(project, id);
 	}
 
