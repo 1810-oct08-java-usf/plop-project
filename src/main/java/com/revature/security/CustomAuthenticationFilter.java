@@ -1,5 +1,5 @@
 package com.revature.security;
-
+/*
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -147,3 +147,4 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 		}
 	}
 }
+*/
