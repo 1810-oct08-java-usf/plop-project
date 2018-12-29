@@ -1,5 +1,5 @@
 package com.revature.security;
-
+/*
 import java.util.Collection;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -50,3 +50,4 @@ public class AccessAuthenticationToken extends AbstractAuthenticationToken {
 		credentials = null;
 	}
 }
+*/
