@@ -1,5 +1,5 @@
 package com.revature.security;
-
+/*
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
@@ -46,3 +46,4 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 	}
 	
 }
+*/
