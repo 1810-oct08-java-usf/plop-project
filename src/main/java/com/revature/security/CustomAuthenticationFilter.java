@@ -18,7 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.revature.exceptions.SubversionAttemptException;
-
+*/
+public class CustomAuthenticationFilter {}
+/*
 public class CustomAuthenticationFilter extends GenericFilterBean {
 
 	@Override
