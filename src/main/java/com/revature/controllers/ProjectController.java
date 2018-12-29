@@ -30,7 +30,7 @@ import com.revature.services.ProjectService;
  * The ProjectController maps service endpoints for essential CRUD operations on Projects
  */
 @RestController
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ProjectController {
 
 	private ProjectService projectService;
