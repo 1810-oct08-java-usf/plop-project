@@ -27,11 +27,14 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
 		// get header and validate from request object.
+		System.out.println("Printing the Servlet Request headers");
 		Enumeration<String> ems = request.getAttributeNames();
 		while (ems.hasMoreElements()) {
 			String temp = ems.nextElement();
 			System.out.println(temp + "    " + request.getAttribute(temp));
 		}
+		System.out.println("\n\n\n");
+		System.out.println("Printing the HTTP Servlet Request headers");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		Enumeration<String> ems2 = httpRequest.getHeaderNames();
 		while (ems2.hasMoreElements()) {
@@ -39,8 +42,8 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			System.out.println(temp + "    " + httpRequest.getHeader(temp));
 		}
 		String headerZuul = httpRequest.getHeader("RPM_ZUUL_ACCESS_HEADER");
-		System.out.println(headerZuul);
-		System.out.println(httpRequest.getHeader("x-forwarded-port"));
+		System.out.println("Zuul header     " + headerZuul);
+		System.out.println("Forwarded Port     " + httpRequest.getHeader("x-forwarded-port"));
 		try {
 			if (headerZuul == null || httpRequest.getHeader("x-forwarded-port") == null
 					|| !httpRequest.getHeader("x-forwarded-port").equals("8762")
@@ -73,7 +76,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			}
 
 			String appUrl = request.getScheme() + "://" + request.getLocalAddr();
-			System.out.println(appUrl);
+			System.out.println("URL     " + appUrl);
 			// throw new RuntimeException(ipAddress + " " + appUrl, e);
 		}
 		filterChain.doFilter(request, response);
