@@ -1,5 +1,5 @@
 package com.revature.security;
-/*
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -18,9 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.revature.exceptions.SubversionAttemptException;
-*/
-public class CustomAuthenticationFilter {}
-/*
+
+//public class CustomAuthenticationFilter {}
+
 public class CustomAuthenticationFilter extends GenericFilterBean {
 
 	@Override
@@ -51,7 +51,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 				 * In case of attempted subversion around Zuul we want to invalidate the
 				 * session, so we can guarantee that the user will not be authenticated
 				 */
-/*
+
 				SecurityContextHolder.clearContext();
 				((HttpServletResponse) response).setStatus(401);
 				// Log this
@@ -66,7 +66,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			 * TODO This should be refactored to log the failed authentication attempt,
 			 * including the IP address of the requester.
 			 */
-/*
+
 			String ipAddress = ((HttpServletRequest) request).getHeader("X-FORWARDED-FOR");
 			if (ipAddress == null) {
 				ipAddress = request.getRemoteAddr();
@@ -151,4 +151,4 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 		}
 	}
 }
-*/
+
