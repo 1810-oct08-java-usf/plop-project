@@ -1,12 +1,12 @@
 package com.revature.security;
-/*
+
 import java.util.Collection;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-*/
-public class AccessAuthenticationToken {}
-/*
+
+//public class AccessAuthenticationToken {}
+
 public class AccessAuthenticationToken extends AbstractAuthenticationToken {
 
 	private static final long serialVersionUID = 8214607188015458452L;
@@ -52,4 +52,4 @@ public class AccessAuthenticationToken extends AbstractAuthenticationToken {
 		credentials = null;
 	}
 }
-*/
+
