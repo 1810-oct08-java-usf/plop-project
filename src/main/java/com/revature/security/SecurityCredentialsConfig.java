@@ -1,5 +1,5 @@
 package com.revature.security;
-/*
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpMethod;
@@ -8,9 +8,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-*/
-public class SecurityCredentialsConfig {}
-/*
+
+//public class SecurityCredentialsConfig {}
+
 @EnableWebSecurity
 public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 	
@@ -40,7 +40,7 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 			 * Allow unrestricted access to the actuator/info endpoint. Otherwise, AWS ELB
 			 * cannot perform a health check on the instance and it drains the instances.
 			 */
-/*
+
 			.antMatchers(HttpMethod.GET, "/actuator/info").permitAll()
 			.antMatchers(HttpMethod.GET, "/actuator/routes").permitAll()
 
@@ -49,4 +49,4 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 	}
 	
 }
-*/
+
