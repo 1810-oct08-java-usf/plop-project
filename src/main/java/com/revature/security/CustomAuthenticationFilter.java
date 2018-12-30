@@ -27,12 +27,14 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
 		// get header and validate from request object.
+		System.out.println("Printing the Servlet Request headers");
 		Enumeration<String> ems = request.getAttributeNames();
 		while (ems.hasMoreElements()) {
 			String temp = ems.nextElement();
 			System.out.println(temp + "    " + request.getAttribute(temp));
 		}
 		System.out.println("\n\n\n");
+		System.out.println("Printing the HTTP Servlet Request headers");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		Enumeration<String> ems2 = httpRequest.getHeaderNames();
 		while (ems2.hasMoreElements()) {
