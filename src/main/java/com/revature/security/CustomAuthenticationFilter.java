@@ -46,10 +46,12 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 		System.out.println("Zuul header     " + headerZuul);
 		System.out.println("Forwarded Port     " + httpRequest.getHeader("x-forwarded-port"));
 		try {
-			if (headerZuul == null
-			    	//|| httpRequest.getHeader("x-forwarded-port") == null
-				//|| !httpRequest.getHeader("x-forwarded-port").equals("8762")
-				|| !headerZuul.equals("Trevin is a meanie")|| httpRequest.getRequestURI().contains("actuator")) {
+			if (httpRequest.getRequestURI().contains("actuator")) {
+				System.out.println("giving auth to actuator");
+				Authentication auth = new AccessAuthenticationToken(headerZuul, "ROLE_ADMIN", new ArrayList<>());
+				SecurityContextHolder.getContext().setAuthentication(auth);
+			} else if ((headerZuul == null
+				|| !headerZuul.equals("Trevin is a meanie"))) {
 
 				System.out.println("Bad trevin");
 				/*
@@ -71,7 +73,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			 * TODO This should be refactored to log the failed authentication attempt,
 			 * including the IP address of the requester.
 			 */
-
+			e.printStackTrace();
 			String ipAddress = ((HttpServletRequest) request).getHeader("X-FORWARDED-FOR");
 			if (ipAddress == null) {
 				ipAddress = request.getRemoteAddr();
