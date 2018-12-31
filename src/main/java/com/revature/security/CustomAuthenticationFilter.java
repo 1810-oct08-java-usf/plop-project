@@ -41,7 +41,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			String temp = ems2.nextElement();
 			System.out.println(temp + "    " + httpRequest.getHeader(temp));
 		}
-		System.out.println("URI: " + httpRequest.getRequestURI());
+		System.out.println("URI: " + httpRequest.getRequestURI() + "  " + !httpRequest.getRequestURI().contains("actuator"));
 		String headerZuul = httpRequest.getHeader("RPM_ZUUL_ACCESS_HEADER");
 		System.out.println("Zuul header     " + headerZuul);
 		System.out.println("Forwarded Port     " + httpRequest.getHeader("x-forwarded-port"));
