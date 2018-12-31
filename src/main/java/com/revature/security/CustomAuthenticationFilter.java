@@ -27,6 +27,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
 		// get header and validate from request object.
+		/*
 		System.out.println("Printing the Servlet Request headers");
 		Enumeration<String> ems = request.getAttributeNames();
 		while (ems.hasMoreElements()) {
@@ -35,20 +36,25 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 		}
 		System.out.println("\n\n\n");
 		System.out.println("Printing the HTTP Servlet Request headers");
+		*/
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		/*
 		Enumeration<String> ems2 = httpRequest.getHeaderNames();
 		while (ems2.hasMoreElements()) {
 			String temp = ems2.nextElement();
 			System.out.println(temp + "    " + httpRequest.getHeader(temp));
 		}
 		System.out.println("URI: " + httpRequest.getRequestURI() + "  " + httpRequest.getRequestURI().contains("actuator"));
+		*/
 		String headerZuul = httpRequest.getHeader("RPM_ZUUL_ACCESS_HEADER");
+		/*
 		System.out.println("Zuul header     " + headerZuul);
 		System.out.println("Forwarded Port     " + httpRequest.getHeader("x-forwarded-port"));
+		*/
 		try {
 			if (httpRequest.getRequestURI().contains("actuator")) {
 				System.out.println("giving auth to actuator");
-				Authentication auth = new AccessAuthenticationToken(headerZuul, "ROLE_ADMIN", new ArrayList<>());
+				Authentication auth = new AccessAuthenticationToken(headerZuul, "ROLE_ACTUATOR", new ArrayList<>());
 				SecurityContextHolder.getContext().setAuthentication(auth);
 			} else if ((headerZuul == null
 				|| !headerZuul.equals("Trevin is a meanie"))) {
