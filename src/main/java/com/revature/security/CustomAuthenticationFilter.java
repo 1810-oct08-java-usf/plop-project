@@ -41,11 +41,12 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			String temp = ems2.nextElement();
 			System.out.println(temp + "    " + httpRequest.getHeader(temp));
 		}
+		System.out.println("URI: " + httpRequest.getRequestURI());
 		String headerZuul = httpRequest.getHeader("RPM_ZUUL_ACCESS_HEADER");
 		System.out.println("Zuul header     " + headerZuul);
 		System.out.println("Forwarded Port     " + httpRequest.getHeader("x-forwarded-port"));
 		try {
-			if (headerZuul == null 
+			if (headerZuul == null || !httpRequest.getRequestURI().contains("actuator")
 			    	//|| httpRequest.getHeader("x-forwarded-port") == null
 				//|| !httpRequest.getHeader("x-forwarded-port").equals("8762")
 				|| !headerZuul.equals("Trevin is a meanie")) {
