@@ -40,7 +40,7 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 			 * Allow unrestricted access to the actuator/info endpoint. Otherwise, AWS ELB
 			 * cannot perform a health check on the instance and it drains the instances.
 			 */
-
+			.mvcMatchers(HttpMethod.GET, "/actuator/info").permitAll()
 			.antMatchers(HttpMethod.GET, "/actuator/info").permitAll()
 			.antMatchers(HttpMethod.GET, "/actuator/routes").permitAll()
 			
