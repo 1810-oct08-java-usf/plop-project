@@ -9,7 +9,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-//public class SecurityCredentialsConfig {}
+/**
+ * This currently checks if the current User is allowed to access a certain end point
+ * using their role.
+ *
+ */
 
 @EnableWebSecurity
 public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{

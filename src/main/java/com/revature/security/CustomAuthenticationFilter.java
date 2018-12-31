@@ -19,10 +19,25 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import com.revature.exceptions.SubversionAttemptException;
 
-//public class CustomAuthenticationFilter {}
 
+/**
+ * 
+ * The purpose of this class is to create custom filters for this service to only
+ * accept and authorize requests from zuul or to anything that wants info about the 
+ * health of the service. Currently, it looks for this header from zuul using the
+ * header "RPM_ZUUL_ACCESS_HEADER" and checks for a value of "Trevin is a meanie".
+ * If anything tries to hit an end point for actuator it lets it through regardless
+ * of headers. This is allowed for now as ELB on AWS will check actuator/info in order
+ * to evaluate the health of the service. If it does not get through to that end point,
+ * ELB will shut down the service and start a new one within 3 minutes.
+ *
+ */
 public class CustomAuthenticationFilter extends GenericFilterBean {
-
+	
+	
+	/**
+	 * This is the filter that is used to authenticate specific traffic.
+	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
@@ -52,6 +67,10 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 		System.out.println("Forwarded Port     " + httpRequest.getHeader("x-forwarded-port"));
 		*/
 		try {
+			
+			
+			// This is where the main check if the actuator end point is being hit or
+			//	that the zuul header is present.
 			if (httpRequest.getRequestURI().contains("actuator")) {
 				System.out.println("giving auth to actuator");
 				Authentication auth = new AccessAuthenticationToken(headerZuul, "ROLE_ACTUATOR", new ArrayList<>());
@@ -89,6 +108,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			System.out.println("URL     " + appUrl);
 			// throw new RuntimeException(ipAddress + " " + appUrl, e);
 		}
+		// Activates the next filter if there is any.
 		filterChain.doFilter(request, response);
 	}
 
