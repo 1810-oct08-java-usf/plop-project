@@ -45,9 +45,10 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 		System.out.println("Zuul header     " + headerZuul);
 		System.out.println("Forwarded Port     " + httpRequest.getHeader("x-forwarded-port"));
 		try {
-			if (headerZuul == null || httpRequest.getHeader("x-forwarded-port") == null
-					|| !httpRequest.getHeader("x-forwarded-port").equals("8762")
-					|| !headerZuul.equals("Trevin is a meanie")) {
+			if (headerZuul == null 
+			    	//|| httpRequest.getHeader("x-forwarded-port") == null
+				//|| !httpRequest.getHeader("x-forwarded-port").equals("8762")
+				|| !headerZuul.equals("Trevin is a meanie")) {
 
 				System.out.println("Bad trevin");
 				/*
