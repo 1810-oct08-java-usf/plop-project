@@ -201,21 +201,35 @@ public class ProjectController {
 	 * This method is used to update an entry into the embedded MongoDB based on the
 	 * ID
 	 * 
+	 * If the project is approved, it will keep a version of the old approved project.
+	 * 
+	 * 
 	 * Uses HTTP method PUT. Retrieves and produces JSON data
 	 * 
 	 * @param project: Requests that the user enters a project
 	 * 
 	 * @param id: String that serves as the id for the project
 	 * 
+	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * @author Michael Grammens (1810-Oct22-Java-USF)
+	 * @author Bronwen Hughes (1810-Oct22-Java-USF)
+	 * @author Phillip Pride (1810-Oct22-Java-USF)
+	 * 
 	 */
 	// TODO should let you update screenshots and repositories
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
-		Project ID = projectService.findById(id);
-		if (ID == null) {
+		Project backendProject = projectService.findById(id);
+		if (backendProject == null) {	
 			throw new ProjectNotFoundException("ID entered cannot be found to complete update.");
+		}
+		if(backendProject.getStatus().toLowerCase().equals("pending") && project.getStatus().toLowerCase().equals("approved")) {
+			project.setOldProject(backendProject);
+		}
+		if(project.getStatus().toLowerCase().equals("denied")) {
+			return projectService.updateProject(project.getOldProject(), id);
 		}
 		return projectService.updateProject(project, id);
 	}

@@ -31,6 +31,8 @@ public class Project implements Serializable {
 	private String description;
 	private String techStack;
 	private String status;
+	
+	private Project oldProject;
 
 	public Project() {
 		super();
@@ -49,6 +51,21 @@ public class Project implements Serializable {
 		this.description = description;
 		this.techStack = techStack;
 		this.status = status;
+	}
+	
+	public Project(String name, String batch, String trainer, List<String> groupMembers, List<String> screenShots,
+			List<String> zipLinks, String description, String techStack, String status, Project oldProject) {
+		super();
+		this.name = name;
+		this.batch = batch;
+		this.trainer = trainer;
+		this.groupMembers = groupMembers;
+		this.screenShots = screenShots;
+		this.zipLinks = zipLinks;
+		this.description = description;
+		this.techStack = techStack;
+		this.status = status;
+		this.oldProject = oldProject;
 	}
 	
 	public void addZipLink(String zipLink) {
@@ -137,6 +154,14 @@ public class Project implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	
+	public Project getOldProject() {
+		return oldProject;
+	}
+
+	public void setOldProject(Project oldProject) {
+		this.oldProject = oldProject;
+	}
 
 	@Override
 	public int hashCode() {
@@ -152,68 +177,113 @@ public class Project implements Serializable {
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((techStack == null) ? 0 : techStack.hashCode());
 		result = prime * result + ((zipLinks == null) ? 0 : zipLinks.hashCode());
+		result = prime * result + ((oldProject == null) ? 0 : oldProject.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
+		
 		Project other = (Project) obj;
+		
 		if (batch == null) {
-			if (other.batch != null)
+			if (other.batch != null) {
 				return false;
-		} else if (!batch.equals(other.batch))
+			}
+		} else if (!batch.equals(other.batch)) {
 			return false;
+		}
+		
 		if (description == null) {
-			if (other.description != null)
+			if (other.description != null) {
 				return false;
-		} else if (!description.equals(other.description))
+			}
+		} else if (!description.equals(other.description)) {
 			return false;
+		}
+		
 		if (trainer == null) {
-			if (other.trainer != null)
+			if (other.trainer != null) {
 				return false;
-		} else if (!trainer.equals(other.trainer))
+			}
+		} else if (!trainer.equals(other.trainer)) {
 			return false;
+		}
+		
 		if (groupMembers == null) {
-			if (other.groupMembers != null)
+			if (other.groupMembers != null) {
 				return false;
-		} else if (!groupMembers.equals(other.groupMembers))
+			}
+		} else if (!groupMembers.equals(other.groupMembers)) {
 			return false;
+		}
+		
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
+		}
+		
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.equals(other.name))
+			}
+		} else if (!name.equals(other.name)) {
 			return false;
+		}
+		
 		if (screenShots == null) {
-			if (other.screenShots != null)
+			if (other.screenShots != null) {
 				return false;
-		} else if (!screenShots.equals(other.screenShots))
+			}
+		} else if (!screenShots.equals(other.screenShots)) {
 			return false;
+		}
+		
 		if (status == null) {
-			if (other.status != null)
+			if (other.status != null) {
 				return false;
-		} else if (!status.equals(other.status))
+			}
+		} else if (!status.equals(other.status)) {
 			return false;
+		}
+		
 		if (techStack == null) {
-			if (other.techStack != null)
+			if (other.techStack != null) {
 				return false;
-		} else if (!techStack.equals(other.techStack))
+			}
+		} else if (!techStack.equals(other.techStack)) {
 			return false;
+		}
 		if (zipLinks == null) {
-			if (other.zipLinks != null)
+			if (other.zipLinks != null) {
 				return false;
-		} else if (!zipLinks.equals(other.zipLinks))
+			}
+		} else if (!zipLinks.equals(other.zipLinks)) {
 			return false;
+		}
+		
+		if (oldProject == null) {
+			if (other.oldProject != null) {
+				return false;
+			}
+		} else if (!oldProject.equals(other.oldProject)) {
+			return false;
+		}
+		
 		return true;
 	}
 
