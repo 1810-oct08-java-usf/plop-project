@@ -9,6 +9,13 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.0.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -18,24 +25,9 @@
 		<spring-cloud.version>Greenwich.M3</spring-cloud.version>
 	</properties>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.0.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
+	
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+	
 
 	<dependencies>
 		
@@ -57,10 +49,7 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
@@ -85,16 +74,33 @@
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
-	      <groupId>io.springfox</groupId>
-	      <artifactId>springfox-swagger2</artifactId>
-	      <version>2.4.0</version>
-	    </dependency>
-	     <dependency>
-	      <groupId>io.springfox</groupId>
-	      <artifactId>springfox-swagger-ui</artifactId>
-	      <version>2.4.0</version>
-	    </dependency>
+		      <groupId>io.springfox</groupId>
+		      <artifactId>springfox-swagger2</artifactId>
+		      <version>2.4.0</version>
+	    	</dependency>
+	     	<dependency>
+		      <groupId>io.springfox</groupId>
+		      <artifactId>springfox-swagger-ui</artifactId>
+		      <version>2.4.0</version>
+	    	</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 	</dependencies>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
 	<build>
 		<plugins>
 			<plugin>
