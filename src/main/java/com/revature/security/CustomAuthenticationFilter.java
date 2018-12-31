@@ -73,7 +73,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			 * TODO This should be refactored to log the failed authentication attempt,
 			 * including the IP address of the requester.
 			 */
-
+			e.printStackTrace();
 			String ipAddress = ((HttpServletRequest) request).getHeader("X-FORWARDED-FOR");
 			if (ipAddress == null) {
 				ipAddress = request.getRemoteAddr();
