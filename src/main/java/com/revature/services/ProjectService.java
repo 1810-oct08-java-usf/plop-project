@@ -156,6 +156,9 @@ public class ProjectService {
 			if (project.getStatus() != null) {
 				currentProject.setStatus(project.getStatus());
 			}
+			if (project.getOldProject() != null) {
+				currentProject.setOldProject(project.getOldProject());
+			}
 
 			projectRepo.save(currentProject);
 			return true;
