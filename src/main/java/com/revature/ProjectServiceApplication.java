@@ -16,7 +16,7 @@ import org.springframework.web.filter.CorsFilter;
 import com.revature.models.Project;
 import com.revature.repositories.ProjectRepository;
 
-//@EnableEurekaClient
+@EnableEurekaClient
 @SpringBootApplication
 public class ProjectServiceApplication implements CommandLineRunner {
 

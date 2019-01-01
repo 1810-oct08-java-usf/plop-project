@@ -5,7 +5,11 @@ import java.util.Collection;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
-
+/**
+ * This class is designed to act as an authentication for a user if they are correctly accessing the
+ * service.
+ * @author Sean Doyle (1810-Oct22-Java-USF)
+ */
 
 public class AccessAuthenticationToken extends AbstractAuthenticationToken {
 
