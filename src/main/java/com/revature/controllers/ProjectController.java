@@ -226,7 +226,10 @@ public class ProjectController {
 			throw new ProjectNotFoundException("ID entered cannot be found to complete update.");
 		}
 		if(backendProject.getStatus().toLowerCase().equals("pending") && project.getStatus().toLowerCase().equals("approved")) {
+			backendProject.setStatus("approved");
 			project.setOldProject(backendProject);
+		}else if(backendProject.getStatus().toLowerCase().equals("approved") && project.getStatus().toLowerCase().equals("approved")) {
+			project.setStatus("pending");
 		}
 		if(project.getStatus().toLowerCase().equals("denied")) {
 			return projectService.updateProject(project.getOldProject(), id);
