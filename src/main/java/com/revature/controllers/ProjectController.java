@@ -227,10 +227,10 @@ public class ProjectController {
 		}
 		if(backendProject.getStatus().toLowerCase().equals("approved") && project.getStatus().toLowerCase().equals("pending")) {
 			project.setStatus("pending");
-      project.setOldProject(backendProject);
+      			project.setOldProject(backendProject);
 		}
 		if(project.getStatus().toLowerCase().equals("denied")) {
-			if(backendProject.getStatus().toLowerCase().equals("approved")) {
+			if(backendProject.getOldProject().getStatus().toLowerCase().equals("approved")) {
 				project = backendProject;
 				return projectService.updateProject(project, id);
 			}else {
