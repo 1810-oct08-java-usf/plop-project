@@ -229,7 +229,7 @@ public class ProjectController {
 			project.setStatus("pending");
       project.setOldProject(backendProject);
 		}
-		if(project.getStatus().toLowerCase().equals("denied")) {
+		if(project.getOldProject().getStatus().toLowerCase().equals("denied")) {
 			if(backendProject.getStatus().toLowerCase().equals("approved")) {
 				project = backendProject;
 				return projectService.updateProject(project, id);
