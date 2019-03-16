@@ -35,6 +35,6 @@ aws:
   config:
     aws-access-key-id: ${RPM_AWS_ACCESS_KEY}
     aws-secret-access-key: ${RPM_AWS_SECRET_ACCESS_KEY}
-    s3-endpoint: https://s3.us-east-1.amazonaws.com
-    bucket-name: rpm-assets
-    bucket-region: us-east-1
+    s3-endpoint: https://s3.eu-west-2.amazonaws.com
+    bucket-name: rpm-project-assets
+    bucket-region: eu-west-2
