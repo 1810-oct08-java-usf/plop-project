@@ -13,8 +13,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.revature.controllers.ProjectController;
+import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
+import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 
 
@@ -63,7 +65,7 @@ public class ProjectControllerTestSuite {//For testing the ProjectController cla
 	
 	
 	
-	//testDeleteById
+	//testDeleteById ------------------------------------------------------------------ 
 	
 	/**
 	 * Test for exception to be thrown when 
@@ -84,9 +86,27 @@ public class ProjectControllerTestSuite {//For testing the ProjectController cla
 	}
 	
 	
-	//testDeleteById
 	
-	//testHandleException
+	
+	//testHandleException --------------------------------------------------------------
+	
+	@Mock
+	ProjectErrorResponse projectErrorResponse;
+	
+	@Mock 
+	ProjectNotFoundException projectNotFoundException; 
+	
+	@Mock
+	ProjectNotAddedException projectNotAddedException;
+	
+	/**
+	 * Test for handleExceptions in the case that 
+	 * @author Bjorn Pedersen & Brandon Morris 190107-Java-Spark-USF  
+	 */
+	public void testHandleExceptions() {
+			
+		
+	}
 	
 	
 }
