@@ -23,9 +23,13 @@ import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
-
+/**
+ *  Testing suite for the Project Controller class
+ * @author Alonzo, Bjorn Pedersen, Brandon Morris, Kamaria DeRamu, and Tracy Cummings (190107-Java-Spark-USF)
+ *
+ */
 @RunWith(MockitoJUnitRunner.class)
-public class ProjectControllerTestSuite {// For testing the ProjectController class --Alonzo Muncy 2019/04/05
+public class ProjectControllerTestSuite {
 
 	@Mock
 	Project project;
@@ -38,22 +42,20 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 
 	@Rule
 	public ExpectedException exceptionRule = ExpectedException.none();
-
+	/**
+	 * 
+	 */
 	@Before
 	public void setup() {
 		project = new Project();
-//		projectService = new ProjectService();
 		projectController = new ProjectController(projectService);
 	}
 
 	/**
-	 * testDeleteById
-	 */
-
-	/**
+	 * Test Delete by id
 	 * Test method for deleting by id if the input project id is valid.
 	 * 
-	 * @author Bjorn Pedersen & Brandon Morris 190107-Java-Spark-USF
+	 * @author Bjorn Pedersen & Brandon Morris (190107-Java-Spark-USF)
 	 * 
 	 */
 	@Test
@@ -73,7 +75,7 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	/**
 	 * Test for exception to be thrown when project not found in database via ID.
 	 * 
-	 * @author Bjorn Pedersen & Brandon Morris 190107-Java-Spark-USF
+	 * @author Bjorn Pedersen & Brandon Morris (190107-Java-Spark-USF)
 	 * 
 	 */
 	@Test
@@ -87,9 +89,12 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 		projectController.deleteById("47");
 	}
 
-	// testHandleException
-	// --------------------------------------------------------------
-
+		/**
+	 * Test for handleExceptions in the case that
+	 * 
+	 * @author Bjorn Pedersen & Brandon Morris (190107-Java-Spark-USF)
+	 */
+	
 	@Mock
 	ProjectErrorResponse projectErrorResponse;
 
@@ -99,49 +104,16 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	@Mock
 	ProjectNotAddedException projectNotAddedException;
 
-	/**
-	 * Test for handleExceptions in the case that
-	 * 
-	 * @author Bjorn Pedersen & Brandon Morris (190107-Java-Spark-USF)
-	 */
-	/*
-	 * @Test public void testHandleExceptionsWithProjectNotFoundException() {
-	 * 
-	 * when(projectController.handleExceptions(projectNotFoundException)).thenReturn
-	 * (projectErrorResponse);
-	 * 
-	 * 
-	 * }
-	 * 
-	 * @Test public void testHandleExceptionsWithProjectNotAddedException() {
-	 * 
-	 * when(projectContoller.handleExceptions(projectNotAddedException))
-	 * 
-	 * }
-	 * 
-	 * @Test public void testHandleExceptionsWithNull() {
-	 * 
-	 * }
-	 */
-	// ------------------------------------------------------------------------------------------
 
-	// testAddProject
-	// ---------------------------------------------------------------------------
-
-	//	testAddProjectValidProject
-	//	
-	//	testAddProjcetNull
 
 	/**
 	 * Tests for behavior when a project is input validly 
 	 * @author Bjorn Pedersen & Brandon Morris (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testAddProjectValidProject() {
-		//		when(projectController.addProject("name", "batch", "trainer",
-		//				new ArrayList<String>(), new ArrayList<MultipartFile>(),
-		//				new ArrayList<String>(), "description", "techStack", "status")).thenReturn(project);
-		//				
+
 
 		//TODO Yeah this has errors. But tis how it should be. Address this issue system-wide latter. 
 		when(projectService.createProject(project)).then(project);
@@ -158,7 +130,7 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	/**
 	 * This shall test the addProject method, 
 	 * when invoked with the value null. 
-	 * 
+	 * @author Bjorn Pedersen & Brandon Morris (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testAddProjectNull() {
@@ -175,7 +147,7 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	
 	/**
 	 * Test for returning a non-empty list of projects.
-	 * @author Kamaria DeRamus & Bjorn Pedersen 190107-Java-Spark-USF
+	 * @author Kamaria DeRamus & Bjorn Pedersen (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testGetAllProjectsMoreThanOneProject() {
@@ -197,7 +169,7 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	
 	/**
 	 * Test for returning list with only one project.
-	 * @author Kamaria DeRamus & Bjorn Pedersen 190107-Java-Spark-USF
+	 * @author Kamaria DeRamus & Bjorn Pedersen (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testGetAllProjectsOnlyOneProject() {
@@ -213,7 +185,7 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	//--------------------------------------------------------------------------
 	/**
 	 * Test for returning a list of projects by valid name
-	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testGetProjectsByNameIfValidName() {
@@ -236,7 +208,7 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	
 	/**
 	 * Test for returning a list of projects where name is not found
-	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testGetProjectsByNameIfNameNotFound() {
@@ -253,7 +225,8 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	
 	/**
 	 * Test for returning a list of projects by valid batch
-	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 * 
+	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testGetProjetsByBatchIfValid() {
@@ -274,7 +247,8 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	//--------------------------------------------------------------------------
 	/**
 	 * Test for returning a list of projects where batch name is not found
-	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 * 
+	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testGetProjectsByBatchIfBatchNotFound() {
@@ -290,7 +264,8 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	// ------------------------------------------------------------------------------------------
 	/**
 	 * Test for returning a list of projects by status
-	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 * 
+	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testGetProjectsByStatusIfValid() {
@@ -308,7 +283,8 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	//--------------------------------------------------------------------------
 	/**
 	 * Test for returning a list of projects where status is not found
-	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 * 
+	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testGetProjectsByStatusIfStatusNotFound() {
@@ -336,6 +312,7 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 
 	/**
 	 * Tests the Project not found condition.
+	 * @author Alonzo Muncy (190107-Java-Spark-USF)
 	 */
 	@Test(expected = ProjectNotFoundException.class)
 	public void testProjectNotFoundException() {
@@ -421,7 +398,9 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	}
 
 	/**
-	 * This tests the normal functionality of the update project function
+	 * This tests the normal functionality of the update project function 
+	 * 
+	 * @author Alonzo Muncy (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testNormal() {
