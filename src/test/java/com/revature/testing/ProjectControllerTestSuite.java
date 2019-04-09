@@ -42,7 +42,8 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	@Before
 	public void setup() {
 		project = new Project();
-		projectService = new ProjectService();
+//		projectService = new ProjectService();
+		projectController = new ProjectController(projectService);
 	}
 
 	/**
@@ -176,8 +177,6 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	 * Test for returning a non-empty list of projects.
 	 * @author Kamaria DeRamus & Bjorn Pedersen 190107-Java-Spark-USF
 	 */
-	
-	
 	@Test
 	public void testGetAllProjectsMoreThanOneProject() {
 		Project project1 = new Project();
@@ -194,12 +193,12 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 		verify(projectService).findAllProjects();
 	}
 	
+	//--------------------------------------------------------------------------
 	
 	/**
 	 * Test for returning list with only one project.
 	 * @author Kamaria DeRamus & Bjorn Pedersen 190107-Java-Spark-USF
 	 */
-	
 	@Test
 	public void testGetAllProjectsOnlyOneProject() {
 		List<Project> projectList2 = new ArrayList<>();
@@ -210,8 +209,119 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 		assertEquals(projectList2, projectController.getAllProjects());
 	}
 	
+	
+	//--------------------------------------------------------------------------
+	/**
+	 * Test for returning a list of projects by valid name
+	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 */
+	@Test
+	public void testGetProjectsByNameIfValidName() {
+		Project project3 = new Project();
+		Project project4 = new Project();
+		
+		project3.setName("Kamaria");
+		project4.setName("Kamaria");
+		
+		List<Project> projectList3 = new ArrayList<>();
+		projectList3.add(project3);
+		projectList3.add(project4);
+		
+		when(projectService.findByName("Kamaria")).thenReturn(projectList3);
+		assertEquals(projectList3, projectController.getProjectsByName("Kamaria"));
+	
+}
+	
+	//---------------------------------------------------------------------------
+	
+	/**
+	 * Test for returning a list of projects where name is not found
+	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 */
+	@Test
+	public void testGetProjectsByNameIfNameNotFound() {
+
+		when(projectService.findByName("Kamaria")).thenReturn(null);
+
+		exceptionRule.expect(ProjectNotFoundException.class);
+		exceptionRule.expectMessage("Name entered cannot be found to return these projects");
+
+		projectController.getProjectsByName("Kamaria");
+	}
+	
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Test for returning a list of projects by valid batch
+	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 */
+	@Test
+	public void testGetProjetsByBatchIfValid() {
+		Project project3 = new Project();
+		Project project4 = new Project();
+		
+		project3.setBatch("Wezley");
+		project4.setBatch("Wezley");
+		
+		List<Project> projectList3 = new ArrayList<>();
+		projectList3.add(project3);
+		projectList3.add(project4);
+		
+		when(projectService.findByBatch("Wezley")).thenReturn(projectList3);
+		assertEquals(projectList3, projectController.getProjectsByBatch("Wezley"));
+	}
+	
+	//--------------------------------------------------------------------------
+	/**
+	 * Test for returning a list of projects where batch name is not found
+	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 */
+	@Test
+	public void testGetProjectsByBatchIfBatchNotFound() {
+		when(projectService.findByBatch("Wezley")).thenReturn(null);
+
+		exceptionRule.expect(ProjectNotFoundException.class);
+		exceptionRule.expectMessage("Batch entered cannot be found to return these projects");
+
+		projectController.getProjectsByBatch("Wezley");
+		
+	}
 
 	// ------------------------------------------------------------------------------------------
+	/**
+	 * Test for returning a list of projects by status
+	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 */
+	@Test
+	public void testGetProjectsByStatusIfValid() {
+		Project project5 = new Project();
+		project5.setStatus("Approved");
+		
+		List<Project> projectList = new ArrayList<>();
+		projectList.add(project5);
+		
+		when(projectService.findByStatus("Approved")).thenReturn(projectList);
+		assertEquals(projectList, projectController.getProjectsByStatus("Approved"));
+		
+	}
+	
+	//--------------------------------------------------------------------------
+	/**
+	 * Test for returning a list of projects where status is not found
+	 * @author Kamaria DeRamus 190107-Java-Spark-USF
+	 */
+	@Test
+	public void testGetProjectsByStatusIfStatusNotFound() {
+		when(projectService.findByStatus("Approved")).thenReturn(null);
+		
+		exceptionRule.expect(ProjectNotFoundException.class);
+		exceptionRule.expectMessage("Status entered cannot be found to return these projects");
+		
+		projectController.getProjectsByStatus("Approved");
+	}
+	
+	//----------------------------------------------------------------------------------
+	
 	@InjectMocks
 	private ProjectController classUnderTest;
 
