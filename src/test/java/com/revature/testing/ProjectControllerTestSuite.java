@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,7 +16,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.revature.controllers.ProjectController;
 import com.revature.exceptions.ProjectNotAddedException;
@@ -42,6 +42,7 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 	@Before
 	public void setup() {
 		project = new Project();
+		projectService = new ProjectService();
 	}
 
 	/**
@@ -168,6 +169,47 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 		verify(projectService.createProject(null));
 		
 	}
+	
+	//--------------------------------------------------------------------------------------------
+	
+	/**
+	 * Test for returning a non-empty list of projects.
+	 * @author Kamaria DeRamus & Bjorn Pedersen 190107-Java-Spark-USF
+	 */
+	
+	
+	@Test
+	public void testGetAllProjectsMoreThanOneProject() {
+		Project project1 = new Project();
+		Project project2 = new Project();
+		List<Project> projectList = new ArrayList<>();
+		
+		projectList.add(project1);
+		projectList.add(project2);
+		
+		when(projectService.findAllProjects()).thenReturn(projectList);
+		
+		assertEquals(new ArrayList<>(), projectController.getAllProjects());
+		
+		verify(projectService).findAllProjects();
+	}
+	
+	
+	/**
+	 * Test for returning list with only one project.
+	 * @author Kamaria DeRamus & Bjorn Pedersen 190107-Java-Spark-USF
+	 */
+	
+	@Test
+	public void testGetAllProjectsOnlyOneProject() {
+		List<Project> projectList2 = new ArrayList<>();
+		projectList2.add(project);
+		
+		when(projectService.findAllProjects()).thenReturn(projectList2);
+		
+		assertEquals(projectList2, projectController.getAllProjects());
+	}
+	
 
 	// ------------------------------------------------------------------------------------------
 	@InjectMocks
@@ -281,5 +323,7 @@ public class ProjectControllerTestSuite {// For testing the ProjectController cl
 		verify(mockProjectOld, times(0)).getOldProject();
 		verify(mockProjectNew, times(0)).setOldProject(mockProjectOld);
 	}
+	
+
 
 }
