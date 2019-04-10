@@ -104,45 +104,6 @@ public class ProjectControllerTestSuite {
 	@Mock
 	ProjectNotAddedException projectNotAddedException;
 
-
-
-	/**
-	 * Tests for behavior when a project is input validly 
-	 * @author Bjorn Pedersen & Brandon Morris (190107-Java-Spark-USF)
-	 */
-	
-	@Test
-	public void testAddProjectValidProject() {
-
-
-		//TODO Yeah this has errors. But tis how it should be. Address this issue system-wide latter. 
-		when(projectService.createProject(project)).then(project);
-		
-		// If the project passed in is the same as the project returned by the projectController's
-		// add project method, return true. This is a basic check. Note that the methods in the
-		// projectService are not pleasant. 
-		assertEquals(project, projectController.addProject(project));
-		
-		verify(projectService.createProject(project));
-		
-	}
-
-	/**
-	 * This shall test the addProject method, 
-	 * when invoked with the value null. 
-	 * @author Bjorn Pedersen & Brandon Morris (190107-Java-Spark-USF)
-	 */
-	@Test
-	public void testAddProjectNull() {
-		when(projectService.createProject(null)).then(null);
-		
-		
-		assertEquals(null, projectController.addProject(null));
-		
-		verify(projectService.createProject(null));
-		
-	}
-	
 	//--------------------------------------------------------------------------------------------
 	
 	/**
