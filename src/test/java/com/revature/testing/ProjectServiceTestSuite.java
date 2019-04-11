@@ -22,8 +22,9 @@ import com.revature.services.StorageService;
 
 
 /**
- * 
+ * Test suite for ProjectService.
  * @author Derek Martin
+ * @author Alonzo Muncy (190107-Java-Spark-USF)
  */
 @SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
@@ -68,18 +69,12 @@ public class ProjectServiceTestSuite {
 		
 		// Define the behavior of dummyList
 		dummyList.add(dummyProject);
-		//Mockito.when(dummyList.add()).thenCallRealMethod(dummyProject);
-		Mockito.when(dummyList.get(0)).thenReturn(dummyProject);
 		
 		// Define the relevant behaviors of testRepo 
 		Mockito.when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
 		Mockito.when(testRepo.findByName("string")).thenReturn(dummyList);
 		Mockito.when(testRepo.findByBatch("batchin")).thenReturn(dummyList);
 		
-		//Define the relevant behaviors of dummyProject
-		Mockito.when(dummyProject.getId()).thenReturn("floop");
-		Mockito.when(dummyProject.getName()).thenReturn("string");
-		Mockito.when(dummyProject.getBatch()).thenReturn("batchin");
 	}
 	
 	/**
@@ -107,25 +102,23 @@ public class ProjectServiceTestSuite {
 	}
 	
 	/**
-	 *  Assert that method should return an ArrayList given a correct string parameter
-	 */
-	// findByName()
+	 *  Assert that method should return an ArrayList given a correct string parameter for findByName()
+.	 */
 	@Test
 	public void shouldReturnArrayListByName() {
 		assertThat(classUnderTest.findByName("string")).isInstanceOf(List.class);
 	}
 	
 	/**
-	 * Assert that method should return a value of true on a valid id parameter.
+	 * Assert that method should return a value of true on a valid id parameter for deleteById().
 	 */
-	// deleteById()
 	@Test
 	public void shouldReturnTrueOnValidDelete() {
 		assertThat(classUnderTest.deleteById("floop")).isEqualTo(Boolean.TRUE);
 	}
 	
 	/**
-	 * Assert that method should return a value of true on any string parameter
+	 * Assert that method should return a value of true on any string parameter for deleteById().
 	 */
 	@Test
 	public void shouldReturnTrueOnAnyString() {
@@ -133,7 +126,7 @@ public class ProjectServiceTestSuite {
 	}
 	
 	/**
-	 * Assert that method should return false on a null parameter
+	 * Assert that method should return false on a null parameter for deleteById().
 	 */
 	@Test
 	public void shouldReturnFalseOnNullParameter() {
@@ -143,11 +136,8 @@ public class ProjectServiceTestSuite {
 	/**
 	 * Assert that findAllProjects returns a LinkedList
 	 */
-	// findAllProjects()
 	@Test
 	public void shouldReturnLinkedList() {
 		assertThat(classUnderTest.findAllProjects()).isInstanceOf(LinkedList.class);
 	}
-	
-	// TODO: Add additional test methods to improve coverage of the test suite as needed.
 }
