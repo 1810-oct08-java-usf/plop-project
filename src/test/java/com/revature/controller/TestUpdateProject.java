@@ -1,6 +1,10 @@
 package com.revature.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,27 +67,27 @@ public class TestUpdateProject {
 	 * 
 	 * @author Jose Rivera (190107-Java-Spark-USF)
 	 */
-//	@Test
-//	public void testUpdateProject() throws Exception {
-//
-//		// An id to use to check for a project
-//		String id = "1";
-//
-//		// The expected result from the controller
-//		String expectedResult = "true";
-//
-//		/*
-//		 * When our ProjectService.findById() is invoked, we tell it to return a mock
-//		 * project so our get request can return a proper result as if it was not
-//		 * mocked.
-//		 */
-//		when(mockProjectService.findById(id)).thenReturn(mockProject);
-//
-//		/*
-//		 * Test our PUT mapping for updateProject() and check if the status is OK
-//		 * ( 200 ) and the expected result is returned.
-//		 */
-//		this.mockMvc.perform(put(URI + id)).andExpect(status().isOk()).andExpect(content().string(expectedResult));
-//
-//	}
+	@Test
+	public void testUpdateProject() throws Exception {
+
+		// An id to use to check for a project
+		String id = "1";
+
+		// The expected result from the controller
+		String expectedResult = "true";
+
+		/*
+		 * When our ProjectService.findById() is invoked, we tell it to return a mock
+		 * project so our get request can return a proper result as if it was not
+		 * mocked.
+		 */
+		when(mockProjectService.findById(id)).thenReturn(mockProject);
+
+		/*
+		 * Test our PUT mapping for updateProject() and check if the status is OK
+		 * ( 200 ) and the expected result is returned.
+		 */
+		this.mockMvc.perform(put(URI + id)).andExpect(status().isOk()).andExpect(content().string(expectedResult));
+
+	}
 }
