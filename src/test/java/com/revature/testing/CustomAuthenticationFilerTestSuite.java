@@ -81,6 +81,9 @@ public class CustomAuthenticationFilerTestSuite {
 		
 	}
 	
+	/**
+	 * This is if the actuator is false, on doFilter
+	 */
 @Test
 public void testDoFilterActuatorFalse() {
 		
@@ -109,7 +112,9 @@ public void testDoFilterActuatorFalse() {
 		}
 		
 	}
-
+/**
+ * Testing for invalid credentials
+ */
 @Test
 public void testDoFilterInvalidHeader() {
 	when(mockHttpServletRequest.getRequestURI()).thenReturn("/somethingElse");
