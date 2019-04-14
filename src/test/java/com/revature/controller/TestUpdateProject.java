@@ -6,15 +6,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.Charset;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.revature.controllers.ProjectController;
 import com.revature.models.Project;
 import com.revature.repositories.ProjectRepository;
@@ -28,7 +34,7 @@ import com.revature.services.ProjectService;
  *
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(ProjectController.class)
+@WebMvcTest(controllers = { ProjectController.class }, secure = false)
 public class TestUpdateProject {
 
 	@Autowired
@@ -39,11 +45,14 @@ public class TestUpdateProject {
 
 	@MockBean
 	private ProjectService mockProjectService;
-	
+
 	@MockBean
 	private ProjectRepository mockProjectRepository;
 
 	private static final String URI = "/";
+
+	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
+			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
 	/**
 	 * This method is going to test if our context loads and is not null.
@@ -84,10 +93,21 @@ public class TestUpdateProject {
 		when(mockProjectService.findById(id)).thenReturn(mockProject);
 
 		/*
-		 * Test our PUT mapping for updateProject() and check if the status is OK
-		 * ( 200 ) and the expected result is returned.
+		 * Convert the mock Project into JSON to pass as the request body using Object
+		 * Mapper. Currently produces an error.
 		 */
-		this.mockMvc.perform(put(URI + id)).andExpect(status().isOk()).andExpect(content().string(expectedResult));
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+		String requestJson = ow.writeValueAsString(mockProject);
+
+		/*
+		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
+		 * ) and the expected result is returned.
+		 */
+		this.mockMvc.perform(put(URI + id).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
 
 	}
 }
