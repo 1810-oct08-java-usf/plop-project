@@ -69,7 +69,7 @@ public class ProjectServiceTestSuite {
 		// Define the behavior of dummyList
 		dummyList.add(dummyProject);
 		//Mockito.when(dummyList.add()).thenCallRealMethod(dummyProject);
-		Mockito.when(dummyList.get(0)).thenReturn(dummyProject);
+		
 		
 		// Define the relevant behaviors of testRepo 
 		Mockito.when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
@@ -77,9 +77,7 @@ public class ProjectServiceTestSuite {
 		Mockito.when(testRepo.findByBatch("batchin")).thenReturn(dummyList);
 		
 		//Define the relevant behaviors of dummyProject
-		Mockito.when(dummyProject.getId()).thenReturn("floop");
-		Mockito.when(dummyProject.getName()).thenReturn("string");
-		Mockito.when(dummyProject.getBatch()).thenReturn("batchin");
+		
 	}
 	
 	/**
