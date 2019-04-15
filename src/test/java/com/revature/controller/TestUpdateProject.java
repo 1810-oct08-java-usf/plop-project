@@ -36,7 +36,7 @@ import com.revature.services.ProjectService;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = { ProjectController.class }, secure = false)
-@WithMockUser(roles="ADMIN")
+@WithMockUser(roles= {"USER","ADMIN"})
 public class TestUpdateProject {
 
 	@Autowired
@@ -105,6 +105,7 @@ public class TestUpdateProject {
 				when(mockProject.getOldProject()).thenReturn(null);
 				//when it calls the service return true
 				when(mockProjectService.updateProject(proj, id)).thenReturn(true);
+				
 
 				/*
 				 * Test our PUT mapping for updateProject() and check if the status is OK ( 200

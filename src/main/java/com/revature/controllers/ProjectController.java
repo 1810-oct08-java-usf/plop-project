@@ -235,8 +235,9 @@ public class ProjectController {
 		if(!project.getStatus().equalsIgnoreCase("approved") && !project.getStatus().equalsIgnoreCase("denied") && !project.getStatus().equalsIgnoreCase("pending")) {
 			throw new ProjectNotFoundException("Status is unacceptable.");
 		}
-		
+		if(project.getStatus().equalsIgnoreCase("approved")) {
 			project.setOldProject(backendProject);
+		}
 			return projectService.updateProject(project, id);
 		
 		
