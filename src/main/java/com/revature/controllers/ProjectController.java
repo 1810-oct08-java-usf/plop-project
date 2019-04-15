@@ -197,7 +197,7 @@ public class ProjectController {
 		return projectService.deleteById(id);
 	}
 
-	/*
+	/**
 	 * This method is used to update an entry into the embedded MongoDB based on the
 	 * ID
 	 * 

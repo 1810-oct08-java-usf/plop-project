@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,6 +76,7 @@ public class TestUpdateProject {
 	 * @throws Exception: If the test fails, an exception will be thrown.
 	 * 
 	 * @author Jose Rivera (190107-Java-Spark-USF)
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
 	 */
 	@Test
 	public void testUpdateProject() throws Exception {
@@ -87,26 +89,30 @@ public class TestUpdateProject {
 
 		/*
 		 * When our ProjectService.findById() is invoked, we tell it to return a mock
-		 * project so our get request can return a proper result as if it was not
-		 * mocked.
+		 * project and a mock status so our get request can return a proper result 
+		 * as if it was not mocked.
 		 */
 		when(mockProjectService.findById(id)).thenReturn(mockProject);
+		when(mockProject.getStatus()).thenReturn("pending");
+		
 
 		/*
-		 * Convert the mock Project into JSON to pass as the request body using Object
+		 * Create a new Project and convert it into JSON to pass as the request body using Object
 		 * Mapper. Currently produces an error.
 		 */
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-		String requestJson = ow.writeValueAsString(mockProject);
+		Project proj = new Project("name","batch","trainer", new ArrayList<String>(), new ArrayList<String>(),new ArrayList<String>(),"description","techstack","approved");
+		String requestJson = ow.writeValueAsString(proj);
+		
+		//when it calls the service return true
+		when(mockProjectService.updateProject(proj, id)).thenReturn(true);
 
 		/*
 		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
 		 * ) and the expected result is returned.
 		 */
-		this.mockMvc.perform(put(URI + id).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		this.mockMvc.perform(put(URI + id).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
 
 	}
