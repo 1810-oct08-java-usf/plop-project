@@ -19,10 +19,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.revature.controllers.ProjectController;
+import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
 import com.revature.repositories.ProjectRepository;
 import com.revature.services.ProjectService;
@@ -51,9 +51,14 @@ public class TestUpdateProject {
 	private ProjectRepository mockProjectRepository;
 
 	private static final String URI = "/";
+	
+	// An id to use to check for a project
+	String id = "1";
 
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+	
+	Project proj = new Project("name","batch","trainer", new ArrayList<String>(), new ArrayList<String>(),new ArrayList<String>(),"description","techstack","approved");
 
 	/**
 	 * This method is going to test if our context loads and is not null.
@@ -81,9 +86,6 @@ public class TestUpdateProject {
 	@Test
 	public void testUpdateProject() throws Exception {
 
-		// An id to use to check for a project
-		String id = "1";
-
 		// The expected result from the controller
 		String expectedResult = "true";
 
@@ -95,15 +97,8 @@ public class TestUpdateProject {
 		when(mockProjectService.findById(id)).thenReturn(mockProject);
 		when(mockProject.getStatus()).thenReturn("pending");
 		
-
-		/*
-		 * Create a new Project and convert it into JSON to pass as the request body using Object
-		 * Mapper. Currently produces an error.
-		 */
-		ObjectMapper mapper = new ObjectMapper();
-		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-		Project proj = new Project("name","batch","trainer", new ArrayList<String>(), new ArrayList<String>(),new ArrayList<String>(),"description","techstack","approved");
-		String requestJson = ow.writeValueAsString(proj);
+		
+		String requestJson = asJsonString(proj);
 		
 		//when it calls the service return true
 		when(mockProjectService.updateProject(proj, id)).thenReturn(true);
@@ -115,5 +110,58 @@ public class TestUpdateProject {
 		this.mockMvc.perform(put(URI + id).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
 
+	}
+	
+	@Test
+	public void testUpdateWithNullProject() throws Exception {
+		// The expected result from the controller
+		
+		when(mockProjectService.findById(id)).thenReturn(null);
+		String requestJson = asJsonString(proj);
+		
+		this.mockMvc.perform(put(URI + id)
+				.contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+				.andExpect(status().isNotFound());
+		
+	}
+	
+	@Test
+	public void testUpdateProjectWithDeniedProject() throws Exception {
+
+		// The expected result from the controller
+		String expectedResult = "true";
+		proj.setStatus("Denied");
+
+		/*
+		 * When our ProjectService.findById() is invoked, we tell it to return a mock
+		 * project and a mock status so our get request can return a proper result 
+		 * as if it was not mocked.
+		 */
+		when(mockProjectService.findById(id)).thenReturn(mockProject);
+		when(mockProject.getStatus()).thenReturn("pending");
+		
+		
+		String requestJson = asJsonString(proj);
+		//service checks if there's a previous project attached to this one
+		when(mockProject.getOldProject()).thenReturn(null);
+		//when it calls the service return true
+		when(mockProjectService.updateProject(proj, id)).thenReturn(true);
+
+		/*
+		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
+		 * ) and the expected result is returned.
+		 */
+		this.mockMvc.perform(put(URI + id).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
+
+	}
+	
+	/**
+	 * This is a helper method to convert a project to a JSON String
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 * @throws JsonProcessingException 
+	 */
+	private static String asJsonString(Project p) throws JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(p);
 	}
 }
