@@ -150,11 +150,16 @@ public class ProjectController {
 	 */
 	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Project addProject(@RequestParam String name, @RequestParam String batch,
-			// TODO should be retrieved from auth service
-			@RequestParam String trainer, @RequestParam List<String> groupMembers,
-			@RequestParam List<MultipartFile> screenShots, @RequestParam List<String> zipLinks,
-			@RequestParam String description, @RequestParam String techStack, @RequestParam String status) {
+	public Project addProject(// TODO should be retrieved from auth service
+			@RequestParam String name, 
+			@RequestParam String batch,
+			@RequestParam String trainer, 
+			@RequestParam List<String> groupMembers,
+			@RequestParam List<MultipartFile> screenShots, 
+			@RequestParam List<String> zipLinks,
+			@RequestParam String description, 
+			@RequestParam String techStack, 
+			@RequestParam String status) {
 		ProjectDTO projectDTO = new ProjectDTO();
 
 		projectDTO.setName(name);

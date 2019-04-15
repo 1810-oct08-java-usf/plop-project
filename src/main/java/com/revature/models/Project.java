@@ -52,22 +52,7 @@ public class Project implements Serializable {
 		this.techStack = techStack;
 		this.status = status;
 	}
-	
-	public Project(String name, String batch, String trainer, List<String> groupMembers, List<String> screenShots,
-			List<String> zipLinks, String description, String techStack, String status, Project oldProject) {
-		super();
-		this.name = name;
-		this.batch = batch;
-		this.trainer = trainer;
-		this.groupMembers = groupMembers;
-		this.screenShots = screenShots;
-		this.zipLinks = zipLinks;
-		this.description = description;
-		this.techStack = techStack;
-		this.status = status;
-		this.oldProject = oldProject;
-	}
-	
+
 	public void addZipLink(String zipLink) {
 		if (zipLinks == null) {
 			zipLinks = new ArrayList<>();
