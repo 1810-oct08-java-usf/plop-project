@@ -16,13 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.controllers.ProjectController;
-import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
 import com.revature.repositories.ProjectRepository;
 import com.revature.services.ProjectService;
@@ -36,6 +36,7 @@ import com.revature.services.ProjectService;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = { ProjectController.class }, secure = false)
+@WithMockUser(roles="ADMIN")
 public class TestUpdateProject {
 
 	@Autowired
@@ -84,45 +85,44 @@ public class TestUpdateProject {
 	 * @author Jaitee Pitts (190107-Java-Spark-USF)
 	 */
 	@Test
-	public void testUpdateProject() throws Exception {
+	public void testUpdateProjectWhenApproved() throws Exception {
 
 		// The expected result from the controller
-		String expectedResult = "true";
+				String expectedResult = "true";
+				proj.setStatus("approved");
 
-		/*
-		 * When our ProjectService.findById() is invoked, we tell it to return a mock
-		 * project and a mock status so our get request can return a proper result 
-		 * as if it was not mocked.
-		 */
-		when(mockProjectService.findById(id)).thenReturn(mockProject);
-		when(mockProject.getStatus()).thenReturn("pending");
-		
-		
-		String requestJson = asJsonString(proj);
-		
-		//when it calls the service return true
-		when(mockProjectService.updateProject(proj, id)).thenReturn(true);
+				/*
+				 * When our ProjectService.findById() is invoked, we tell it to return a mock
+				 * project and a mock status so our get request can return a proper result 
+				 * as if it was not mocked.
+				 */
+				when(mockProjectService.findById(id)).thenReturn(mockProject);
+				when(mockProject.getStatus()).thenReturn("pending");
+				
+				
+				String requestJson = asJsonString(proj);
+				//service checks if there's a previous project attached to this one
+				when(mockProject.getOldProject()).thenReturn(null);
+				//when it calls the service return true
+				when(mockProjectService.updateProject(proj, id)).thenReturn(true);
 
-		/*
-		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
-		 * ) and the expected result is returned.
-		 */
-		this.mockMvc.perform(put(URI + id).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
-				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
+				/*
+				 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
+				 * ) and the expected result is returned.
+				 */
+				this.mockMvc.perform(put(URI + id).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+						.andExpect(status().isOk()).andExpect(content().string(expectedResult));
 
 	}
 	
 	@Test
-	public void testUpdateWithNullProject() throws Exception {
-		// The expected result from the controller
-		
+	public void testUpdateWithNullProject() throws Exception {		
 		when(mockProjectService.findById(id)).thenReturn(null);
 		String requestJson = asJsonString(proj);
 		
 		this.mockMvc.perform(put(URI + id)
 				.contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
-				.andExpect(status().isNotFound());
-		
+				.andExpect(status().isNotFound());		
 	}
 	
 	@Test
@@ -132,11 +132,6 @@ public class TestUpdateProject {
 		String expectedResult = "true";
 		proj.setStatus("Denied");
 
-		/*
-		 * When our ProjectService.findById() is invoked, we tell it to return a mock
-		 * project and a mock status so our get request can return a proper result 
-		 * as if it was not mocked.
-		 */
 		when(mockProjectService.findById(id)).thenReturn(mockProject);
 		when(mockProject.getStatus()).thenReturn("pending");
 		
@@ -153,7 +148,51 @@ public class TestUpdateProject {
 		 */
 		this.mockMvc.perform(put(URI + id).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
+	}
+	
+	@Test
+	public void testUpdateProjectWithPendingProject() throws Exception {
 
+		// The expected result from the controller
+		String expectedResult = "true";
+		proj.setStatus("Pending");
+
+		when(mockProjectService.findById(id)).thenReturn(mockProject);
+		when(mockProject.getStatus()).thenReturn("pending");
+		
+		
+		String requestJson = asJsonString(proj);
+		//service checks if there's a previous project attached to this one
+		when(mockProject.getOldProject()).thenReturn(null);
+		//when it calls the service return true
+		when(mockProjectService.updateProject(proj, id)).thenReturn(true);
+
+		/*
+		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
+		 * ) and the expected result is returned.
+		 */
+		this.mockMvc.perform(put(URI + id).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
+	}
+	
+	@Test
+	public void testUpdateProjectWithBadStatus() throws Exception {
+		proj.setStatus("bad status");
+
+		when(mockProjectService.findById(id)).thenReturn(mockProject);
+		when(mockProject.getStatus()).thenReturn("pending");
+		
+		String requestJson = asJsonString(proj);
+
+		//when it calls the service return true
+		when(mockProjectService.updateProject(proj, id)).thenReturn(false);
+
+		/*
+		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
+		 * ) and the expected result is returned.
+		 */
+		this.mockMvc.perform(put(URI + id).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+				.andExpect(status().is4xxClientError());
 	}
 	
 	/**

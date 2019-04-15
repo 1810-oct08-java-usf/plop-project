@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -227,26 +227,19 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
 		Project backendProject = projectService.findById(id);
+		//check that the project exists
 		if (backendProject == null) {	
 			throw new ProjectNotFoundException("ID entered cannot be found to complete update.");
 		}
-		if(backendProject.getStatus().toLowerCase().equals("approved") && project.getStatus().toLowerCase().equals("pending")) {
-			project.setStatus("pending");
-      			project.setOldProject(backendProject);
+		//check that status is valid
+		if(!project.getStatus().equalsIgnoreCase("approved") && !project.getStatus().equalsIgnoreCase("denied") && !project.getStatus().equalsIgnoreCase("pending")) {
+			throw new ProjectNotFoundException("Status is unacceptable.");
 		}
-		if(project.getStatus().toLowerCase().equals("denied")) {
-			if(backendProject.getOldProject() == null) {
-			
-			}
-			else if(backendProject.getOldProject().getStatus().toLowerCase().equals("approved")) {
-				project = backendProject.getOldProject();
-				return projectService.updateProject(project, id);
-			}else {
-				project.setOldProject(backendProject);
-				return projectService.updateProject(project, id);
-			}
-		}
-		return projectService.updateProject(project, id);
+		
+			project.setOldProject(backendProject);
+			return projectService.updateProject(project, id);
+		
+		
 	}
 
 	/*
