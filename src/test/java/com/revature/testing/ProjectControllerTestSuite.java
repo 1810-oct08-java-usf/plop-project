@@ -42,15 +42,101 @@ public class ProjectControllerTestSuite {
 
 	@Rule
 	public ExpectedException exceptionRule = ExpectedException.none();
+	
 	/**
+	 * Method to run before every test to initialize dependencies.
 	 * 
+	 * @author Bjorn Pedersen & Brandon Morris (190107-Java-Spark-USF)
 	 */
+	
 	@Before
 	public void setup() {
 		project = new Project();
 		projectController = new ProjectController(projectService);
 	}
 
+	/**
+	 * Test if addProject works when passed valid project.
+	 * 
+	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
+	 */
+	
+	@Test
+	public void testAddProjectIfProjectValid() {
+		when(projectService.createProject(project)).thenReturn(project);
+		assertEquals(project, projectController.addProject(project));
+	}
+	
+	/**
+	 * Test if addProject throws appropriate exception if passed null.
+	 * 
+	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
+	 */
+	
+	@Test
+	public void testAddProjectIfPassedNull() {
+		
+		exceptionRule.expect(ProjectNotAddedException.class);
+		exceptionRule.expectMessage("No Project Data Submitted");
+		
+		projectController.addProject(null);
+	}
+	
+	/**
+	 * Test if addProject throws appropriate exception if 
+	 * passed project with no batch info.
+	 * 
+	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
+	 */
+	
+	@Test
+	public void testAddProjectIfNoBatchGiven() {
+		
+		project.setBatch(null);		
+		
+		exceptionRule.expect(ProjectNotAddedException.class);
+		exceptionRule.expectMessage("The 'batch' input cannot be null when adding project");
+		
+		projectController.addProject(project);
+	}
+	
+	
+	/**
+	 * Test if addProject throws appropriate exception if 
+	 * passed project with no project name.
+	 * 
+	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
+	 */
+	
+	@Test
+	public void testAddProjectIfNoNameGiven() {
+		
+		project.setName(null);		
+		
+		exceptionRule.expect(ProjectNotAddedException.class);
+		exceptionRule.expectMessage("The 'name' input cannot be null when adding project");
+		
+		projectController.addProject(project);
+	}
+	
+	/**
+	 * Test if addProject throws appropriate exception if 
+	 * passed project with no tech stack info.
+	 * 
+	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
+	 */
+	
+	@Test
+	public void testAddProjectIfNoTechStackGiven() {
+		
+		project.setTechStack(null);		
+		
+		exceptionRule.expect(ProjectNotAddedException.class);
+		exceptionRule.expectMessage("The 'tech stack' input cannot be null when adding project");
+		
+		projectController.addProject(project);
+	}
+	
 	/**
 	 * Test Delete by id
 	 * Test method for deleting by id if the input project id is valid.
@@ -148,6 +234,7 @@ public class ProjectControllerTestSuite {
 	 * Test for returning a list of projects by valid name
 	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testGetProjectsByNameIfValidName() {
 		Project project3 = new Project();
@@ -171,6 +258,7 @@ public class ProjectControllerTestSuite {
 	 * Test for returning a list of projects where name is not found
 	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testGetProjectsByNameIfNameNotFound() {
 
@@ -189,6 +277,7 @@ public class ProjectControllerTestSuite {
 	 * 
 	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testGetProjetsByBatchIfValid() {
 		Project project3 = new Project();
@@ -211,6 +300,7 @@ public class ProjectControllerTestSuite {
 	 * 
 	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testGetProjectsByBatchIfBatchNotFound() {
 		when(projectService.findByBatch("Wezley")).thenReturn(null);
@@ -228,6 +318,7 @@ public class ProjectControllerTestSuite {
 	 * 
 	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testGetProjectsByStatusIfValid() {
 		Project project5 = new Project();
@@ -247,6 +338,7 @@ public class ProjectControllerTestSuite {
 	 * 
 	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testGetProjectsByStatusIfStatusNotFound() {
 		when(projectService.findByStatus("Approved")).thenReturn(null);
@@ -275,6 +367,7 @@ public class ProjectControllerTestSuite {
 	 * Tests the Project not found condition.
 	 * @author Alonzo Muncy (190107-Java-Spark-USF)
 	 */
+	
 	@Test(expected = ProjectNotFoundException.class)
 	public void testProjectNotFoundException() {
 		when(mockProjectService.findById("0")).thenReturn(null);
@@ -289,6 +382,7 @@ public class ProjectControllerTestSuite {
 	 * 
 	 * @author Alonzo Muncy (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testSetPending() {
 		when(mockProjectService.findById("0")).thenReturn(mockProjectOld);
@@ -307,6 +401,7 @@ public class ProjectControllerTestSuite {
 	 * 
 	 * @author Alonzo Muncy (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testDeniedNull() {
 		when(mockProjectService.findById("0")).thenReturn(mockProjectOld);
@@ -327,6 +422,7 @@ public class ProjectControllerTestSuite {
 	 * 
 	 * @author Alonzo Muncy (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testDeniedApproved() {
 		when(mockProjectService.findById("0")).thenReturn(mockProjectOld);
@@ -346,6 +442,7 @@ public class ProjectControllerTestSuite {
 	 * 
 	 * @author Alonzo Muncy (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testDeniedOther() {
 		when(mockProjectService.findById("0")).thenReturn(mockProjectOld);
@@ -363,6 +460,7 @@ public class ProjectControllerTestSuite {
 	 * 
 	 * @author Alonzo Muncy (190107-Java-Spark-USF)
 	 */
+	
 	@Test
 	public void testNormal() {
 		when(mockProjectService.findById("0")).thenReturn(mockProjectOld);
