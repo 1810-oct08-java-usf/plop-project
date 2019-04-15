@@ -63,12 +63,10 @@ public class GetProjectsByNameTest {
 		public void testGetProjectsByName() throws Exception{
 			
 			String input = "ghostbusters";
-			List<Project> projects = new ArrayList<>();	
+			List<Project> projects = new ArrayList<>();
 
-			when(projectRepo.findByName(input)).thenReturn(projects);
 			when(projectService.findByName(input)).thenReturn(projects);
 			
-
 			this.mvc.perform(get(uri,input))
 			.andExpect(status().isOk());
 		}
@@ -84,13 +82,13 @@ public class GetProjectsByNameTest {
 		@Test
 		public void testGetNotFoundStatus() throws Exception{
 			
-			String input = "doknox";
-			
-			when(projectRepo.findByName(input)).thenThrow(pnfe);
+			String input = "drocktnor";
+	
 			when(projectService.findByName(input)).thenThrow(pnfe);
 			
 			this.mvc.perform(get(uri,input))
 			.andExpect(status().isNotFound());
 					
-		}
+		}	
+		
 }
