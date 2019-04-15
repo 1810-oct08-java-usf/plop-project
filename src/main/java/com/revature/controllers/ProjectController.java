@@ -206,7 +206,6 @@ public class ProjectController {
 	 * This method is used to update an entry into the embedded MongoDB based on the
 	 * ID
 	 * 
-	 * If the project is approved, it will keep a version of the old approved project.
 	 * 
 	 * 
 	 * Uses HTTP method PUT. Retrieves and produces JSON data
@@ -223,6 +222,7 @@ public class ProjectController {
 	 * 
 	 */
 	// TODO should let you update screenshots and repositories
+	// TODO If the project is approved, it will keep a version of the old approved project.
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
@@ -235,9 +235,7 @@ public class ProjectController {
 		if(!project.getStatus().equalsIgnoreCase("approved") && !project.getStatus().equalsIgnoreCase("denied") && !project.getStatus().equalsIgnoreCase("pending")) {
 			throw new ProjectNotFoundException("Status is unacceptable.");
 		}
-		if(project.getStatus().equalsIgnoreCase("approved")) {
-			project.setOldProject(backendProject);
-		}
+		
 			return projectService.updateProject(project, id);
 		
 		
