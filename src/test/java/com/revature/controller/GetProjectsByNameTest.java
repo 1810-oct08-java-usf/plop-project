@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,6 +23,8 @@ import com.revature.repositories.ProjectRepository;
 import com.revature.services.ProjectService;
 /**
  * 
+ * This class includes test cases for testing Project Controller's 
+ * getProjectsByName();
  * @author Ankit Patel
  *
  */
@@ -53,22 +54,16 @@ public class GetProjectsByNameTest {
 		
 		/**
 		 * Tests whether the endpoint responds with OK or 200 status with valid request.
+		 * 
 		 * @throws Exception
+		 * 
 		 * @author Ankit Patel
 		 */
 		@Test
 		public void testGetProjectsByName() throws Exception{
 			
 			String input = "ghostbusters";
-			List<Project> projects = new ArrayList<>();
-			
-			/*
-			 *  below line is commented because it gives nested Exception:
-			 *  	-httpMessageConversionException
-			 *  	-jackson.databind.exc.InvalidDefinitionException
-			 */
-//			projects.add(project);
-			
+			List<Project> projects = new ArrayList<>();	
 
 			when(projectRepo.findByName(input)).thenReturn(projects);
 			when(projectService.findByName(input)).thenReturn(projects);
@@ -81,11 +76,14 @@ public class GetProjectsByNameTest {
 		/**
 		 * Tests the appropriate response to send with valid requests but project name
 		 * doesn't exist.
+		 * 
 		 * @throws Exception
+		 * 
 		 * @author Ankit Patel
 		 */
 		@Test
 		public void testGetNotFoundStatus() throws Exception{
+			
 			String input = "doknox";
 			
 			when(projectRepo.findByName(input)).thenThrow(pnfe);
