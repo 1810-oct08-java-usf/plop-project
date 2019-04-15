@@ -72,8 +72,8 @@ public class ProjectControllerTestSuite {
 	
 	@Test
 	public void testAddProjectIfProjectValid() {
+		
 		when(projectService.createProjectFromDTO(projectDTO)).thenReturn(project);
-//		assertEquals(project, projectController.addProject(projectDTO));
 		projectController.addProject(projectDTO);
 		verify(projectService).createProjectFromDTO(projectDTO);
 		
