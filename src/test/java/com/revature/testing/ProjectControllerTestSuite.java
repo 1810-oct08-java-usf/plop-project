@@ -1,6 +1,7 @@
 package com.revature.testing;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +22,7 @@ import com.revature.controllers.ProjectController;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
+import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 /**
@@ -33,6 +35,9 @@ public class ProjectControllerTestSuite {
 
 	@Mock
 	Project project;
+	
+	@Mock
+	ProjectDTO projectDTO;
 
 	@Mock
 	ProjectService projectService;
@@ -53,6 +58,10 @@ public class ProjectControllerTestSuite {
 	public void setup() {
 		project = new Project();
 		projectController = new ProjectController(projectService);
+		projectDTO = new ProjectDTO();
+		projectDTO.setBatch("Cabbage");
+		projectDTO.setName("Kids");
+		projectDTO.setTechStack("Light, Water, Soil");
 	}
 
 	/**
@@ -63,8 +72,11 @@ public class ProjectControllerTestSuite {
 	
 	@Test
 	public void testAddProjectIfProjectValid() {
-		when(projectService.createProject(project)).thenReturn(project);
-		assertEquals(project, projectController.addProject(project));
+		when(projectService.createProjectFromDTO(projectDTO)).thenReturn(project);
+//		assertEquals(project, projectController.addProject(projectDTO));
+		projectController.addProject(projectDTO);
+		verify(projectService).createProjectFromDTO(projectDTO);
+		
 	}
 	
 	/**
@@ -84,7 +96,7 @@ public class ProjectControllerTestSuite {
 	
 	/**
 	 * Test if addProject throws appropriate exception if 
-	 * passed project with no batch info.
+	 * passed projectDTO with no batch info.
 	 * 
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
 	 */
@@ -92,18 +104,18 @@ public class ProjectControllerTestSuite {
 	@Test
 	public void testAddProjectIfNoBatchGiven() {
 		
-		project.setBatch(null);		
+		projectDTO.setBatch(null);		
 		
 		exceptionRule.expect(ProjectNotAddedException.class);
 		exceptionRule.expectMessage("The 'batch' input cannot be null when adding project");
 		
-		projectController.addProject(project);
+		projectController.addProject(projectDTO);
 	}
 	
 	
 	/**
 	 * Test if addProject throws appropriate exception if 
-	 * passed project with no project name.
+	 * passed projectDTO with no project name.
 	 * 
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
 	 */
@@ -111,17 +123,17 @@ public class ProjectControllerTestSuite {
 	@Test
 	public void testAddProjectIfNoNameGiven() {
 		
-		project.setName(null);		
+		projectDTO.setName(null);		
 		
 		exceptionRule.expect(ProjectNotAddedException.class);
 		exceptionRule.expectMessage("The 'name' input cannot be null when adding project");
 		
-		projectController.addProject(project);
+		projectController.addProject(projectDTO);
 	}
 	
 	/**
 	 * Test if addProject throws appropriate exception if 
-	 * passed project with no tech stack info.
+	 * passed projectDTO with no tech stack info.
 	 * 
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
 	 */
@@ -129,12 +141,12 @@ public class ProjectControllerTestSuite {
 	@Test
 	public void testAddProjectIfNoTechStackGiven() {
 		
-		project.setTechStack(null);		
+		projectDTO.setTechStack(null);		
 		
 		exceptionRule.expect(ProjectNotAddedException.class);
 		exceptionRule.expectMessage("The 'tech stack' input cannot be null when adding project");
 		
-		projectController.addProject(project);
+		projectController.addProject(projectDTO);
 	}
 	
 	/**

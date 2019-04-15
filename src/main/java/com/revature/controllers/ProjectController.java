@@ -150,28 +150,9 @@ public class ProjectController {
 	 */
 	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Project addProject(// TODO should be retrieved from auth service
-			@RequestParam String name, 
-			@RequestParam String batch,
-			@RequestParam String trainer, 
-			@RequestParam List<String> groupMembers,
-			@RequestParam List<MultipartFile> screenShots, 
-			@RequestParam List<String> zipLinks,
-			@RequestParam String description, 
-			@RequestParam String techStack, 
-			@RequestParam String status) {
-		ProjectDTO projectDTO = new ProjectDTO();
-
-		projectDTO.setName(name);
-		projectDTO.setBatch(batch);
-		projectDTO.setTrainer(trainer);
-		projectDTO.setScreenShots(screenShots);
-		projectDTO.setGroupMembers(groupMembers);
-		projectDTO.setZipLinks(zipLinks);
-		projectDTO.setDescription(description);
-		projectDTO.setTechStack(techStack);
-		projectDTO.setStatus(status);
-
+	public Project addProject( @RequestParam ProjectDTO projectDTO) {
+		if (projectDTO == null)
+			throw new ProjectNotAddedException("No Project Data Submitted");
 		if (projectDTO.getBatch() == null)
 			throw new ProjectNotAddedException("The 'batch' input cannot be null when adding project");
 		if (projectDTO.getName() == null)
@@ -181,6 +162,37 @@ public class ProjectController {
 
 		return projectService.createProjectFromDTO(projectDTO);
 	}
+//	public Project addProject(// TODO should be retrieved from auth service
+//			@RequestParam String name, 
+//			@RequestParam String batch,
+//			@RequestParam String trainer, 
+//			@RequestParam List<String> groupMembers,
+//			@RequestParam List<MultipartFile> screenShots, 
+//			@RequestParam List<String> zipLinks,
+//			@RequestParam String description, 
+//			@RequestParam String techStack, 
+//			@RequestParam String status) {
+//		ProjectDTO projectDTO = new ProjectDTO();
+//
+//		projectDTO.setName(name);
+//		projectDTO.setBatch(batch);
+//		projectDTO.setTrainer(trainer);
+//		projectDTO.setScreenShots(screenShots);
+//		projectDTO.setGroupMembers(groupMembers);
+//		projectDTO.setZipLinks(zipLinks);
+//		projectDTO.setDescription(description);
+//		projectDTO.setTechStack(techStack);
+//		projectDTO.setStatus(status);
+//
+//		if (projectDTO.getBatch() == null)
+//			throw new ProjectNotAddedException("The 'batch' input cannot be null when adding project");
+//		if (projectDTO.getName() == null)
+//			throw new ProjectNotAddedException("The 'name' input cannot be null when adding project");
+//		if (projectDTO.getTechStack() == null)
+//			throw new ProjectNotAddedException("The 'tech stack' input cannot be null when adding project");
+//
+//		return projectService.createProjectFromDTO(projectDTO);
+//	}
 
 	/*
 	 * This method is used to delete an entry into the embedded MongoDB based on the
