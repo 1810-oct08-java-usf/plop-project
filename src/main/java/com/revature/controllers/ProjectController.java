@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -150,11 +150,16 @@ public class ProjectController {
 	 */
 	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Project addProject(@RequestParam String name, @RequestParam String batch,
-			// TODO should be retrieved from auth service
-			@RequestParam String trainer, @RequestParam List<String> groupMembers,
-			@RequestParam List<MultipartFile> screenShots, @RequestParam List<String> zipLinks,
-			@RequestParam String description, @RequestParam String techStack, @RequestParam String status) {
+	public Project addProject(// TODO should be retrieved from auth service
+			@RequestParam String name, 
+			@RequestParam String batch,
+			@RequestParam String trainer, 
+			@RequestParam List<String> groupMembers,
+			@RequestParam List<MultipartFile> screenShots, 
+			@RequestParam List<String> zipLinks,
+			@RequestParam String description, 
+			@RequestParam String techStack, 
+			@RequestParam String status) {
 		ProjectDTO projectDTO = new ProjectDTO();
 
 		projectDTO.setName(name);
@@ -197,11 +202,10 @@ public class ProjectController {
 		return projectService.deleteById(id);
 	}
 
-	/*
+	/**
 	 * This method is used to update an entry into the embedded MongoDB based on the
 	 * ID
 	 * 
-	 * If the project is approved, it will keep a version of the old approved project.
 	 * 
 	 * 
 	 * Uses HTTP method PUT. Retrieves and produces JSON data
@@ -218,30 +222,23 @@ public class ProjectController {
 	 * 
 	 */
 	// TODO should let you update screenshots and repositories
+	// TODO If the project is approved, it will keep a version of the old approved project.
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
 		Project backendProject = projectService.findById(id);
+		//check that the project exists
 		if (backendProject == null) {	
 			throw new ProjectNotFoundException("ID entered cannot be found to complete update.");
 		}
-		if(backendProject.getStatus().toLowerCase().equals("approved") && project.getStatus().toLowerCase().equals("pending")) {
-			project.setStatus("pending");
-      			project.setOldProject(backendProject);
+		//check that status is valid
+		if(!project.getStatus().equalsIgnoreCase("approved") && !project.getStatus().equalsIgnoreCase("denied") && !project.getStatus().equalsIgnoreCase("pending")) {
+			throw new ProjectNotFoundException("Status is unacceptable.");
 		}
-		if(project.getStatus().toLowerCase().equals("denied")) {
-			if(backendProject.getOldProject() == null) {
-			
-			}
-			else if(backendProject.getOldProject().getStatus().toLowerCase().equals("approved")) {
-				project = backendProject.getOldProject();
-				return projectService.updateProject(project, id);
-			}else {
-				project.setOldProject(backendProject);
-				return projectService.updateProject(project, id);
-			}
-		}
-		return projectService.updateProject(project, id);
+		
+			return projectService.updateProject(project, id);
+		
+		
 	}
 
 	/*
