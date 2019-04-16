@@ -26,7 +26,7 @@ import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 
-/*
+/**
  * The ProjectController maps service endpoints for essential CRUD operations on Projects
  */
 @RestController
@@ -40,7 +40,7 @@ public class ProjectController {
 		this.projectService = projectService;
 	}
 
-	/*
+	/**
 	 * This method retrieves all of the projects stored within embedded MongoDB Uses
 	 * HTTP method GET and only retrieves JSON data.
 	 * 
@@ -53,7 +53,7 @@ public class ProjectController {
 		return projectService.findAllProjects();
 	}
 
-	/*
+	/**
 	 * This method retrieves project by ID Uses HTTP method GET and only retrieves
 	 * JSON data
 	 * 
@@ -68,7 +68,7 @@ public class ProjectController {
 		return projectService.findById(id);
 	}
 
-	/*
+	/**
 	 * This method retrieves project by name Uses HTTP method GET and only retrieves
 	 * JSON data
 	 * 
@@ -83,7 +83,7 @@ public class ProjectController {
 		return projectService.findByName(name);
 	}
 
-	/*
+	/**
 	 * This method retrieves project by batch Uses HTTP method GET and only
 	 * retrieves JSON data
 	 * 
@@ -98,7 +98,7 @@ public class ProjectController {
 		return projectService.findByBatch(batch);
 	}
 
-	/*
+	/**
 	 * This method retrieves project by status Uses HTTP method GET and only
 	 * retrieves JSON data
 	 * 
@@ -113,7 +113,7 @@ public class ProjectController {
 		return projectService.findByStatus(status);
 	}
 
-	/*
+	/**
 	 * This method adds a new project.
 	 * 
 	 * Uses HTTP method POST. Retrieves form data because this method have values
@@ -182,7 +182,7 @@ public class ProjectController {
 		return projectService.createProjectFromDTO(projectDTO);
 	}
 
-	/*
+	/**
 	 * This method is used to delete an entry into the embedded MongoDB based on the
 	 * ID
 	 * 
@@ -202,7 +202,7 @@ public class ProjectController {
 		return projectService.deleteById(id);
 	}
 
-	/*
+	/**
 	 * This method is used to update an entry into the embedded MongoDB based on the
 	 * ID
 	 * 
@@ -249,7 +249,7 @@ public class ProjectController {
 		return projectService.updateProject(project, id);
 	}
 
-	/*
+	/**
 	 * This method is used to send a status code into the client based on the
 	 * validity of the information sent.
 	 * 
@@ -274,7 +274,7 @@ public class ProjectController {
 		return error;
 	}
 
-	/*
+	/**
 	 * This method is used to send a status code into the client based on the
 	 * validity of the information sent.
 	 * 
