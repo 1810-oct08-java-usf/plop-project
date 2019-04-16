@@ -94,8 +94,6 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		
-<<<<<<< HEAD
-		
 <dependency>
 
     <groupId>org.springframework.security</groupId>
@@ -107,10 +105,8 @@
     <scope>test</scope>
 
 </dependency>
-		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-=======
->>>>>>> 38de56e34cb34cfd68c582120a6f0a59e7dd97be
 		<dependency>
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
 		    <groupId>org.mockito</groupId>
 		    <artifactId>mockito-core</artifactId>
 		    <scope>test</scope>
