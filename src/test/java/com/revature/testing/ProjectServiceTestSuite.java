@@ -115,6 +115,8 @@ public class ProjectServiceTestSuite {
 		Mockito.when(testRepo.findByName("string")).thenReturn(dummyList);
 		Mockito.when(testRepo.findByBatch("batchin")).thenReturn(dummyList);
 		
+		//Define the relevant behaviors of dummyProject
+		
 	}
 	
 	/**
