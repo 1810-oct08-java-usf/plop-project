@@ -386,6 +386,7 @@ public class ProjectControllerTestSuite {
 	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
 	 */
 	
+	@Ignore //incomplete
 	@Test
 	public void testGetProjectByIdIfIdNotFound() {
 		when(projectService.findById("3")).thenReturn(null);
