@@ -114,8 +114,6 @@ public class ProjectController {
 	}
 
 	/**
-<<<<<<< HEAD
-=======
 	 * 
 	 * This method accepts a ProjectDTO and checks it for a few basic issues before sending it to
 	 * the service layer to be turned into a project and saved. LOOK AT THE SERVICE LAYER!!!! It is 
@@ -147,7 +145,6 @@ public class ProjectController {
 	}
 		
 	/*
->>>>>>> b53f288d3daea74dd3edd4908400d19f9aa00526
 	 * This method adds a new project.
 	 * 
 	 * Uses HTTP method POST. Retrieves form data because this method have values
