@@ -361,6 +361,42 @@ public class ProjectControllerTestSuite {
 		projectController.getProjectsByStatus("Approved");
 	}
 	
+	
+	//-------------------------------------------------------------------------------
+	
+	
+	/**
+	 * Test for returning a project by valid id
+	 * 
+	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
+	 */
+	
+	@Test
+	public void testGetProjectByValidId() {
+		project.setId("3");
+		when(projectService.findById("3")).thenReturn(project);
+		assertEquals(project, projectController.getProjectById("3"));
+	}
+	
+	//------------------------------------------------------------------------------
+	
+	/**
+	 * Test for returning a project if id not found
+	 * 
+	 * @author Kamaria DeRamus (190107-Java-Spark-USF)
+	 */
+	
+	@Test
+	public void testGetProjectByIdIfIdNotFound() {
+		when(projectService.findById("3")).thenReturn(null);
+
+		exceptionRule.expect(ProjectNotFoundException.class);
+		exceptionRule.expectMessage("ID entered cannot be found to return this project");
+
+		projectController.getProjectById("3");
+		
+	}
+	
 	//----------------------------------------------------------------------------------
 	
 	@InjectMocks
