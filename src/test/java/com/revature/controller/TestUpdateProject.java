@@ -59,7 +59,7 @@ public class TestUpdateProject {
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	
-	Project proj = new Project("name","batch","trainer", new ArrayList<String>(), new ArrayList<String>(),new ArrayList<String>(),"description","techstack","approved");
+	private static Project proj = new Project("name","batch","trainer", new ArrayList<String>(), new ArrayList<String>(),new ArrayList<String>(),"description","techstack","approved");
 
 	/**
 	 * This method is going to test if our context loads and is not null.
@@ -217,9 +217,6 @@ public class TestUpdateProject {
 		when(mockProject.getStatus()).thenReturn("pending");
 		
 		String requestJson = asJsonString(proj);
-
-		//when it calls the service return true
-		when(mockProjectService.updateProject(proj, id)).thenReturn(false);
 
 		/*
 		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
