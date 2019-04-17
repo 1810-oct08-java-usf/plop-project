@@ -1,6 +1,7 @@
 package com.revature.testing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -200,6 +201,30 @@ public class ProjectServiceTestSuite {
 		when(dummyProject.getStatus()).thenReturn(dummyString);
 		when(dummyProject.getOldProject()).thenReturn(dummySavedProject);
 		assertTrue(classUnderTest.updateProject(dummyProject, "97"));
+	}
+	
+	
+	/**
+	 * First block tests for if a project exists, but none of the fields are filled.
+	 * Second block tests for if a project does not exist, will return false. 
+	 */
+	@Test
+	public void testUpdateProjectWhereNotPresent() {
+		optionalProject = Optional.of(dummySavedProject);
+		when(testRepo.findById("97")).thenReturn(optionalProject);
+		when(dummyProject.getName()).thenReturn(null);
+		when(dummyProject.getBatch()).thenReturn(null);
+		when(dummyProject.getTrainer()).thenReturn(null);
+		when(dummyProject.getGroupMembers()).thenReturn(null);
+		when(dummyProject.getScreenShots()).thenReturn(null);
+		when(dummyProject.getZipLinks()).thenReturn(null);
+		when(dummyProject.getDescription()).thenReturn(null);
+		when(dummyProject.getTechStack()).thenReturn(null);
+		when(dummyProject.getStatus()).thenReturn(null);
+		when(dummyProject.getOldProject()).thenReturn(null);
+		assertTrue(classUnderTest.updateProject(dummyProject, "97"));
+		
+		assertFalse(classUnderTest.updateProject(dummyProject,dummyString));
 	}
 	
 	/**
