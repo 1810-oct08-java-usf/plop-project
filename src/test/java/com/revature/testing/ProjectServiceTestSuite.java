@@ -203,10 +203,13 @@ public class ProjectServiceTestSuite {
 		assertTrue(classUnderTest.updateProject(dummyProject, "97"));
 	}
 	
+	
+	/**
+	 * First block tests for if a project exists, but none of the fields are filled.
+	 * Second block tests for if a project does not exist, will return false. 
+	 */
 	@Test
 	public void testUpdateProjectWhereNotPresent() {
-
-		// Tests for if a project exists, but none of the fields are filled. 
 		optionalProject = Optional.of(dummySavedProject);
 		when(testRepo.findById("97")).thenReturn(optionalProject);
 		when(dummyProject.getName()).thenReturn(null);
@@ -221,7 +224,6 @@ public class ProjectServiceTestSuite {
 		when(dummyProject.getOldProject()).thenReturn(null);
 		assertTrue(classUnderTest.updateProject(dummyProject, "97"));
 		
-		// Tests for if a project does not exist, will return false. 
 		assertFalse(classUnderTest.updateProject(dummyProject,dummyString));
 	}
 	
