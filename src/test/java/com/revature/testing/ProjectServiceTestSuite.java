@@ -222,8 +222,7 @@ public class ProjectServiceTestSuite {
 		assertTrue(classUnderTest.updateProject(dummyProject, "97"));
 		
 		// Tests for if a project does not exist, will return false. 
-		System.out.println(classUnderTest.updateProject(dummyProject,dummyString));
-		assertFalse(false);
+		assertFalse(classUnderTest.updateProject(dummyProject,dummyString));
 	}
 	
 	/**
