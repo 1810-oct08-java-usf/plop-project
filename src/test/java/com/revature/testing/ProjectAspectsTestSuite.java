@@ -1,24 +1,16 @@
 package com.revature.testing;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.LinkedList;
-import java.util.List;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import org.aspectj.lang.JoinPoint;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.context.SpringBootTest;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import com.revature.aop.ProjectAspects;
-import com.revature.repositories.ProjectRepository;
 
 /**
  * Test suite for ProjectAspects.
