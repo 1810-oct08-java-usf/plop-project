@@ -116,6 +116,14 @@ public class TestUpdateProject {
 
 	}
 	
+	/**
+	 * This method will test updating a project when given null values.
+	 * This should return an HTTP status of 404.
+	 * 
+	 * @throws Exception: If the test fails, an exception will be thrown.
+	 * 
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 */
 	@Test
 	public void testUpdateWithNullProject() throws Exception {		
 		when(mockProjectService.findById(id)).thenReturn(null);
@@ -125,6 +133,15 @@ public class TestUpdateProject {
 				.contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 				.andExpect(status().isNotFound());		
 	}
+	
+	/**
+	 * This method will test that updating a denied project
+	 * will not get a different result than an approved one.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 */
 	
 	@Test
 	public void testUpdateProjectWithDeniedProject() throws Exception {
@@ -151,6 +168,14 @@ public class TestUpdateProject {
 				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
 	}
 	
+	/**
+	 * This method will test that updating a project with a pending status
+	 * will not get a different result than an approved one.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 */
 	@Test
 	public void testUpdateProjectWithPendingProject() throws Exception {
 
@@ -176,6 +201,14 @@ public class TestUpdateProject {
 				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
 	}
 	
+	/**
+	 * This method will test that updating a project
+	 * with an invalid status will not be allowed.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 */
 	@Test
 	public void testUpdateProjectWithBadStatus() throws Exception {
 		proj.setStatus("bad status");
