@@ -1,13 +1,10 @@
 package com.revature.security;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
