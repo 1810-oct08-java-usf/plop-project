@@ -202,30 +202,6 @@ public class ProjectServiceTestSuite {
 		assertTrue(classUnderTest.updateProject(dummyProject, "97"));
 	}
 	
-	
-	/**
-	 * First block tests for if a project exists, but none of the fields are filled.
-	 * Second block tests for if a project does not exist, will return false. 
-	 */
-	@Test
-	public void testUpdateProjectWhereNotPresent() {
-		optionalProject = Optional.of(dummySavedProject);
-		when(testRepo.findById("97")).thenReturn(optionalProject);
-		when(dummyProject.getName()).thenReturn(null);
-		when(dummyProject.getBatch()).thenReturn(null);
-		when(dummyProject.getTrainer()).thenReturn(null);
-		when(dummyProject.getGroupMembers()).thenReturn(null);
-		when(dummyProject.getScreenShots()).thenReturn(null);
-		when(dummyProject.getZipLinks()).thenReturn(null);
-		when(dummyProject.getDescription()).thenReturn(null);
-		when(dummyProject.getTechStack()).thenReturn(null);
-		when(dummyProject.getStatus()).thenReturn(null);
-		when(dummyProject.getOldProject()).thenReturn(null);
-		assertTrue(classUnderTest.updateProject(dummyProject, "97"));
-		
-		assertFalse(classUnderTest.updateProject(dummyProject,dummyString));
-	}
-	
 	/**
 	 * Test if we can create a project from a DTO. We need the lists and such to properly mock the implementation. 
 	 * TODO: Find a better way to test this thing. Good Luck.
