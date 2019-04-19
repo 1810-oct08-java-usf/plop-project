@@ -1,4 +1,4 @@
-package com.revature.testing;
+package com.revature.tests;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
