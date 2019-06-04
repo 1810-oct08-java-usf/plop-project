@@ -18,7 +18,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.revature.helpers.FileHelper;
 
 @Service
-@Profile({"dev", "prod"})
+@Profile("!local")
 public class S3StorageServiceImpl implements StorageService {
 
 	@Value("${aws.config.aws-access-key-id}")
