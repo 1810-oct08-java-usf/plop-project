@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +18,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.revature.helpers.FileHelper;
 
 @Service
+@Profile({"dev", "prod"})
 public class S3StorageServiceImpl implements StorageService {
 
 	@Value("${aws.config.aws-access-key-id}")
