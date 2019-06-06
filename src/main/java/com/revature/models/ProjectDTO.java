@@ -1,3 +1,4 @@
+
 package com.revature.models;
 
 import java.util.List;
@@ -27,15 +28,18 @@ public class ProjectDTO {
 	private String description;
 	private String techStack;
 	private String status;
+	
+	//field for dataModel
+	private List<MultipartFile> dataModel;
 
 	public ProjectDTO() {
 		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	// TODO implement builder pattern to reduce the complexity of this object's creation
 	public ProjectDTO(String name, String batch, String trainer, List<String> groupMembers,
-			List<MultipartFile> screenShots, List<String> zipLinks, String description, String techStack,
-			String status) {
+			List<MultipartFile> screenShots, List<String> zipLinks, String description, String techStack, String status,
+			List<MultipartFile> dataModel) {
 		super();
 		this.name = name;
 		this.batch = batch;
@@ -46,6 +50,7 @@ public class ProjectDTO {
 		this.description = description;
 		this.techStack = techStack;
 		this.status = status;
+		this.dataModel = dataModel;
 	}
 
 	public String getName() {
@@ -119,5 +124,15 @@ public class ProjectDTO {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	public List<MultipartFile> getDataModel() {
+		return dataModel;
+	}
+
+	public void setDataModel(List<MultipartFile> dataModel) {
+		this.dataModel = dataModel;
+	}
+
 	
 }
+
