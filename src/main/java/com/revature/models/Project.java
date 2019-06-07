@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.data.annotation.Id;
 
 /**
@@ -72,6 +76,9 @@ public class Project implements Serializable {
 		this.id = id;
 	}
 
+	@Size(min = 3, max = 30, message = "'Project Name' must have a minimy of 3 characters with a max of 30.")
+	@NotNull(message = "Please provide a project name.")
+	@NotBlank(message = "Please provide a project name.")
 	public String getName() {
 		return name;
 	}
@@ -80,6 +87,8 @@ public class Project implements Serializable {
 		this.name = name;
 	}
 
+	@NotNull(message = "Please enter a valid batch.")
+	@NotBlank(message = "Please enter a valid batch.")
 	public String getBatch() {
 		return batch;
 	}
@@ -88,6 +97,8 @@ public class Project implements Serializable {
 		this.batch = batch;
 	}
 
+	@NotNull(message = "Please provide the name of your trainer.")
+	@NotBlank(message = "Please provide the name of your trainer.")
 	public String getTrainer() {
 		return trainer;
 	}
@@ -96,6 +107,8 @@ public class Project implements Serializable {
 		this.trainer = trainer;
 	}
 
+	@NotNull(message = "Please list all memebers of the group project.")
+	@NotBlank(message = "Please list all memebers of the group project.")
 	public List<String> getGroupMembers() {
 		return groupMembers;
 	}
@@ -104,6 +117,8 @@ public class Project implements Serializable {
 		this.groupMembers = groupMembers;
 	}
 
+	@NotNull(message = "Please provide a screenshot of the project.")
+	@NotBlank(message = "Please provide a screenshot of the project.")
 	public List<String> getScreenShots() {
 		return screenShots;
 	}
@@ -112,6 +127,8 @@ public class Project implements Serializable {
 		this.screenShots = screenShots;
 	}
 
+	@NotNull(message = "Please provide a link to your project repoistory.")
+	@NotBlank(message = "Please provide a link to your project repoistory.")
 	public List<String> getZipLinks() {
 		return zipLinks;
 	}
@@ -120,6 +137,9 @@ public class Project implements Serializable {
 		this.zipLinks = zipLinks;
 	}
 
+	@Size(min = 20, max = 500, message = "Project Description must be a minimum of 20 characters with a max of 500.")
+	@NotNull(message = "Please provide a valid project description.")
+	@NotBlank(message = "Please provide a valid project description.")
 	public String getDescription() {
 		return description;
 	}
@@ -128,6 +148,8 @@ public class Project implements Serializable {
 		this.description = description;
 	}
 
+	@NotNull(message = "Please provide at least one technology.")
+	@NotBlank(message = "Please provide at least one technology.")
 	public String getTechStack() {
 		return techStack;
 	}
@@ -152,6 +174,8 @@ public class Project implements Serializable {
 		this.oldProject = oldProject;
 	}
 	
+	@NotNull(message = "Please provide a data model.")
+	@NotBlank(message = "Please provide a data model.")
 	public List<String> getDataModel() {
 		return dataModel;
 	}
