@@ -55,10 +55,12 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		List<String> zipLinks = new ArrayList<String>();
 		zipLinks.add("");
 		zipLinks.add("");
+		List<String> dataModels = new ArrayList<String>();
+		dataModels.add("");
 
 		// Save projects into repository
 		projectRepo.save(new Project("Revature Package Manager (RPM)", "1810-oct08-java-usf", "Wezley Singleton",
-				group1, screenShots, zipLinks, "An extremely detailed description", "Java/J2EE", "Approved"));
+				group1, screenShots, zipLinks, dataModels, "An extremely detailed description", "Java/J2EE", "Approved"));
 
 		List<String> group2 = new ArrayList<String>();
 		group2.add("Barry");
@@ -75,7 +77,7 @@ public class ProjectServiceApplication implements CommandLineRunner {
 
 		// Save projects into repository
 		projectRepo.save(new Project("Dashboard 4.0", "1540-nov13-pega-usf", "August Duet", group2, screenShots,
-				zipLinks, "An extremely detailed description", "PEGA", "Pending"));
+				zipLinks, dataModels, "An extremely detailed description", "PEGA", "Pending"));
 
 		List<String> group3 = new ArrayList<String>();
 		group3.add("Erin");
@@ -90,7 +92,7 @@ public class ProjectServiceApplication implements CommandLineRunner {
 
 		// Save projects into repository
 		projectRepo.save(new Project("ASAP", "1630-mar4-javascriptmvc-usf", "Trevin Chester", group3, screenShots,
-				zipLinks, "An extremely detailed description", "Javascript MVC", "Pending"));
+				zipLinks, dataModels, "An extremely detailed description", "Javascript MVC", "Pending"));
 
 		List<String> group4 = new ArrayList<String>();
 		group4.add("Bartholomew");
@@ -105,7 +107,7 @@ public class ProjectServiceApplication implements CommandLineRunner {
 
 		// Save projects into repository
 		projectRepo.save(new Project("Business Analytics", "1900-june30-net-usf", "Genesis Bond", group4, screenShots,
-				zipLinks, "An extremely detailed description", ".Net", "Denied"));
+				zipLinks, dataModels, "An extremely detailed description", ".Net", "Denied"));
 
 		List<String> group5 = new ArrayList<String>();
 		group5.add("Jacob");
@@ -120,7 +122,7 @@ public class ProjectServiceApplication implements CommandLineRunner {
 
 		// Save projects into repository
 		projectRepo.save(new Project("Quizzing Game", "1900-Feb-19-net-usf", "Blake Kruppa", group5, screenShots,
-				zipLinks, "An extremely detailed description", "React.js", "Approved"));
+				zipLinks, dataModels, "An extremely detailed description", "React.js", "Approved"));
 
 		// Get all projects
 		System.out.println("Projects found with findAll()");

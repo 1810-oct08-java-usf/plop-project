@@ -196,8 +196,15 @@ public class ProjectService {
 			String endPoint = s3StorageServiceImpl.store(multipartFile);
 			screenShotsList.add(endPoint);
 		}
-
 		newProject.setScreenShots(screenShotsList);
+		
+		// load sql files in s3 and populate project with links to those files
+		List<String> dataModelList = new ArrayList<>();
+		
+		for (MultipartFile multipartFile : projectDTO.getDataModel()) {
+			String endPoint = s3StorageServiceImpl.store(multipartFile);
+			dataModelList.add(endPoint);
+		}		
 
 		// download a zip archive for each repo from github and store them in our s3
 		// bucket,
