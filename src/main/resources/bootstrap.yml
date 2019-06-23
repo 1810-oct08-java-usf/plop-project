@@ -1,5 +1,5 @@
 spring:
- profiles:    active:    - local
+ profiles:    active: local
  application: 
    name: project-service
  cloud:
@@ -14,6 +14,8 @@ security:
 #Configuration settings that used when the local profile is active
 spring:
   profiles: local
+  application:
+    name: project-service
   cloud:
     config:
       uri:
