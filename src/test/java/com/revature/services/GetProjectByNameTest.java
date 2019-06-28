@@ -1,4 +1,4 @@
-package com.revature.tests;
+package com.revature.services;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
