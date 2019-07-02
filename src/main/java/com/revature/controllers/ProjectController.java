@@ -44,7 +44,7 @@ public class ProjectController {
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 */
-	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getAllProjects() {
 		System.out.println("In Project Controller getAllProjects");
@@ -125,7 +125,7 @@ public class ProjectController {
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
 	 */
 	
-	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public Project addProject( @RequestParam ProjectDTO projectDTO) {
 		if (projectDTO == null)
