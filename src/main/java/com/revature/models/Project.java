@@ -39,24 +39,25 @@ public class Project implements Serializable {
 	
 	private Project oldProject;
 
-	public Project() {
+	/**
+     * This constructor is private for the builder design pattern. 
+     * See below the toString() for the static builder class ProjectBuilder.
+     * 
+     * @param builder
+     * @Author: Tucker Mitchell 190422-USF-Java
+     */
+	private Project(ProjectBuilder builder) {
 		super();
-	}
-
-	// TODO implement builder pattern to reduce the complexity of this object's construction
-	public Project(String name, String batch, String trainer, List<String> groupMembers, List<String> screenShots,
-			List<String> dataModel, List<String> zipLinks, String description, String techStack, String status) {
-		super();
-		this.name = name;
-		this.batch = batch;
-		this.trainer = trainer;
-		this.groupMembers = groupMembers;
-		this.screenShots = screenShots;
-		this.dataModel = dataModel;
-		this.zipLinks = zipLinks;
-		this.description = description;
-		this.techStack = techStack;
-		this.status = status;
+		this.name = builder.name;
+		this.batch = builder.batch;
+		this.trainer = builder.trainer;
+		this.groupMembers = builder.groupMembers;
+		this.screenShots = builder.screenShots;
+		this.dataModel = builder.dataModel;
+		this.zipLinks = builder.zipLinks;
+		this.description = builder.description;
+		this.techStack = builder.techStack;
+		this.status = builder.status;
 	}
 
 	public void addZipLink(String zipLink) {
@@ -72,19 +73,11 @@ public class Project implements Serializable {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	@Size(min = 3, max = 30, message = "'Project Name' must have a minimy of 3 characters with a max of 30.")
+	@Size(min = 3, max = 30, message = "'Project Name' must have a minimum of 3 characters with a max of 30.")
 	@NotNull(message = "Please provide a project name.")
 	@NotBlank(message = "Please provide a project name.")
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@NotNull(message = "Please enter a valid batch.")
@@ -93,18 +86,10 @@ public class Project implements Serializable {
 		return batch;
 	}
 
-	public void setBatch(String batch) {
-		this.batch = batch;
-	}
-
 	@NotNull(message = "Please provide the name of your trainer.")
 	@NotBlank(message = "Please provide the name of your trainer.")
 	public String getTrainer() {
 		return trainer;
-	}
-
-	public void setTrainer(String trainer) {
-		this.trainer = trainer;
 	}
 
 	@NotNull(message = "Please list all memebers of the group project.")
@@ -113,28 +98,16 @@ public class Project implements Serializable {
 		return groupMembers;
 	}
 
-	public void setGroupMembers(List<String> groupMembers) {
-		this.groupMembers = groupMembers;
-	}
-
 	@NotNull(message = "Please provide a screenshot of the project.")
 	@NotBlank(message = "Please provide a screenshot of the project.")
 	public List<String> getScreenShots() {
 		return screenShots;
 	}
 
-	public void setScreenShots(List<String> screenShots) {
-		this.screenShots = screenShots;
-	}
-
 	@NotNull(message = "Please provide a link to your project repoistory.")
 	@NotBlank(message = "Please provide a link to your project repoistory.")
 	public List<String> getZipLinks() {
 		return zipLinks;
-	}
-
-	public void setZipLinks(List<String> zipLinks) {
-		this.zipLinks = zipLinks;
 	}
 
 	@Size(min = 20, max = 500, message = "Project Description must be a minimum of 20 characters with a max of 500.")
@@ -144,34 +117,18 @@ public class Project implements Serializable {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	@NotNull(message = "Please provide at least one technology.")
 	@NotBlank(message = "Please provide at least one technology.")
 	public String getTechStack() {
 		return techStack;
 	}
 
-	public void setTechStack(String techStack) {
-		this.techStack = techStack;
-	}
-
 	public String getStatus() {
 		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 	
 	public Project getOldProject() {
 		return oldProject;
-	}
-
-	public void setOldProject(Project oldProject) {
-		this.oldProject = oldProject;
 	}
 	
 	@NotNull(message = "Please provide a data model.")
@@ -180,8 +137,54 @@ public class Project implements Serializable {
 		return dataModel;
 	}
 
+	
+	
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setBatch(String batch) {
+		this.batch = batch;
+	}
+
+	public void setTrainer(String trainer) {
+		this.trainer = trainer;
+	}
+
+	public void setGroupMembers(List<String> groupMembers) {
+		this.groupMembers = groupMembers;
+	}
+
+	public void setScreenShots(List<String> screenShots) {
+		this.screenShots = screenShots;
+	}
+
 	public void setDataModel(List<String> dataModel) {
 		this.dataModel = dataModel;
+	}
+
+	public void setZipLinks(List<String> zipLinks) {
+		this.zipLinks = zipLinks;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setTechStack(String techStack) {
+		this.techStack = techStack;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public void setOldProject(Project oldProject) {
+		this.oldProject = oldProject;
 	}
 
 	@Override
@@ -282,8 +285,77 @@ public class Project implements Serializable {
 				+ ", description=" + description + ", techStack=" + techStack + ", status=" + status + "]";
 	}
 
-
-	
-	
-
+	/**
+     * The Project class uses the builder design pattern instead of using an all-args constructor for making more readable code.
+     * Set methods can be used or ignored for setting fields of the Project; ignored fields will be default primitive values.
+     * (The fields of the builder must be the same as the fields of the object being built)
+     * The ProjectBuilder is a class within the Project class that can be used initialize the private fields of Project.
+     * The no-args builder constructor is needed to instantiate the builder, after which the set methods can be used.
+     * (Arguments put into the builder constructor will be mandatory for initialization; this was left as no-args for flexibility)
+     * All of the setters need to return the builder object for chaining methods (instead of void).
+     * build() is needed last to call the private Project constructor and instantiate with the builder just created.
+     * 
+     * Based on documentation found here: https://www.journaldev.com/1425/builder-design-pattern-in-java
+     * 
+     * @param builder
+     * @Author: Daniel Shaffer 190422-USF-Java
+     */
+	public static class ProjectBuilder {
+		
+		private String name;
+		private String batch;
+		private String trainer;
+		private List<String> groupMembers;
+		private List<String> screenShots;
+		private List<String> dataModel;
+		private List<String> zipLinks;
+		private String description;
+		private String techStack;
+		private String status;
+		
+		public ProjectBuilder setName(String name) {
+			this.name = name;
+			return this;
+		}
+		public ProjectBuilder setBatch(String batch) {
+			this.batch = batch;
+			return this;
+		}
+		public ProjectBuilder setTrainer(String trainer) {
+			this.trainer = trainer;
+			return this;
+		}
+		public ProjectBuilder setGroupMembers(List<String> groupMembers) {
+			this.groupMembers = groupMembers;
+			return this;
+		}
+		public ProjectBuilder setScreenShots(List<String> screenShots) {
+			this.screenShots = screenShots;
+			return this;
+		}
+		public ProjectBuilder setDataModel(List<String> dataModel) {
+			this.dataModel = dataModel;
+			return this;
+		}
+		public ProjectBuilder setZipLinks(List<String> zipLinks) {
+			this.zipLinks = zipLinks;
+			return this;
+		}
+		public ProjectBuilder setDescription(String description) {
+			this.description = description;
+			return this;
+		}
+		public ProjectBuilder setTechStack(String techStack) {
+			this.techStack = techStack;
+			return this;
+		}
+		public ProjectBuilder setStatus(String status) {
+			this.status = status;
+			return this;
+		}
+		
+		public Project build() {
+			return new Project(this);
+		}
+	}
 }
