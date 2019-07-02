@@ -60,6 +60,10 @@ public class Project implements Serializable {
 		this.status = builder.status;
 	}
 
+	public Project() {
+		super();
+	}
+
 	public void addZipLink(String zipLink) {
 		if (zipLinks == null) {
 			zipLinks = new ArrayList<>();

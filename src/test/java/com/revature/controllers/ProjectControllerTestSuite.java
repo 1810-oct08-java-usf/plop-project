@@ -56,7 +56,7 @@ public class ProjectControllerTestSuite {
 	
 	@Before
 	public void setup() {
-		project = new Project();
+		project = new Project.ProjectBuilder().build();
 		projectController = new ProjectController(projectService);
 		projectDTO = new ProjectDTO();
 		projectDTO.setBatch("Cabbage");
@@ -212,8 +212,8 @@ public class ProjectControllerTestSuite {
 	@Ignore //Incomplete
 	@Test
 	public void testGetAllProjectsMoreThanOneProject() {
-		Project project1 = new Project();
-		Project project2 = new Project();
+		Project project1 = new Project.ProjectBuilder().build();
+		Project project2 = new Project.ProjectBuilder().build();
 		List<Project> projectList = new ArrayList<>();
 		
 		projectList.add(project1);
@@ -251,8 +251,8 @@ public class ProjectControllerTestSuite {
 	
 	@Test
 	public void testGetProjectsByNameIfValidName() {
-		Project project3 = new Project();
-		Project project4 = new Project();
+		Project project3 = new Project.ProjectBuilder().build();
+		Project project4 = new Project.ProjectBuilder().build();
 		
 		project3.setName("Kamaria");
 		project4.setName("Kamaria");
@@ -292,8 +292,8 @@ public class ProjectControllerTestSuite {
 	
 	@Test
 	public void testGetProjetsByBatchIfValid() {
-		Project project3 = new Project();
-		Project project4 = new Project();
+		Project project3 = new Project.ProjectBuilder().build();
+		Project project4 = new Project.ProjectBuilder().build();
 		
 		project3.setBatch("Wezley");
 		project4.setBatch("Wezley");
@@ -331,7 +331,7 @@ public class ProjectControllerTestSuite {
 	
 	@Test
 	public void testGetProjectsByStatusIfValid() {
-		Project project5 = new Project();
+		Project project5 = new Project.ProjectBuilder().build();
 		project5.setStatus("Approved");
 		
 		List<Project> projectList = new ArrayList<>();
