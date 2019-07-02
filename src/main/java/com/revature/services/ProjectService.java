@@ -8,6 +8,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.revature.models.Project;
@@ -34,69 +37,91 @@ public class ProjectService {
 
 	/**
 	 * ProjectService.findByName retrieves a list of projects with a given name
+	 * the transaction is read-only and only reads committed data
 	 * 
 	 * @param name the name of the project(s) you want to retrieve
 	 * @return a list of projects with the given name
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
+
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
 	public List<Project> findByName(String name) {
 		return projectRepo.findByName(name);
 	}
 
 	/**
 	 * ProjectService.findByBatch retrieves a list of projects with a given batch name
+	 * the transaction is read-only and only reads committed data
 	 * 
 	 * @param name the batch for the project(s) you want to retrieve
 	 * @return a list of projects with the given batch
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
 	public List<Project> findByBatch(String batch) {
 		return projectRepo.findByBatch(batch);
 	}
 
 	/**
 	 * ProjectService.findByTrainer retrieves a list of projects with a given trainer
-	 * 
+	 *the transaction is read-only and only reads committed data 
 	 * @param name the trainer for the project(s) you want to retrieve
 	 * @return a list of projects with the given trainer
+	 * @author Stuart Pratuh (190422-JAVA-SPARK-USF)
 	 */
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
 	public List<Project> findByTrainer(String trainer) {
 		return projectRepo.findByTrainer(trainer);
 	}
 
 	/**
 	 * ProjectService.findByTechStack retrieves a list of projects with a given techStack
-	 * 
+	 * the transaction is read-only and only reads committed data
 	 * @param name the techStack for the project(s) you want to retrieve
 	 * @return a list of projects with the given techStack
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
 	public List<Project> findByTechStack(String techStack) {
 		return projectRepo.findByTechStack(techStack);
 	}
 
 	/**
 	 * ProjectService.findByStatus retrieves a list of projects with a given status
-	 * 
+	 * The transaction is read-only and only reads committed data
 	 * @param status the status for the project(s) you want to retrieve
 	 * @return a list of projects with the given status
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
 	public List<Project> findByStatus(String status) {
 		return projectRepo.findByStatus(status);
 	}
 
 	/**
 	 * ProjectService.findAllProjects retrieve a list of all projects
+	 * The transaction is read-only and only reads committed data
 	 * 
 	 * @return a list of all projects
+	 * 
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
 	public List<Project> findAllProjects() {
 		return projectRepo.findAll();
 	}
 
 	/**
 	 * ProjectService.deleteById deletes a project with the given id
+	 * Propagation.Requires_New makes the transaction a new transaction
+	 * to ensure a new delete transaction occurs each time.
 	 * 
 	 * @param id an id for a project you want to delete
 	 * @return a boolean indicating if a project with the given id was deleted
+	 * 
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public Boolean deleteById(String id) {
 		if (id != null) {
 			projectRepo.deleteById(id);
@@ -109,6 +134,7 @@ public class ProjectService {
 	/**
 	 * Updates the project by taking in JSON values and mapping them to a Project
 	 * model.
+	 *  Propagation.Requires_New makes a new and different transaction occur each time.
 	 * 
 	 * @param project: User entered JSON data for a project.
 	 * 
@@ -121,7 +147,11 @@ public class ProjectService {
 	 * @author Miles LaCue (1810-Oct08-Java-USF)
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * 
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
+	
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public Boolean updateProject(Project project, String id) {
 		Optional<Project> savedProject = projectRepo.findById(id);
 
@@ -169,6 +199,8 @@ public class ProjectService {
 
 	/**
 	 * ProjectService.createProjectFromDTO accepts a ProjectDTO and persists a Project
+	 * Transaction requires a new one every time to handle each new created object.
+	 * 
 	 * The screenShots field in the DTO contains MultipartFiles that are converted to Files and
 	 * stored. The Project screenShots field is populated with a list of links to those stored images.
 	 * The zipLinks field in the DTO contains links to github repositories. zip archives are downloaded
@@ -177,7 +209,9 @@ public class ProjectService {
 	 * 
 	 * @param projectDTO the data transfer object containing project details
 	 * @return the Project generated from the DTO
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public Project createProjectFromDTO(ProjectDTO projectDTO) {
 		Project newProject = new Project();
 
@@ -222,7 +256,12 @@ public class ProjectService {
 		projectRepo.save(newProject);
 		return newProject;
 	}
-
+	/*
+	 * the transaction is read-only and only reads committed data
+	 * 
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
+	 */
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
 	public Project findById(String id) {
 
 		Optional<Project> currProject = projectRepo.findById(id);
