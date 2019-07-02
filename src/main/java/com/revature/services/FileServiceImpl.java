@@ -24,11 +24,14 @@ public class FileServiceImpl implements FileService {
 	
 	/**
 	 * FileServiceImpl.download simply implements FileService.download
+	 * Added @Transactional
 	 * 
 	 * @param fileURI URI to the file to be downloaded
 	 * @return the downloaded File
 	 * @throws IOException if there is an issue downloading the specified file
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */ 
+	@Transactional
 	public File download(String fileURI) throws IOException {
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());    

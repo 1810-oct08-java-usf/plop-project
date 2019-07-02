@@ -12,12 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class StorageLocalMockImpl implements StorageService {
 
 	Logger logger = Logger.getLogger(StorageLocalMockImpl.class);
-	
+
 	@Override
 	public void init() {
 		logger.warn("Running with mock S3 implementation. This should only be used for a local development environment.");
 	}
-
+	
+	
 	@Override
 	public String store(MultipartFile multipartFile) {
 		return "localhost:8080/unpersisted";
