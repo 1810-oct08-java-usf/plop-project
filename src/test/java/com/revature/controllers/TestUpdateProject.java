@@ -59,8 +59,20 @@ public class TestUpdateProject {
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	
-	private static Project proj = new Project("name","batch","trainer", new ArrayList<String>(), new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(),"description","techstack","approved");
-
+	private static Project proj = new Project.ProjectBuilder()
+			.setName("name")
+			.setBatch("batch")
+			.setTrainer("trainer")
+			.setGroupMembers(new ArrayList<String>())
+			.setScreenShots(new ArrayList<String>())
+			.setDataModel(new ArrayList<String>())
+			.setZipLinks(new ArrayList<String>())
+			.setDescription("description")
+			.setTechStack("techstack")
+			.setStatus("approved")
+			.build();
+//	private static Project proj = new Project("name","batch","trainer", new ArrayList<String>(), new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(),"description","techstack","approved");
+	
 	/**
 	 * This method is going to test if our context loads and is not null.
 	 * 

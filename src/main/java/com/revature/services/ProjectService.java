@@ -213,15 +213,16 @@ public class ProjectService {
 	 */
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public Project createProjectFromDTO(ProjectDTO projectDTO) {
-		Project newProject = new Project();
+		Project newProject = new Project.ProjectBuilder()
 
-		newProject.setName(projectDTO.getName());
-		newProject.setBatch(projectDTO.getBatch());
-		newProject.setTrainer(projectDTO.getTrainer());
-		newProject.setGroupMembers(projectDTO.getGroupMembers());
-		newProject.setDescription(projectDTO.getDescription());
-		newProject.setTechStack(projectDTO.getTechStack());
-		newProject.setStatus(projectDTO.getStatus());
+		.setName(projectDTO.getName())
+		.setBatch(projectDTO.getBatch())
+		.setTrainer(projectDTO.getTrainer())
+		.setGroupMembers(projectDTO.getGroupMembers())
+		.setDescription(projectDTO.getDescription())
+		.setTechStack(projectDTO.getTechStack())
+		.setStatus(projectDTO.getStatus())
+		.build();
 
 		// drop screenshot images in s3 and populate project with links to those images
 		List<String> screenShotsList = new ArrayList<>();
