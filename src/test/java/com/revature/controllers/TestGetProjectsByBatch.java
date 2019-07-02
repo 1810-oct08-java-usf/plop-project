@@ -1,4 +1,4 @@
-package com.revature.tests;
+package com.revature.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;

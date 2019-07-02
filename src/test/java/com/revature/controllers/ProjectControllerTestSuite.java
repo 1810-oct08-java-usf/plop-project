@@ -1,4 +1,4 @@
-package com.revature.tests;
+package com.revature.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
