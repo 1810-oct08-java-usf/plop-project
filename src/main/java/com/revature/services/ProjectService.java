@@ -213,37 +213,52 @@ public class ProjectService {
 	 */
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public Project createProjectFromDTO(ProjectDTO projectDTO) {
+		
+		if(projectDTO == null)
+			return null;
+		
 		Project newProject = new Project.ProjectBuilder()
-
-		.setName(projectDTO.getName())
-		.setBatch(projectDTO.getBatch())
-		.setTrainer(projectDTO.getTrainer())
-		.setGroupMembers(projectDTO.getGroupMembers())
-		.setDescription(projectDTO.getDescription())
-		.setTechStack(projectDTO.getTechStack())
-		.setStatus(projectDTO.getStatus())
-		.build();
-
+			.setName(projectDTO.getName())
+			.setBatch(projectDTO.getBatch())
+			.setTrainer(projectDTO.getTrainer())
+			.setGroupMembers(projectDTO.getGroupMembers())
+			.setDescription(projectDTO.getDescription())
+			.setTechStack(projectDTO.getTechStack())
+			.setStatus(projectDTO.getStatus())
+			.build();
+		
 		// drop screenshot images in s3 and populate project with links to those images
 		List<String> screenShotsList = new ArrayList<>();
 
-		for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
-			String endPoint = s3StorageServiceImpl.store(multipartFile);
-			screenShotsList.add(endPoint);
+		if(projectDTO.getScreenShots() == null)
+			newProject.setScreenShots(screenShotsList);
+		else {
+			for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
+				String endPoint = s3StorageServiceImpl.store(multipartFile);
+				screenShotsList.add(endPoint);
+			}
+			newProject.setScreenShots(screenShotsList);
 		}
-		newProject.setScreenShots(screenShotsList);
 		
 		// load sql files in s3 and populate project with links to those files
 		List<String> dataModelList = new ArrayList<>();
 		
-		for (MultipartFile multipartFile : projectDTO.getDataModel()) {
-			String endPoint = s3StorageServiceImpl.store(multipartFile);
-			dataModelList.add(endPoint);
-		}		
-
+		if(projectDTO.getDataModel() == null)
+			newProject.setDataModel(dataModelList);
+		else {
+			for (MultipartFile multipartFile : projectDTO.getDataModel()) {
+				String endPoint = s3StorageServiceImpl.store(multipartFile);
+				dataModelList.add(endPoint);
+			}		
+			newProject.setDataModel(dataModelList);
+		}
+		
 		// download a zip archive for each repo from github and store them in our s3
 		// bucket,
 		// populating the project object with links to those zip files
+		if(projectDTO.getZipLinks() == null)
+			newProject.setZipLinks(new ArrayList<String>());
+		
 		for (String zipLink : projectDTO.getZipLinks()) {
 			try {
 				// TODO produce an http status code for error getting project zip and ABORT
@@ -257,7 +272,8 @@ public class ProjectService {
 		projectRepo.save(newProject);
 		return newProject;
 	}
-	/*
+	
+	/**
 	 * the transaction is read-only and only reads committed data
 	 * 
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
