@@ -72,8 +72,12 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		String p1_stack = "Java/J2EE";
 		String p1_status = "Approved";
 
-		projectRepo.save(new Project(p1_name, p1_batch, p1_trainer, p1_grpMembers, p1_screens, 
-				p1_zips, p1_dataModel, p1_desc, p1_stack, p1_status));
+		
+		projectRepo.save(new Project.ProjectBuilder()
+				.setName(p1_name).setBatch(p1_batch).setTrainer(p1_trainer)
+				.setGroupMembers(p1_grpMembers).setScreenShots(p1_screens)
+				.setZipLinks(p1_zips).setDataModel(p1_dataModel).setDescription(p1_desc)
+				.setTechStack(p1_stack).setStatus(p1_status).build());
 
 		String p2_name = "Cannons and Goblins";
 		String p2_batch = "190422-Java-USF";
@@ -100,8 +104,11 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		String p2_stack = "Java/J2EE";
 		String p2_status = "Pending";
 		
-		projectRepo.save(new Project(p2_name, p2_batch, p2_trainer, p2_grpMembers, p2_screens, 
-				p2_zips, p2_dataModel, p2_desc, p2_stack, p2_status));
+		projectRepo.save(new Project.ProjectBuilder()
+				.setName(p2_name).setBatch(p2_batch).setTrainer(p2_trainer)
+				.setGroupMembers(p2_grpMembers).setScreenShots(p2_screens)
+				.setZipLinks(p2_zips).setDataModel(p2_dataModel).setDescription(p2_desc)
+				.setTechStack(p2_stack).setStatus(p2_status).build());
 		
 		String p3_name = "XChange";
 		String p3_batch = "1711-Nov13-Java";
@@ -129,8 +136,11 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		String p3_stack = "Java/J2EE";
 		String p3_status = "Approved";
 
-		projectRepo.save(new Project(p3_name, p3_batch, p3_trainer, p3_grpMembers, p3_screens, 
-				p3_zips, p3_dataModel, p3_desc, p3_stack, p3_status));
+		projectRepo.save(new Project.ProjectBuilder()
+				.setName(p3_name).setBatch(p3_batch).setTrainer(p3_trainer)
+				.setGroupMembers(p3_grpMembers).setScreenShots(p3_screens)
+				.setZipLinks(p3_zips).setDataModel(p3_dataModel).setDescription(p3_desc)
+				.setTechStack(p3_stack).setStatus(p3_status).build());
 		
 		String p4_name = "Quizzard";
 		String p4_batch = "1805-May14-JavaScript";
@@ -157,9 +167,11 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		String p4_stack = "NERD";
 		String p4_status = "Approved";
 
-		projectRepo.save(new Project(p4_name, p4_batch, p4_trainer, p4_grpMembers, p4_screens, 
-				p4_zips, p4_dataModel, p4_desc, p4_stack, p4_status));
-		
+		projectRepo.save(new Project.ProjectBuilder()
+				.setName(p4_name).setBatch(p4_batch).setTrainer(p4_trainer)
+				.setGroupMembers(p4_grpMembers).setScreenShots(p4_screens)
+				.setZipLinks(p4_zips).setDataModel(p4_dataModel).setDescription(p4_desc)
+				.setTechStack(p4_stack).setStatus(p4_status).build());
 		
 		String p5_name = "RideForce";
 		String p5_batch = "1808-Aug13-NET";
@@ -182,9 +194,11 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		String p5_stack = ".NET";
 		String p5_status = "Denied";
 
-		projectRepo.save(new Project(p5_name, p5_batch, p5_trainer, p5_grpMembers, p5_screens, 
-				p5_zips, p5_dataModel, p5_desc, p5_stack, p5_status));
-		
+		projectRepo.save(new Project.ProjectBuilder()
+				.setName(p5_name).setBatch(p5_batch).setTrainer(p5_trainer)
+				.setGroupMembers(p5_grpMembers).setScreenShots(p5_screens)
+				.setZipLinks(p5_zips).setDataModel(p5_dataModel).setDescription(p5_desc)
+				.setTechStack(p5_stack).setStatus(p5_status).build());
 	}
 	
 }
