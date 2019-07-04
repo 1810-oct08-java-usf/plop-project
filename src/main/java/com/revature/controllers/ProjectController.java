@@ -131,8 +131,6 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Project addProject
 	( 
-//		@RequestParam("screenShots") MultipartFile screenShots) {
-		
 		@RequestParam("name") String name,
 		@RequestParam("batch") String batch,
 		@RequestParam("trainer") String trainer, 
@@ -144,27 +142,18 @@ public class ProjectController {
 		@RequestParam("status") String status
 	) 
 	{
-		ProjectDTO projectDTO = new ProjectDTO();
-
-		projectDTO.setName(name);
-		projectDTO.setBatch(batch);
-		projectDTO.setTrainer(trainer);
-		projectDTO.setGroupMembers(groupMembers);
-		projectDTO.setScreenShots(screenShots);
-		projectDTO.setZipLinks(zipLinks);
-		projectDTO.setDescription(description);
-		projectDTO.setTechStack(techStack);
-		projectDTO.setStatus(status);
+		ProjectDTO projectDTO = new ProjectDTO.ProjectDTOBuilder()
+		.setName(name)
+		.setBatch(batch)
+		.setTrainer(trainer)
+		.setGroupMembers(groupMembers)
+		.setScreenShots(screenShots)
+		.setZipLinks(zipLinks)
+		.setDescription(description)
+		.setTechStack(techStack)
+		.setStatus(status)
+		.build();
 			
-//		if (projectDTO == null)
-//			throw new ProjectNotAddedException("No Project Data Submitted");
-		if (projectDTO.getBatch() == null)
-			throw new ProjectNotAddedException("The 'batch' input cannot be null when adding project");
-		if (projectDTO.getName() == null)
-			throw new ProjectNotAddedException("The 'name' input cannot be null when adding project");
-		if (projectDTO.getTechStack() == null)
-			throw new ProjectNotAddedException("The 'tech stack' input cannot be null when adding project");
-
 		return projectService.createProjectFromDTO(projectDTO);
 	}
 		

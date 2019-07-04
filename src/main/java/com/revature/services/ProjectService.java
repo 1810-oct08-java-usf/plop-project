@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
@@ -198,24 +199,31 @@ public class ProjectService {
 	}
 
 	/**
-	 * ProjectService.createProjectFromDTO accepts a ProjectDTO and persists a Project
+	 * ProjectService.createProjectFromDTO accepts a ProjectDTO and persists a Project.
 	 * Transaction requires a new one every time to handle each new created object.
 	 * 
 	 * The screenShots field in the DTO contains MultipartFiles that are converted to Files and
 	 * stored. The Project screenShots field is populated with a list of links to those stored images.
-	 * The zipLinks field in the DTO contains links to github repositories. zip archives are downloaded
+	 * The zipLinks field in the DTO contains links to github repositories. Zip archives are downloaded
 	 * from github for each repository and stored in S3. The Project's screenShots field is populated with
 	 * a list of links to those stored zip archives
 	 * 
 	 * @param projectDTO the data transfer object containing project details
 	 * @return the Project generated from the DTO
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
+	 * @author Tucker Mitchell (190422-Java-USF)
 	 */
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public Project createProjectFromDTO(ProjectDTO projectDTO) {
 		
-		if(projectDTO == null)
-			return null;
+		if (projectDTO == null)
+			throw new ProjectNotAddedException("No Project Data Submitted");
+		if (projectDTO.getName() == null || projectDTO.getName().equals(""))
+			throw new ProjectNotAddedException("The 'name' input cannot be empty when adding project");
+		if (projectDTO.getBatch() == null || projectDTO.getBatch().equals(""))
+			throw new ProjectNotAddedException("The 'batch' input cannot be empty when adding project");		
+		if (projectDTO.getTechStack() == null || projectDTO.getTechStack().equals(""))
+			throw new ProjectNotAddedException("The 'tech stack' input cannot be empty when adding project");
 		
 		Project newProject = new Project.ProjectBuilder()
 			.setName(projectDTO.getName())
