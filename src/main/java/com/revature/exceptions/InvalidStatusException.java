@@ -4,16 +4,16 @@ public class InvalidStatusException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	
-	public InvalidStatusException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
+	public InvalidStatusException(String message, Throwable cause) {
+		super(message, cause);
 	}
 	
-	public InvalidStatusException(String arg0) {
-		super(arg0);
+	public InvalidStatusException(String message) {
+		super(message);
 	}
 	
-	public InvalidStatusException(Throwable arg1) {
-		super(arg1);
+	public InvalidStatusException(Throwable cause) {
+		super(cause);
 	}
 	
 	
