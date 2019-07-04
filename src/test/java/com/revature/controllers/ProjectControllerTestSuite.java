@@ -58,10 +58,11 @@ public class ProjectControllerTestSuite {
 	public void setup() {
 		project = new Project.ProjectBuilder().build();
 		projectController = new ProjectController(projectService);
-		projectDTO = new ProjectDTO();
-		projectDTO.setBatch("Cabbage");
-		projectDTO.setName("Kids");
-		projectDTO.setTechStack("Light, Water, Soil");
+		projectDTO = new ProjectDTO.ProjectDTOBuilder()
+		.setBatch("Cabbage")
+		.setName("Kids")
+		.setTechStack("Light, Water, Soil")
+		.build();
 	}
 
 	/**
@@ -74,7 +75,9 @@ public class ProjectControllerTestSuite {
 	public void testAddProjectIfProjectValid() {
 		
 		when(projectService.createProjectFromDTO(projectDTO)).thenReturn(project);
-		projectController.addProject(projectDTO);
+		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
+				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus());
 		verify(projectService).createProjectFromDTO(projectDTO);
 		
 	}
@@ -85,14 +88,14 @@ public class ProjectControllerTestSuite {
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
 	 */
 	
-	@Test
-	public void testAddProjectIfPassedNull() {
-		
-		exceptionRule.expect(ProjectNotAddedException.class);
-		exceptionRule.expectMessage("No Project Data Submitted");
-		
-		projectController.addProject(null);
-	}
+//	@Test
+//	public void testAddProjectIfPassedNull() {
+//		
+//		exceptionRule.expect(ProjectNotAddedException.class);
+//		exceptionRule.expectMessage("No Project Data Submitted");
+//		
+//		projectController.addProject(null);
+//	}
 	
 	/**
 	 * Test if addProject throws appropriate exception if 
@@ -107,9 +110,11 @@ public class ProjectControllerTestSuite {
 		projectDTO.setBatch(null);		
 		
 		exceptionRule.expect(ProjectNotAddedException.class);
-		exceptionRule.expectMessage("The 'batch' input cannot be null when adding project");
+		exceptionRule.expectMessage("The 'batch' input cannot be empty when adding project");
 		
-		projectController.addProject(projectDTO);
+		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
+				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus());
 	}
 	
 	
@@ -126,9 +131,11 @@ public class ProjectControllerTestSuite {
 		projectDTO.setName(null);		
 		
 		exceptionRule.expect(ProjectNotAddedException.class);
-		exceptionRule.expectMessage("The 'name' input cannot be null when adding project");
+		exceptionRule.expectMessage("The 'name' input cannot be empty when adding project");
 		
-		projectController.addProject(projectDTO);
+		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
+				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus());
 	}
 	
 	/**
@@ -144,9 +151,11 @@ public class ProjectControllerTestSuite {
 		projectDTO.setTechStack(null);		
 		
 		exceptionRule.expect(ProjectNotAddedException.class);
-		exceptionRule.expectMessage("The 'tech stack' input cannot be null when adding project");
+		exceptionRule.expectMessage("The 'tech stack' input cannot be empty when adding project");
 		
-		projectController.addProject(projectDTO);
+		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
+				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus());
 	}
 	
 	/**

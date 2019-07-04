@@ -114,14 +114,20 @@ public class ProjectController {
 
 	/**
 	 * 
-	 * This method accepts each field of a ProjectDTO object in the form of multipart form data.and checks it for a few basic issues before sending it to
-	 * the service layer to be turned into a project and saved. LOOK AT THE SERVICE LAYER!!!! It is 
-	 * very important to understand the subtle difference between Projects and their DTOs. 
+	 * This method accepts each field of a ProjectDTO object in the form of multipart form data.
+	 * A ProjectDTO object is created from the fields and sent to the service layer to be converted 
+	 * to a Project object and saved.
 	 * 
-	 * Don't blame me. I didn't write it that way.
+	 * @param name the name field of the form data
+	 * @param batch the batch field of the form data
+	 * @param trainer the trainer field of the form data
+	 * @param groupMembers the groupMembers field of the form data
+	 * @param screenShots the screenShots field of the form data
+	 * @param zipLinks the zipLinks field of the form data
+	 * @param description the description field of the form data
+	 * @param techStack the techStack field of the form data
+	 * @param status the status field of the form data
 	 * 
-	 * @param ProjectDTO: Digital transfer object sent from client-side and used to create a 
-	 * 	 					Project object that will be saved in the database
 	 * @return project: The Project object derived from ProjectDTO in the service layer. 
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
 	 * @author Tucker Mitchell (190422-Java-USF)
