@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
@@ -113,7 +114,7 @@ public class ProjectController {
 
 	/**
 	 * 
-	 * This method accepts a ProjectDTO and checks it for a few basic issues before sending it to
+	 * This method accepts each field of a ProjectDTO object in the form of multipart form data.and checks it for a few basic issues before sending it to
 	 * the service layer to be turned into a project and saved. LOOK AT THE SERVICE LAYER!!!! It is 
 	 * very important to understand the subtle difference between Projects and their DTOs. 
 	 * 
@@ -123,13 +124,40 @@ public class ProjectController {
 	 * 	 					Project object that will be saved in the database
 	 * @return project: The Project object derived from ProjectDTO in the service layer. 
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
+	 * @author Tucker Mitchell (190422-Java-USF)
 	 */
 	
-	@PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Project addProject( @RequestBody ProjectDTO projectDTO) {
-		if (projectDTO == null)
-			throw new ProjectNotAddedException("No Project Data Submitted");
+	public Project addProject
+	( 
+//		@RequestParam("screenShots") MultipartFile screenShots) {
+		
+		@RequestParam("name") String name,
+		@RequestParam("batch") String batch,
+		@RequestParam("trainer") String trainer, 
+		@RequestParam("groupMembers") List<String> groupMembers,
+		@RequestParam("screenShots") List<MultipartFile> screenShots, 
+		@RequestParam("zipLinks") List<String> zipLinks,
+		@RequestParam("description") String description, 
+		@RequestParam("techStack") String techStack, 
+		@RequestParam("status") String status
+	) 
+	{
+		ProjectDTO projectDTO = new ProjectDTO();
+
+		projectDTO.setName(name);
+		projectDTO.setBatch(batch);
+		projectDTO.setTrainer(trainer);
+		projectDTO.setGroupMembers(groupMembers);
+		projectDTO.setScreenShots(screenShots);
+		projectDTO.setZipLinks(zipLinks);
+		projectDTO.setDescription(description);
+		projectDTO.setTechStack(techStack);
+		projectDTO.setStatus(status);
+			
+//		if (projectDTO == null)
+//			throw new ProjectNotAddedException("No Project Data Submitted");
 		if (projectDTO.getBatch() == null)
 			throw new ProjectNotAddedException("The 'batch' input cannot be null when adding project");
 		if (projectDTO.getName() == null)
@@ -137,9 +165,7 @@ public class ProjectController {
 		if (projectDTO.getTechStack() == null)
 			throw new ProjectNotAddedException("The 'tech stack' input cannot be null when adding project");
 
-		Project project = projectService.createProjectFromDTO(projectDTO);
-		
-		return project;
+		return projectService.createProjectFromDTO(projectDTO);
 	}
 		
 	/*
