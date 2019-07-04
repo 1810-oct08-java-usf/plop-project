@@ -216,9 +216,10 @@ public class ProjectControllerTestSuite {
 	/**
 	 * Test for returning a non-empty list of projects.
 	 * @author Kamaria DeRamus & Bjorn Pedersen (190107-Java-Spark-USF)
+	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
+	 * 
 	 */
 	
-	@Ignore //Incomplete
 	@Test
 	public void testGetAllProjectsMoreThanOneProject() {
 		Project project1 = new Project.ProjectBuilder().build();
@@ -230,7 +231,7 @@ public class ProjectControllerTestSuite {
 		
 		when(projectService.findAllProjects()).thenReturn(projectList);
 		
-		assertEquals(new ArrayList<>(), projectController.getAllProjects());
+		assertEquals(projectList, projectController.getAllProjects());
 		
 		verify(projectService).findAllProjects();
 	}
