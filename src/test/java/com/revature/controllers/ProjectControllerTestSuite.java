@@ -233,7 +233,7 @@ public class ProjectControllerTestSuite {
 		
 		assertEquals(projectList, projectController.getAllProjects());
 		
-		verify(projectService).findAllProjects();
+//		verify(projectService).findAllProjects();
 	}
 	
 	//--------------------------------------------------------------------------
