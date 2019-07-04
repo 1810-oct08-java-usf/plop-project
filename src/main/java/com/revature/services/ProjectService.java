@@ -258,17 +258,17 @@ public class ProjectService {
 		// populating the project object with links to those zip files
 		if(projectDTO.getZipLinks() == null)
 			newProject.setZipLinks(new ArrayList<String>());
-		
-		for (String zipLink : projectDTO.getZipLinks()) {
-			try {
-				// TODO produce an http status code for error getting project zip and ABORT
-				File zipArchive = fileService.download(zipLink + "/archive/master.zip");
-				newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));
-			} catch (IOException e) {
-				e.printStackTrace();
+		else {
+			for (String zipLink : projectDTO.getZipLinks()) {
+				try {
+					// TODO produce an http status code for error getting project zip and ABORT
+					File zipArchive = fileService.download(zipLink + "/archive/master.zip");
+					newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
 		projectRepo.save(newProject);
 		return newProject;
 	}
