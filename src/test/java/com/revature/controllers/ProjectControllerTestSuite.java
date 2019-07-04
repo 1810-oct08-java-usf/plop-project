@@ -183,7 +183,7 @@ public class ProjectControllerTestSuite {
 	 * Test for exception to be thrown when project not found in database via ID.
 	 * 
 	 * @author Bjorn Pedersen & Brandon Morris (190107-Java-Spark-USF)
-	 * 
+	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 */
 	@Test
 	public void testDeleteByIdIfNotFound() {
@@ -191,7 +191,7 @@ public class ProjectControllerTestSuite {
 		when(projectService.findById("47")).thenReturn(null);
 
 		exceptionRule.expect(ProjectNotFoundException.class);
-		exceptionRule.expectMessage("ID entered cannot be found to delete this project");
+		exceptionRule.expectMessage("Project with id: 47, cannot be found to delete this project.");
 
 		projectController.deleteById("47");
 	}
