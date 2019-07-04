@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.revature.exceptions.InvalidStatusException;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
@@ -43,11 +44,15 @@ public class ProjectController {
 	 * HTTP method GET and only retrieves JSON data.
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 */
 	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getAllProjects() {
 		System.out.println("In Project Controller getAllProjects");
+		if(projectService.findAllProjects() == null) {
+			throw new ProjectNotFoundException("There are no projects in the database.");
+		}
 		return projectService.findAllProjects();
 	}
 
@@ -58,11 +63,15 @@ public class ProjectController {
 	 * @param id: String that serves as the id for the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 */
 	@GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public Project getProjectById(@PathVariable String id) {
 		System.out.println("In Project Controller getProjectById "+ id);
+		if(projectService.findById(id) == null) {
+			throw new ProjectNotFoundException("There is no project with id: " + id + ", in the database.");
+		}
 		return projectService.findById(id);
 	}
 
@@ -73,11 +82,15 @@ public class ProjectController {
 	 * @param name: String that serves as the name of the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 */
 	@GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getProjectsByName(@PathVariable String name) {
 		System.out.println("In Project Controller getProjectsByName " + name);
+		if(projectService.findByName(name) == null) {
+			throw new ProjectNotFoundException("There is no project named: " + name + ", in the database.");
+		}
 		return projectService.findByName(name);
 	}
 
@@ -88,11 +101,15 @@ public class ProjectController {
 	 * @param batch: String that serves as the batch for the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 */
 	@GetMapping(value = "/batch/{batch}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getProjectsByBatch(@PathVariable String batch) {
 		System.out.println("In Project Controller getProjectsByBatch " + batch);
+		if(projectService.findByBatch(batch) == null) {
+			throw new ProjectNotFoundException("There is no project associated with batch: " + batch + ", in the database.");
+		}
 		return projectService.findByBatch(batch);
 	}
 
@@ -103,11 +120,15 @@ public class ProjectController {
 	 * @param status: String that serves as the status of the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 */
 	@GetMapping(value = "/status/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Project> getProjectsByStatus(@PathVariable String status) {
 		System.out.println("In Project Controller getProjectsByStatus " + status);
+		if(projectService.findByStatus(status) == null) {
+			throw new ProjectNotFoundException("There are currently no projects with status: " + status + ", in the database");
+		}
 		return projectService.findByStatus(status);
 	}
 
@@ -123,6 +144,7 @@ public class ProjectController {
 	 * 	 					Project object that will be saved in the database
 	 * @return project: The Project object derived from ProjectDTO in the service layer. 
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
+	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 */
 	
 	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -219,13 +241,14 @@ public class ProjectController {
 	 * @param id: String that serves as the id for the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
+	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 */
 	@DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
 	public Boolean deleteById(@PathVariable String id) {
 		Project ID = projectService.findById(id);
 		if (ID == null) {
-			throw new ProjectNotFoundException("ID entered cannot be found to delete this project");
+			throw new ProjectNotFoundException("Project with id: " + id + ", cannot be found to delete this project.");
 		}
 		return projectService.deleteById(id);
 	}
@@ -247,6 +270,7 @@ public class ProjectController {
 	 * @author Michael Grammens (1810-Oct22-Java-USF)
 	 * @author Bronwen Hughes (1810-Oct22-Java-USF)
 	 * @author Phillip Pride (1810-Oct22-Java-USF)
+	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 * 
 	 */
 	// TODO should let you update screenshots and repositories
@@ -257,11 +281,11 @@ public class ProjectController {
 		Project backendProject = projectService.findById(id);
 		//check that the project exists
 		if (backendProject == null) {	
-			throw new ProjectNotFoundException("ID entered cannot be found to complete update.");
+			throw new ProjectNotFoundException("Project with id: " + id + ", cannot be found to update this project.");
 		}
 		//check that status is valid
 		if(!project.getStatus().equalsIgnoreCase("approved") && !project.getStatus().equalsIgnoreCase("denied") && !project.getStatus().equalsIgnoreCase("pending")) {
-			throw new ProjectNotFoundException("Status is unacceptable.");
+			throw new InvalidStatusException("Status: " + project.getStatus() + ", is unacceptable.");
 		}
 		
 			return projectService.updateProject(project, id);
@@ -290,7 +314,7 @@ public class ProjectController {
 		ProjectErrorResponse error = new ProjectErrorResponse();
 		error.setStatus(HttpStatus.NOT_FOUND.value());
 		error.setMessage(pnfe.getMessage());
-		error.setTimmeStamp(System.currentTimeMillis());
+		error.setTimeStamp(System.currentTimeMillis());
 		return error;
 	}
 
@@ -315,7 +339,32 @@ public class ProjectController {
 		ProjectErrorResponse error = new ProjectErrorResponse();
 		error.setStatus(HttpStatus.BAD_REQUEST.value());
 		error.setMessage(pnae.getMessage());
-		error.setTimmeStamp(System.currentTimeMillis());
+		error.setTimeStamp(System.currentTimeMillis());
+		return error;
+	}
+	
+	/**
+	 * This method is used to send a status code into the client based on the
+	 * validity of the information sent.
+	 * 
+	 * Exception Handler for Invalid Status Response which is used for updateProject()
+	 * 
+	 * Uses @ExceptionHandler annotation. Creates a new error response
+	 * error.setStatus: Defines the value of the status code returned if
+	 * thrown(BAD_REQUEST) error.setMessage: Defines a custom message sent to the
+	 * client if the exception is thrown error.setTimeStamp: Defines the time this
+	 * error was thrown
+	 * 
+	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
+	 * 
+	 */
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ProjectErrorResponse handleExceptions(InvalidStatusException ise) {
+		ProjectErrorResponse error = new ProjectErrorResponse();
+		error.setStatus(HttpStatus.BAD_REQUEST.value());
+		error.setMessage(ise.getMessage());
+		error.setTimeStamp(System.currentTimeMillis());
 		return error;
 	}
 

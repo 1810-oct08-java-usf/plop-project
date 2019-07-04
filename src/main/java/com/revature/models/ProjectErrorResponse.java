@@ -7,17 +7,17 @@ package com.revature.models;
 public class ProjectErrorResponse {
 	private int status;
 	private String message;
-	private long timmeStamp;
+	private long timeStamp;
 	
 	public ProjectErrorResponse() {
 		super();
 	}
 
-	public ProjectErrorResponse(int status, String message, long timmeStamp) {
+	public ProjectErrorResponse(int status, String message, long timeStamp) {
 		super();
 		this.status = status;
 		this.message = message;
-		this.timmeStamp = timmeStamp;
+		this.timeStamp = timeStamp;
 	}
 
 	public int getStatus() {
@@ -36,12 +36,12 @@ public class ProjectErrorResponse {
 		this.message = message;
 	}
 
-	public long getTimmeStamp() {
-		return timmeStamp;
+	public long getTimeStamp() {
+		return timeStamp;
 	}
 
-	public void setTimmeStamp(long timmeStamp) {
-		this.timmeStamp = timmeStamp;
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class ProjectErrorResponse {
 		int result = 1;
 		result = prime * result + ((message == null) ? 0 : message.hashCode());
 		result = prime * result + status;
-		result = prime * result + (int) (timmeStamp ^ (timmeStamp >>> 32));
+		result = prime * result + (int) (timeStamp ^ (timeStamp >>> 32));
 		return result;
 	}
 
@@ -70,14 +70,14 @@ public class ProjectErrorResponse {
 			return false;
 		if (status != other.status)
 			return false;
-		if (timmeStamp != other.timmeStamp)
+		if (timeStamp != other.timeStamp)
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "ProjectErrorResponse [status=" + status + ", message=" + message + ", timmeStamp=" + timmeStamp + "]";
+		return "ProjectErrorResponse [status=" + status + ", message=" + message + ", timeStamp=" + timeStamp + "]";
 	}
 	
 	
