@@ -216,15 +216,6 @@ public class ProjectService {
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public Project createProjectFromDTO(ProjectDTO projectDTO) {
 		
-		if (projectDTO == null)
-			throw new ProjectNotAddedException("No Project Data Submitted");
-		if (projectDTO.getName() == null || projectDTO.getName().equals(""))
-			throw new ProjectNotAddedException("The 'name' input cannot be empty when adding project");
-		if (projectDTO.getBatch() == null || projectDTO.getBatch().equals(""))
-			throw new ProjectNotAddedException("The 'batch' input cannot be empty when adding project");		
-		if (projectDTO.getTechStack() == null || projectDTO.getTechStack().equals(""))
-			throw new ProjectNotAddedException("The 'tech stack' input cannot be empty when adding project");
-		
 		Project newProject = new Project.ProjectBuilder()
 			.setName(projectDTO.getName())
 			.setBatch(projectDTO.getBatch())

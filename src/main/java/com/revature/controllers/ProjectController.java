@@ -148,6 +148,13 @@ public class ProjectController {
 		@RequestParam("status") String status
 	) 
 	{
+		if (name == null || name.equals(""))
+			throw new ProjectNotAddedException("The 'name' input cannot be empty when adding project");
+		if (batch == null || batch.equals(""))
+			throw new ProjectNotAddedException("The 'batch' input cannot be empty when adding project");		
+		if (techStack == null || techStack.equals(""))
+			throw new ProjectNotAddedException("The 'tech stack' input cannot be empty when adding project");
+		
 		ProjectDTO projectDTO = new ProjectDTO.ProjectDTOBuilder()
 		.setName(name)
 		.setBatch(batch)
