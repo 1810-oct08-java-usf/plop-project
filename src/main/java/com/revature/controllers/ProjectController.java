@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.revature.exceptions.InvalidStatusException;
 import com.revature.exceptions.ProjectNotAddedException;
@@ -134,34 +135,61 @@ public class ProjectController {
 
 	/**
 	 * 
-	 * This method accepts a ProjectDTO and checks it for a few basic issues before sending it to
-	 * the service layer to be turned into a project and saved. LOOK AT THE SERVICE LAYER!!!! It is 
-	 * very important to understand the subtle difference between Projects and their DTOs. 
+	 * This method accepts each field of a ProjectDTO object in the form of multipart form data.
+	 * A ProjectDTO object is created from the fields and sent to the service layer to be converted 
+	 * to a Project object and saved.
 	 * 
-	 * Don't blame me. I didn't write it that way.
+	 * @param name the name field of the form data
+	 * @param batch the batch field of the form data
+	 * @param trainer the trainer field of the form data
+	 * @param groupMembers the groupMembers field of the form data
+	 * @param screenShots the screenShots field of the form data
+	 * @param zipLinks the zipLinks field of the form data
+	 * @param description the description field of the form data
+	 * @param techStack the techStack field of the form data
+	 * @param status the status field of the form data
 	 * 
-	 * @param ProjectDTO: Digital transfer object sent from client-side and used to create a 
-	 * 	 					Project object that will be saved in the database
 	 * @return project: The Project object derived from ProjectDTO in the service layer. 
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
+	 * @author Tucker Mitchell (190422-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 */
 	
-	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Project addProject( @RequestParam ProjectDTO projectDTO) {
-		if (projectDTO == null)
-			throw new ProjectNotAddedException("No Project Data Submitted");
-		if (projectDTO.getBatch() == null)
-			throw new ProjectNotAddedException("The 'batch' input cannot be null when adding project");
-		if (projectDTO.getName() == null)
-			throw new ProjectNotAddedException("The 'name' input cannot be null when adding project");
-		if (projectDTO.getTechStack() == null)
-			throw new ProjectNotAddedException("The 'tech stack' input cannot be null when adding project");
-
-		Project project = projectService.createProjectFromDTO(projectDTO);
+	public Project addProject
+	( 
+		@RequestParam("name") String name,
+		@RequestParam("batch") String batch,
+		@RequestParam("trainer") String trainer, 
+		@RequestParam("groupMembers") List<String> groupMembers,
+		@RequestParam("screenShots") List<MultipartFile> screenShots, 
+		@RequestParam("zipLinks") List<String> zipLinks,
+		@RequestParam("description") String description, 
+		@RequestParam("techStack") String techStack, 
+		@RequestParam("status") String status
+	) 
+	{
+		if (name == null || name.equals(""))
+			throw new ProjectNotAddedException("The 'name' input cannot be empty when adding project");
+		if (batch == null || batch.equals(""))
+			throw new ProjectNotAddedException("The 'batch' input cannot be empty when adding project");		
+		if (techStack == null || techStack.equals(""))
+			throw new ProjectNotAddedException("The 'tech stack' input cannot be empty when adding project");
 		
-		return project;
+		ProjectDTO projectDTO = new ProjectDTO.ProjectDTOBuilder()
+		.setName(name)
+		.setBatch(batch)
+		.setTrainer(trainer)
+		.setGroupMembers(groupMembers)
+		.setScreenShots(screenShots)
+		.setZipLinks(zipLinks)
+		.setDescription(description)
+		.setTechStack(techStack)
+		.setStatus(status)
+		.build();
+			
+		return projectService.createProjectFromDTO(projectDTO);
 	}
 		
 	/*
