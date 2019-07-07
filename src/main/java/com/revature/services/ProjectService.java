@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
@@ -198,66 +199,80 @@ public class ProjectService {
 	}
 
 	/**
-	 * ProjectService.createProjectFromDTO accepts a ProjectDTO and persists a Project
+	 * ProjectService.createProjectFromDTO accepts a ProjectDTO and persists a Project.
 	 * Transaction requires a new one every time to handle each new created object.
 	 * 
 	 * The screenShots field in the DTO contains MultipartFiles that are converted to Files and
 	 * stored. The Project screenShots field is populated with a list of links to those stored images.
-	 * The zipLinks field in the DTO contains links to github repositories. zip archives are downloaded
+	 * The zipLinks field in the DTO contains links to github repositories. Zip archives are downloaded
 	 * from github for each repository and stored in S3. The Project's screenShots field is populated with
 	 * a list of links to those stored zip archives
 	 * 
 	 * @param projectDTO the data transfer object containing project details
 	 * @return the Project generated from the DTO
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
+	 * @author Tucker Mitchell (190422-Java-USF)
 	 */
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public Project createProjectFromDTO(ProjectDTO projectDTO) {
+		
 		Project newProject = new Project.ProjectBuilder()
-
-		.setName(projectDTO.getName())
-		.setBatch(projectDTO.getBatch())
-		.setTrainer(projectDTO.getTrainer())
-		.setGroupMembers(projectDTO.getGroupMembers())
-		.setDescription(projectDTO.getDescription())
-		.setTechStack(projectDTO.getTechStack())
-		.setStatus(projectDTO.getStatus())
-		.build();
-
+			.setName(projectDTO.getName())
+			.setBatch(projectDTO.getBatch())
+			.setTrainer(projectDTO.getTrainer())
+			.setGroupMembers(projectDTO.getGroupMembers())
+			.setDescription(projectDTO.getDescription())
+			.setTechStack(projectDTO.getTechStack())
+			.setStatus(projectDTO.getStatus())
+			.build();
+		
 		// drop screenshot images in s3 and populate project with links to those images
 		List<String> screenShotsList = new ArrayList<>();
 
-		for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
-			String endPoint = s3StorageServiceImpl.store(multipartFile);
-			screenShotsList.add(endPoint);
+		if(projectDTO.getScreenShots() == null)
+			newProject.setScreenShots(screenShotsList);
+		else {
+			for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
+				String endPoint = s3StorageServiceImpl.store(multipartFile);
+				screenShotsList.add(endPoint);
+			}
+			newProject.setScreenShots(screenShotsList);
 		}
-		newProject.setScreenShots(screenShotsList);
 		
 		// load sql files in s3 and populate project with links to those files
 		List<String> dataModelList = new ArrayList<>();
 		
-		for (MultipartFile multipartFile : projectDTO.getDataModel()) {
-			String endPoint = s3StorageServiceImpl.store(multipartFile);
-			dataModelList.add(endPoint);
-		}		
-
+		if(projectDTO.getDataModel() == null)
+			newProject.setDataModel(dataModelList);
+		else {
+			for (MultipartFile multipartFile : projectDTO.getDataModel()) {
+				String endPoint = s3StorageServiceImpl.store(multipartFile);
+				dataModelList.add(endPoint);
+			}		
+			newProject.setDataModel(dataModelList);
+		}
+		
 		// download a zip archive for each repo from github and store them in our s3
 		// bucket,
 		// populating the project object with links to those zip files
-		for (String zipLink : projectDTO.getZipLinks()) {
-			try {
-				// TODO produce an http status code for error getting project zip and ABORT
-				File zipArchive = fileService.download(zipLink + "/archive/master.zip");
-				newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));
-			} catch (IOException e) {
-				e.printStackTrace();
+		if(projectDTO.getZipLinks() == null)
+			newProject.setZipLinks(new ArrayList<String>());
+		else {
+			for (String zipLink : projectDTO.getZipLinks()) {
+				try {
+					// TODO produce an http status code for error getting project zip and ABORT
+					File zipArchive = fileService.download(zipLink + "/archive/master.zip");
+					newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
 		projectRepo.save(newProject);
 		return newProject;
 	}
-	/*
+	
+	/**
 	 * the transaction is read-only and only reads committed data
 	 * 
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)

@@ -102,7 +102,7 @@ public class TestGetProjectsByBatch {
 		
 		when(mockProjectService.findByBatch(pathVariable)).thenReturn(null);
 		
-		this.mockMvc.perform(get(uri + pathVariable)).andExpect(status().isOk()).andExpect(content().string(""));
+		this.mockMvc.perform(get(uri + pathVariable)).andExpect(status().isNotFound());
 	}
 	
 	/**

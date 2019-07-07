@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.revature.helpers.FileHelper;
+import com.revature.util.FileHelper;
 
 /**
  * FileServiceImpl implements FileService
