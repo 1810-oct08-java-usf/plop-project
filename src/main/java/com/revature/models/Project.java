@@ -9,11 +9,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.stereotype.Component;
 
 /**
  * the Project class (implementing Serializable) represents a successfully-submitted project
  */
 // TODO this class should have JSR-303 (Bean Validator) annotations (@NotNull, @Pattern, etc.)
+@Component
 public class Project implements Serializable {
 
 	private static final long serialVersionUID = -1295401907345421001L;
