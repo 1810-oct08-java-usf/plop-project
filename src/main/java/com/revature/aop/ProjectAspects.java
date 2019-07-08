@@ -1,31 +1,43 @@
 package com.revature.aop;
 
+import java.time.LocalTime;
+import java.util.Arrays;
+
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.context.annotation.Configuration;
-
-/**
- * Currently used to get extra debug information without having
- * to scatter code throughout service.
- * @author Joshua
- *
- */
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
 
 @Aspect
-@Configuration
+@Component
 public class ProjectAspects {
+		
+    @Pointcut("execution(* com.revature..*(..))")
+    public void logAll() {
+    }
 	
-	/**
-	 * Used for getting any errors thrown from methods
-	 * @param joinPoint
-	 * @param ex
-	 */
-	@AfterThrowing(pointcut = "execution(* com.revature..*(..))", throwing = "ex")
-	public void errorOcurance(JoinPoint joinPoint, Exception ex){
-		System.out.println("An Error Has Occured");
-		ex.printStackTrace();
+	@Before("logAll()")
+	public void beforeExec(JoinPoint jp) {
+		System.out.println("[LOG] - [project-service]");
+		System.out.println("	Timestamp: "+LocalTime.now());
+		System.out.println("	Before method: "+jp.getClass()+" "+jp.getSignature().getName());
+		System.out.println("	Input arguments: "+Arrays.toString(jp.getArgs()));
 	}
 	
+	@AfterReturning(pointcut="logAll()",returning="result")
+	public void afterReturn(JoinPoint jp, Object result) {
+		System.out.println("[LOG] - [project-service]");
+		System.out.println("	Timestamp: "+LocalTime.now());
+		System.out.println("	After method: "+jp.getClass()+" "+jp.getSignature().getName());
+		System.out.println("	Returned values: "+result+"\n");
+	}
 
+	@AfterThrowing(pointcut = "logAll()", throwing = "ex")
+	public void errorOcurance(JoinPoint joinPoint, Exception ex){
+		System.out.println("[ERROR]-[project-service] - Error caught: "+ex.getMessage());
+	}
+	
 }
