@@ -1,5 +1,6 @@
 package com.revature.aop;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Arrays;
 
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjectAspects {
 	
-	long now;
+	LocalTime now;
 	
     @Pointcut("execution(* com.revature..*(..))")
     public void logAll() {
@@ -30,10 +31,10 @@ public class ProjectAspects {
 	
 	@Before("logAll()")
 	public void beforeExec(JoinPoint jp) {
-		this.now = System.currentTimeMillis();
+		this.now = LocalTime.now();
 		System.out.println("[LOG] - [project-service]");
 		System.out.println("	Before method: 		"+jp.getClass()+" "+jp.getSignature().getName());
-		System.out.println("	Timestamp: 		"+LocalTime.now());
+		System.out.println("	Timestamp: 		"+this.now);
 		System.out.println("	Input arguments: 	"+Arrays.toString(jp.getArgs()));
 	}
 	
@@ -41,7 +42,7 @@ public class ProjectAspects {
 	public void afterReturn(JoinPoint jp, Object result) {
 		System.out.println("[LOG] - [project-service]");
 		System.out.println("	After method: 			"+jp.getClass()+" "+jp.getSignature().getName());
-		System.out.println("	Milliseconds to complete: 	"+(this.now-System.currentTimeMillis()));
+		System.out.println("	Milliseconds to complete: 	"+Duration.between(this.now,LocalTime.now()));
 		System.out.println("	Returned values: 		"+result+"\n");
 	}
 	
