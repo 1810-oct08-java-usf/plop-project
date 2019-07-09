@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,7 +54,7 @@ public class ProjectController {
 	 */
 	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN', 'USER')")
+//	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public List<Project> getAllProjects() {
 		System.out.println("In Project Controller getAllProjects");
 		if(projectService.findAllProjects() == null) {
@@ -100,7 +100,7 @@ public class ProjectController {
 	 */
 	@GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN', 'USER')")
+//	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public List<Project> getProjectsByName(@PathVariable String name) {
 		System.out.println("In Project Controller getProjectsByName " + name);
 		if(projectService.findByName(name) == null) {
@@ -123,10 +123,10 @@ public class ProjectController {
 	 */
 	@GetMapping(value = "/batch/{batch}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN', 'USER')")
+//	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public List<Project> getProjectsByBatch(@PathVariable String batch) {
-		System.out.println("In Project Controller getProjectsByBatch " + batch);
-		if(projectService.findByBatch(batch) == null) {
+		List<Project> result = projectService.findByBatch(batch);
+		if(result.isEmpty()) {
 			throw new ProjectNotFoundException("There is no project associated with batch: " + batch + ", in the database.");
 		}
 		return projectService.findByBatch(batch);
@@ -397,6 +397,16 @@ public class ProjectController {
 	public ProjectErrorResponse handleExceptions(ProjectNotAddedException pnae) {
 		ProjectErrorResponse error = new ProjectErrorResponse();
 		error.setStatus(HttpStatus.BAD_REQUEST.value());
+		error.setMessage(pnae.getMessage());
+		error.setTimeStamp(System.currentTimeMillis());
+		return error;
+	}
+	
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnae) {
+		ProjectErrorResponse error = new ProjectErrorResponse();
+		error.setStatus(HttpStatus.NOT_FOUND.value());
 		error.setMessage(pnae.getMessage());
 		error.setTimeStamp(System.currentTimeMillis());
 		return error;
