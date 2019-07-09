@@ -167,7 +167,8 @@ public class ProjectController {
 		@RequestParam("zipLinks") List<String> zipLinks,
 		@RequestParam("description") String description, 
 		@RequestParam("techStack") String techStack, 
-		@RequestParam("status") String status
+		@RequestParam("status") String status,
+		@RequestParam("dataModel") List<MultipartFile> dataModel
 	) 
 	{
 		if (name == null || name.equals(""))
@@ -187,6 +188,7 @@ public class ProjectController {
 		.setDescription(description)
 		.setTechStack(techStack)
 		.setStatus(status)
+		.setDataModel(dataModel)
 		.build();
 			
 		return projectService.createProjectFromDTO(projectDTO);
