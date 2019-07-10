@@ -93,11 +93,6 @@ public class StorageLocalMockImpl implements StorageService {
 	public String store(MultipartFile multipartFile) {
 		System.out.println("inside store(multipartFile) method");
 		try {
-			System.out.println("multipartFile: " + multipartFile);
-			System.out.println("multipartFileOriginalFilename: " + multipartFile.getOriginalFilename());
-			System.out.println("fileHelper.convert(): " + FileHelper.convert(multipartFile));
-			System.out.println("s3Client: " + s3Client);
-			System.out.println("bucketName: " + bucketName);
 			s3Client.putObject(bucketName, multipartFile.getOriginalFilename(), FileHelper.convert(multipartFile));
 			return  s3EndPoint + '/' + bucketName + '/' + multipartFile.getOriginalFilename();
 		} catch (IOException e) {
