@@ -46,7 +46,6 @@ public class ProjectAspectsTestSuite {
 	 * @author Alonzo Muncy (190107-Java-Spark-USF)
 	 */
 	@Test
-//	@Ignores
 	public void testExeptionPrintStackTrace() {
 		testProjectAspects.errorOcurance(mockJoinPoint, mockException);
 //		verify(mockException, times(1)).printStackTrace();
