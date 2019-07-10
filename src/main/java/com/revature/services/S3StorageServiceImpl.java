@@ -68,7 +68,7 @@ public class S3StorageServiceImpl implements StorageService {
 	
 	@Transactional
 	public String store(MultipartFile multipartFile) {
-		System.out.println("inside store(multipartFile) method");
+
 		try {
 			s3Client.putObject(bucketName, multipartFile.getOriginalFilename(), FileHelper.convert(multipartFile));
 			return  s3EndPoint + '/' + bucketName + '/' + multipartFile.getOriginalFilename();

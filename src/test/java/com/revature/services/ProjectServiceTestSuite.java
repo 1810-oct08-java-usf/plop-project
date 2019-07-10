@@ -114,18 +114,14 @@ public class ProjectServiceTestSuite {
 	@Before
 	public void preTestInit() {	
 		classUnderTest = new ProjectService(testRepo, testStorage, testFileService);
-		//		classUnderTest = new ProjectService(testRepo, testStorage);
-		//		classUnderTest = new ProjectService(testRepo);
-
+		
 		// Define the behavior of dummyList
 		dummyList.add(dummyProject);
 
 		// Define the relevant behaviors of testRepo 
-		Mockito.when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
-		Mockito.when(testRepo.findByName("string")).thenReturn(dummyList);
-		Mockito.when(testRepo.findByBatch("batchin")).thenReturn(dummyList);
-
-		//Define the relevant behaviors of dummyProject
+//		when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
+//		when(testRepo.findByName("string")).thenReturn(dummyList);
+//		when(testRepo.findByBatch("batchin")).thenReturn(dummyList);
 
 	}
 
@@ -142,6 +138,7 @@ public class ProjectServiceTestSuite {
 	 */
 	@Test
 	public void shouldReturnProjectOnGoodIdSearch() {
+		when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
 		assertThat(classUnderTest.findById("floop")).isInstanceOf(Project.class);
 	}
 
@@ -210,6 +207,7 @@ public class ProjectServiceTestSuite {
 		when(dummyProject.getStatus()).thenReturn(dummyString);
 		when(dummyProject.getOldProject()).thenReturn(dummySavedProject);
 		assertTrue(classUnderTest.updateProject(dummyProject, "97"));
+		
 	}
 
 	/**
@@ -222,10 +220,7 @@ public class ProjectServiceTestSuite {
 
 		ArrayList<MultipartFile> listMultipartFile = new ArrayList<MultipartFile>();
 
-		//		MultipartFile mockMultipartFile = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
-
 		ArrayList<String> listZipLink = new ArrayList<String>();
-		//		listZipLink.add("https://github.com/revatureclass/1802java-nick-week1java-wsingleton");
 		listZipLink.add("link");
 		listMultipartFile.add(mockMultipartFile);
 
@@ -243,11 +238,11 @@ public class ProjectServiceTestSuite {
 
 
 		try {
-			//			when(mockMultipartFile.getSize()).then
 			when(testFileService.download("link/archive/master.zip")).thenReturn(mockFile);
 			when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
 
 			assertTrue(classUnderTest.createProjectFromDTO(mockProjectDTO) instanceof Project); 
+			
 			// verifying that these methods are being used during this test
 			verify(testFileService).download("link/archive/master.zip");
 			verify(testStorage).store(mockMultipartFile);
@@ -258,39 +253,6 @@ public class ProjectServiceTestSuite {
 		}
 	}
 
-	//	@Test
-	//	public void testFileSizeTooLargeException(){
-	//		
-	//		ArrayList<MultipartFile> listMultipartFile = new ArrayList<MultipartFile>();
-	//		
-	//		MultipartFile mockMultipartFile = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
-	//		
-	//		ArrayList<String> listZipLink = new ArrayList<String>();
-	//		listZipLink.add("https://github.com/supertuxkart/stk-code");
-	//		listMultipartFile.add(mockMultipartFile);
-	//		
-	//		when(mockProjectDTO.getName()).thenReturn(dummyString);
-	//		when(mockProjectDTO.getBatch()).thenReturn(dummyString);
-	//		when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
-	//		when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
-	//		when(mockProjectDTO.getDescription()).thenReturn(dummyString);
-	//		when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
-	//		when(mockProjectDTO.getStatus()).thenReturn(dummyString);
-	//		when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
-	//		when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
-	//		when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
-	//		
-	//		
-	//		boolean thrown = false;
-	//		try {
-	//			classUnderTest.createProjectFromDTO(mockProjectDTO);
-	//		}
-	//		  catch (FileSizeTooLargeException fstle) {
-	//			  System.out.println("FileSizeTooLargeException caught in test.");
-	//			  thrown  = true;
-	//		  }
-	//		  assertTrue(thrown);
-	//		}
 
 	/**
 	 * Test if an exception is thrown if the file size is over set limitation
@@ -320,7 +282,7 @@ public class ProjectServiceTestSuite {
 		when(mockProjectDTO.getStatus()).thenReturn(dummyString);
 		when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
 		when(mockMultipartFile.getSize()).thenReturn((long) 1000001);
-
+		
 		boolean thrown = false;
 		try {
 			classUnderTest.createProjectFromDTO(mockProjectDTO);

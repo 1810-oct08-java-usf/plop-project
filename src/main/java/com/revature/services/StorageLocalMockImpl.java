@@ -44,22 +44,6 @@ public class StorageLocalMockImpl implements StorageService {
 	private AmazonS3 s3Client;
 
 	Logger logger = Logger.getLogger(StorageLocalMockImpl.class);
-
-//	@Override
-//	public void init() {
-//		logger.warn("Running with mock S3 implementation. This should only be used for a local development environment.");
-//	}
-	
-	
-//	@Override
-//	public String store(MultipartFile multipartFile) {
-//		return "localhost:8080/unpersisted";
-//	}
-//
-//	@Override
-//	public String store(File file) {
-//		return "localhost:8080/unpersisted";
-//	}
 	
 	/**
 	 * init draws on environment variables setting up an s3Client used to store objects
@@ -67,6 +51,7 @@ public class StorageLocalMockImpl implements StorageService {
 	 * 
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
+	@Override
 	@Transactional
 	@PostConstruct
 	public void init() {
@@ -88,7 +73,7 @@ public class StorageLocalMockImpl implements StorageService {
 	 * @return the link to the new object
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
-	
+	@Override
 	@Transactional
 	public String store(MultipartFile multipartFile) {
 		System.out.println("inside store(multipartFile) method");
@@ -113,7 +98,7 @@ public class StorageLocalMockImpl implements StorageService {
 	 * @return the link to the new object
 	 *@author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
-	
+	@Override
 	@Transactional
 	public String store(File file) {
 		s3Client.putObject(bucketName, file.getName(), file);

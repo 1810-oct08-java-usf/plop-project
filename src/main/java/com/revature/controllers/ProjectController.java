@@ -3,11 +3,8 @@ package com.revature.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -81,7 +78,7 @@ public class ProjectController {
 	 */
 	@GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN', 'USER')")
+//	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public Project getProjectById(@PathVariable String id) {
 		System.out.println("In Project Controller getProjectById "+ id);
 		if(projectService.findById(id) == null) {
@@ -150,7 +147,7 @@ public class ProjectController {
 	 */
 	@GetMapping(value = "/status/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
 	public List<Project> getProjectsByStatus(@PathVariable String status) {
 		System.out.println("In Project Controller getProjectsByStatus " + status);
 		if(projectService.findByStatus(status) == null) {
@@ -306,7 +303,7 @@ public class ProjectController {
 	 */
 	@DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
 	public Boolean deleteById(@PathVariable String id) {
 		Project ID = projectService.findById(id);
 		if (ID == null) {
@@ -339,7 +336,7 @@ public class ProjectController {
 	// TODO If the project is approved, it will keep a version of the old approved project.
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
 		Project backendProject = projectService.findById(id);
 		//check that the project exists
