@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,11 +46,15 @@ public class ProjectController {
 	 * This method retrieves all of the projects stored within embedded MongoDB Uses
 	 * HTTP method GET and only retrieves JSON data.
 	 * 
+	 * Added Spring Security annotations to prevent unauthorized users from accessing database
+	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
+	 *  @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
+//	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public List<Project> getAllProjects() {
 		System.out.println("In Project Controller getAllProjects");
 		if(projectService.findAllProjects() == null) {
@@ -61,13 +67,17 @@ public class ProjectController {
 	 * This method retrieves project by ID Uses HTTP method GET and only retrieves
 	 * JSON data
 	 * 
+	 * Added Spring Security annotations to prevent unauthorized users from accessing database
+	 * 
 	 * @param id: String that serves as the id for the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
+	 *  @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
+	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public Project getProjectById(@PathVariable String id) {
 		System.out.println("In Project Controller getProjectById "+ id);
 		if(projectService.findById(id) == null) {
@@ -80,13 +90,17 @@ public class ProjectController {
 	 * This method retrieves project by name Uses HTTP method GET and only retrieves
 	 * JSON data
 	 * 
+	 *Added Spring Security annotations to prevent unauthorized users from accessing database 
+	 * 
 	 * @param name: String that serves as the name of the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
+	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
+//	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public List<Project> getProjectsByName(@PathVariable String name) {
 		System.out.println("In Project Controller getProjectsByName " + name);
 		if(projectService.findByName(name) == null) {
@@ -99,16 +113,20 @@ public class ProjectController {
 	 * This method retrieves project by batch Uses HTTP method GET and only
 	 * retrieves JSON data
 	 * 
+	 * Added Spring Security annotations to prevent outside users from accessing database
+	 * 
 	 * @param batch: String that serves as the batch for the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
+	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@GetMapping(value = "/batch/{batch}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
+//	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public List<Project> getProjectsByBatch(@PathVariable String batch) {
-		System.out.println("In Project Controller getProjectsByBatch " + batch);
-		if(projectService.findByBatch(batch) == null) {
+		List<Project> result = projectService.findByBatch(batch);
+		if(result.isEmpty()) {
 			throw new ProjectNotFoundException("There is no project associated with batch: " + batch + ", in the database.");
 		}
 		return projectService.findByBatch(batch);
@@ -118,13 +136,17 @@ public class ProjectController {
 	 * This method retrieves project by status Uses HTTP method GET and only
 	 * retrieves JSON data
 	 * 
+	 * Added Spring Security annotations to prevent unauthorized users from accessing database
+	 * 
 	 * @param status: String that serves as the status of the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
+	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@GetMapping(value = "/status/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
+	@PreAuthorize("hasRole('ADMIN')")
 	public List<Project> getProjectsByStatus(@PathVariable String status) {
 		System.out.println("In Project Controller getProjectsByStatus " + status);
 		if(projectService.findByStatus(status) == null) {
@@ -139,6 +161,8 @@ public class ProjectController {
 	 * A ProjectDTO object is created from the fields and sent to the service layer to be converted 
 	 * to a Project object and saved.
 	 * 
+	 * Added Spring Security annotations to prevent unauthorized users from accessing database
+	 * 
 	 * @param name the name field of the form data
 	 * @param batch the batch field of the form data
 	 * @param trainer the trainer field of the form data
@@ -151,12 +175,13 @@ public class ProjectController {
 	 * 
 	 * @return project: The Project object derived from ProjectDTO in the service layer. 
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
-	 * @author Tucker Mitchell (190422-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
+	 *  @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	
 	@PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
+	@PreAuthorize("hasRole('USER')")
 	public Project addProject
 	( 
 		@RequestParam("name") String name,
@@ -268,13 +293,17 @@ public class ProjectController {
 	 * 
 	 * Uses HTTP method DELETE and only retrieves JSON data
 	 * 
+	 * Added Spring Security annotations to prevent unauthorized users from accessing database
+	 * 
 	 * @param id: String that serves as the id for the project
 	 * 
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
+	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
+	@PreAuthorize("hasRole('ADMIN')")
 	public Boolean deleteById(@PathVariable String id) {
 		Project ID = projectService.findById(id);
 		if (ID == null) {
@@ -287,7 +316,7 @@ public class ProjectController {
 	 * This method is used to update an entry into the embedded MongoDB based on the
 	 * ID
 	 * 
-	 * 
+	 * Added Spring Security annotations to prevent unauthorized users from accessing database
 	 * 
 	 * Uses HTTP method PUT. Retrieves and produces JSON data
 	 * 
@@ -301,12 +330,13 @@ public class ProjectController {
 	 * @author Bronwen Hughes (1810-Oct22-Java-USF)
 	 * @author Phillip Pride (1810-Oct22-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
-	 * 
+	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF) 
 	 */
 	// TODO should let you update screenshots and repositories
 	// TODO If the project is approved, it will keep a version of the old approved project.
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
+	@PreAuthorize("hasRole('ADMIN')")
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
 		Project backendProject = projectService.findById(id);
 		//check that the project exists
@@ -337,9 +367,10 @@ public class ProjectController {
 	 * error was thrown
 	 * 
 	 * @author Miles LaCue (1810-Oct08-Java-USF)
-	 */
+	 * /
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.NOT_FOUND)
+
 	public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnfe) {
 		ProjectErrorResponse error = new ProjectErrorResponse();
 		error.setStatus(HttpStatus.NOT_FOUND.value());
@@ -368,6 +399,16 @@ public class ProjectController {
 	public ProjectErrorResponse handleExceptions(ProjectNotAddedException pnae) {
 		ProjectErrorResponse error = new ProjectErrorResponse();
 		error.setStatus(HttpStatus.BAD_REQUEST.value());
+		error.setMessage(pnae.getMessage());
+		error.setTimeStamp(System.currentTimeMillis());
+		return error;
+	}
+	
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnae) {
+		ProjectErrorResponse error = new ProjectErrorResponse();
+		error.setStatus(HttpStatus.NOT_FOUND.value());
 		error.setMessage(pnae.getMessage());
 		error.setTimeStamp(System.currentTimeMillis());
 		return error;
