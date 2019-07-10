@@ -26,7 +26,7 @@ public class FileServiceTestSuite {
 	try {
 		File zipArchive = classUnderTest.download(zipLink + "/archive/master.zip");
 		if (zipArchive.length() > 5500000) {
-			throw new FileSizeTooLargeException("The file size of: " + zipArchive.getName() + "exceeds 1GB");
+			throw new FileSizeTooLargeException("The file size of: " + zipArchive.getName() + "exceeds limit");
 		}
 	}
 	  catch (FileSizeTooLargeException | IOException fstle) {

@@ -31,8 +31,9 @@ public class FileServiceImpl implements FileService {
 	 * @throws IOException if there is an issue downloading the specified file
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */ 
+	@Transactional
 	public File download(String fileURI) throws IOException {
-		System.out.println("in download()");
+		
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());    
 		HttpHeaders headers = new HttpHeaders();
@@ -42,7 +43,7 @@ public class FileServiceImpl implements FileService {
 		ResponseEntity<byte[]> response = restTemplate.exchange(fileURI, HttpMethod.GET, entity, byte[].class, "1");
 		
 		String fileName = response.getHeaders().getContentDisposition().getFilename();
-System.out.println("response file name: " + response.getHeaders().getContentDisposition().getFilename());
+
 		return FileHelper.convert(response.getBody(), fileName);
 	}
 

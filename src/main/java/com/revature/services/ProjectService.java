@@ -235,7 +235,7 @@ public class ProjectService {
 			newProject.setScreenShots(screenShotsList);
 		else {
 			for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
-				if (multipartFile.getSize() > 1000000) {
+				if (multipartFile.getSize() > 1_000_000) {
 					throw new FileSizeTooLargeException("File size of screenshot: " + multipartFile.getName() + "is greater than 1MB.");
 				}
 				String endPoint = s3StorageServiceImpl.store(multipartFile);
@@ -251,7 +251,7 @@ public class ProjectService {
 			newProject.setDataModel(dataModelList);
 		else {
 			for (MultipartFile multipartFile : projectDTO.getDataModel()) {
-				if (multipartFile.getSize() > 1000000) {
+				if (multipartFile.getSize() > 1_000_000) {
 					throw new FileSizeTooLargeException("File size of data model: " + multipartFile.getName() + "is greater than 1MB.");
 				}
 				String endPoint = s3StorageServiceImpl.store(multipartFile);
@@ -270,7 +270,7 @@ public class ProjectService {
 				try {
 					// TODO produce an http status code for error getting project zip and ABORT
 					File zipArchive = fileService.download(zipLink + "/archive/master.zip");
-					if (zipArchive.length() > 999999999) {
+					if (zipArchive.length() > 1_000_000_000) {
 						throw new FileSizeTooLargeException("The file size of: " + zipArchive.getName() + "exceeds 1GB");
 					}
 					newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));

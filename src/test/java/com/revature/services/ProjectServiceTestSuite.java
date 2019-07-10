@@ -119,9 +119,9 @@ public class ProjectServiceTestSuite {
 		dummyList.add(dummyProject);
 
 		// Define the relevant behaviors of testRepo 
-		Mockito.when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
-		Mockito.when(testRepo.findByName("string")).thenReturn(dummyList);
-		Mockito.when(testRepo.findByBatch("batchin")).thenReturn(dummyList);
+//		when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
+//		when(testRepo.findByName("string")).thenReturn(dummyList);
+//		when(testRepo.findByBatch("batchin")).thenReturn(dummyList);
 
 	}
 
@@ -138,6 +138,7 @@ public class ProjectServiceTestSuite {
 	 */
 	@Test
 	public void shouldReturnProjectOnGoodIdSearch() {
+		when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
 		assertThat(classUnderTest.findById("floop")).isInstanceOf(Project.class);
 	}
 
