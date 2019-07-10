@@ -13,10 +13,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.revature.exceptions.ProjectNotAddedException;
+import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
+import com.revature.services.FileServiceImpl;
 
 // TODO include transactional annotations to specify propagation and isolation levels
 /**
@@ -25,6 +26,9 @@ import com.revature.repositories.ProjectRepository;
 @Service
 public class ProjectService {
 
+//	ProjectRepository projectRepo;
+//	S3StorageServiceImpl s3StorageServiceImpl;
+//	FileServiceImpl fileService;
 	ProjectRepository projectRepo;
 	StorageService s3StorageServiceImpl;
 	FileService fileService;
@@ -35,6 +39,19 @@ public class ProjectService {
 		this.s3StorageServiceImpl = s3StorageServiceImpl;
 		this.fileService = fileService;
 	}
+//	public ProjectService(ProjectRepository projectRepo, S3StorageServiceImpl s3StorageServiceImpl, FileServiceImpl fileService) {
+//		this.projectRepo = projectRepo;
+//		this.s3StorageServiceImpl = s3StorageServiceImpl;
+////		this.fileService = new FileServiceImpl();
+//		this.fileService = fileService;
+//	}
+	
+//	@Autowired
+//	public ProjectService(ProjectRepository projectRepo) {
+//		this.projectRepo = projectRepo;
+//		this.s3StorageServiceImpl = new S3StorageServiceImpl();
+//		this.fileService = new FileServiceImpl();
+//	}
 
 	/**
 	 * ProjectService.findByName retrieves a list of projects with a given name
@@ -212,10 +229,11 @@ public class ProjectService {
 	 * @return the Project generated from the DTO
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 * @author Tucker Mitchell (190422-Java-USF)
+	 * @author Kevin Ocampo (190422-Java-USF)
 	 */
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	public Project createProjectFromDTO(ProjectDTO projectDTO) {
-		
+	public Project createProjectFromDTO(ProjectDTO projectDTO) throws FileSizeTooLargeException {
+		System.out.println("in createProjectFromDTO");
 		Project newProject = new Project.ProjectBuilder()
 			.setName(projectDTO.getName())
 			.setBatch(projectDTO.getBatch())
@@ -225,14 +243,17 @@ public class ProjectService {
 			.setTechStack(projectDTO.getTechStack())
 			.setStatus(projectDTO.getStatus())
 			.build();
-		
+		System.out.println("project builder complete");
 		// drop screenshot images in s3 and populate project with links to those images
 		List<String> screenShotsList = new ArrayList<>();
-
+		
 		if(projectDTO.getScreenShots() == null)
 			newProject.setScreenShots(screenShotsList);
 		else {
 			for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
+				if (multipartFile.getSize() > 1000000) {
+					throw new FileSizeTooLargeException("File size of screenshot: " + multipartFile.getName() + "is greater than 1MB.");
+				}
 				String endPoint = s3StorageServiceImpl.store(multipartFile);
 				screenShotsList.add(endPoint);
 			}
@@ -246,6 +267,9 @@ public class ProjectService {
 			newProject.setDataModel(dataModelList);
 		else {
 			for (MultipartFile multipartFile : projectDTO.getDataModel()) {
+				if (multipartFile.getSize() > 1000000) {
+					throw new FileSizeTooLargeException("File size of data model: " + multipartFile.getName() + "is greater than 1MB.");
+				}
 				String endPoint = s3StorageServiceImpl.store(multipartFile);
 				dataModelList.add(endPoint);
 			}		
@@ -255,6 +279,8 @@ public class ProjectService {
 		// download a zip archive for each repo from github and store them in our s3
 		// bucket,
 		// populating the project object with links to those zip files
+		System.out.println("before getZipLinks");
+		System.out.println("zip links: " + projectDTO.getZipLinks());
 		if(projectDTO.getZipLinks() == null)
 			newProject.setZipLinks(new ArrayList<String>());
 		else {
@@ -262,6 +288,13 @@ public class ProjectService {
 				try {
 					// TODO produce an http status code for error getting project zip and ABORT
 					File zipArchive = fileService.download(zipLink + "/archive/master.zip");
+					System.out.println("zipArchive Name: " + zipArchive);
+//					999999999
+					System.out.println("zipArchive.length(): ");
+					System.out.println(zipArchive.length() + " bytes");
+					if (zipArchive.length() > 5500000) {
+						throw new FileSizeTooLargeException("The file size of: " + zipArchive.getName() + "exceeds 5.5MB");
+					}
 					newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));
 				} catch (IOException e) {
 					e.printStackTrace();
