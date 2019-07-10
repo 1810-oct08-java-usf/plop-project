@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,21 +22,22 @@ import com.revature.util.FileHelper;
 
 @Service
 @Profile("local")
+@PropertySource("classpath:credentials.properties")
 public class StorageLocalMockImpl implements StorageService {
 	
-	@Value("${aws.config.aws-access-key-id}")
+	@Value("${ACCESS_KEY_ID}")
 	private String awsAccessKeyId;
 
-	@Value("${aws.config.aws-secret-access-key}")
+	@Value("${SECRET_ACCESS_KEY}")
 	private String awsSecretAccessKey;
 
-	@Value("${aws.config.bucket-name}")
+	@Value("${BUCKET_NAME}")
 	private String bucketName;
 
-	@Value("${aws.config.bucket-region}")
+	@Value("${BUCKET_REGION}")
 	private String bucketRegion;
 	
-	@Value("${aws.config.s3-endpoint}")
+	@Value("${S3_ENDPOINT}")
 	private String s3EndPoint;
 
 	private AWSCredentials credentials;

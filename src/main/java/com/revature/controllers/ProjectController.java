@@ -3,9 +3,10 @@ package com.revature.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,6 +42,9 @@ public class ProjectController {
 	public ProjectController(ProjectService projectService) {
 		this.projectService = projectService;
 	}
+	
+	
+	
 
 	/**
 	 * This method retrieves all of the projects stored within embedded MongoDB Uses
@@ -181,7 +185,7 @@ public class ProjectController {
 	
 	@PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	@PreAuthorize("hasRole('USER')")
+//	@PreAuthorize("hasRole('USER')")
 	public Project addProject
 	( 
 		@RequestParam("name") String name,
@@ -213,7 +217,6 @@ public class ProjectController {
 		.setDescription(description)
 		.setTechStack(techStack)
 		.setStatus(status)
-		.setDataModel(dataModel)
 		.build();
 			
 		return projectService.createProjectFromDTO(projectDTO);
