@@ -72,9 +72,11 @@ public class ProjectControllerTestSuite {
 	public void testAddProjectIfProjectValid() {
 
 		when(projectService.createProjectFromDTO(projectDTO)).thenReturn(project);
-		projectController.addProject(projectDTO.getName(), projectDTO.getBatch(), projectDTO.getTrainer(),
-				projectDTO.getGroupMembers(), projectDTO.getScreenShots(), projectDTO.getZipLinks(),
-				projectDTO.getDescription(), projectDTO.getTechStack(), projectDTO.getStatus());
+
+		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
+				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel());
+
 		verify(projectService).createProjectFromDTO(projectDTO);
 
 	}
@@ -109,9 +111,9 @@ public class ProjectControllerTestSuite {
 		exceptionRule.expect(ProjectNotAddedException.class);
 		exceptionRule.expectMessage("The 'batch' input cannot be empty when adding project");
 
-		projectController.addProject(projectDTO.getName(), projectDTO.getBatch(), projectDTO.getTrainer(),
-				projectDTO.getGroupMembers(), projectDTO.getScreenShots(), projectDTO.getZipLinks(),
-				projectDTO.getDescription(), projectDTO.getTechStack(), projectDTO.getStatus());
+		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
+				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel());
 	}
 
 	/**
@@ -128,10 +130,10 @@ public class ProjectControllerTestSuite {
 
 		exceptionRule.expect(ProjectNotAddedException.class);
 		exceptionRule.expectMessage("The 'name' input cannot be empty when adding project");
-
-		projectController.addProject(projectDTO.getName(), projectDTO.getBatch(), projectDTO.getTrainer(),
-				projectDTO.getGroupMembers(), projectDTO.getScreenShots(), projectDTO.getZipLinks(),
-				projectDTO.getDescription(), projectDTO.getTechStack(), projectDTO.getStatus());
+		
+		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
+				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel());
 	}
 
 	/**
@@ -148,10 +150,10 @@ public class ProjectControllerTestSuite {
 
 		exceptionRule.expect(ProjectNotAddedException.class);
 		exceptionRule.expectMessage("The 'tech stack' input cannot be empty when adding project");
-
-		projectController.addProject(projectDTO.getName(), projectDTO.getBatch(), projectDTO.getTrainer(),
-				projectDTO.getGroupMembers(), projectDTO.getScreenShots(), projectDTO.getZipLinks(),
-				projectDTO.getDescription(), projectDTO.getTechStack(), projectDTO.getStatus());
+		
+		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
+				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel());
 	}
 
 	/**

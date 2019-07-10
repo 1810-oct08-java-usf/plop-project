@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.revature.exceptions.ProjectNotAddedException;
+import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
@@ -35,6 +35,7 @@ public class ProjectService {
 		this.s3StorageServiceImpl = s3StorageServiceImpl;
 		this.fileService = fileService;
 	}
+
 
 	/**
 	 * ProjectService.findByName retrieves a list of projects with a given name
@@ -151,7 +152,6 @@ public class ProjectService {
 	 * 
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
-	
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public Boolean updateProject(Project project, String id) {
 		Optional<Project> savedProject = projectRepo.findById(id);
@@ -207,14 +207,16 @@ public class ProjectService {
 	 * The zipLinks field in the DTO contains links to github repositories. Zip archives are downloaded
 	 * from github for each repository and stored in S3. The Project's screenShots field is populated with
 	 * a list of links to those stored zip archives
+	 * (Needs a unit test for zipLinks to test fileSizeTooLargeException)
 	 * 
 	 * @param projectDTO the data transfer object containing project details
 	 * @return the Project generated from the DTO
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 * @author Tucker Mitchell (190422-Java-USF)
+	 * @author Kevin Ocampo (190422-Java-USF)
 	 */
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	public Project createProjectFromDTO(ProjectDTO projectDTO) {
+	public Project createProjectFromDTO(ProjectDTO projectDTO) throws FileSizeTooLargeException {
 		
 		Project newProject = new Project.ProjectBuilder()
 			.setName(projectDTO.getName())
@@ -228,11 +230,14 @@ public class ProjectService {
 		
 		// drop screenshot images in s3 and populate project with links to those images
 		List<String> screenShotsList = new ArrayList<>();
-
+		
 		if(projectDTO.getScreenShots() == null)
 			newProject.setScreenShots(screenShotsList);
 		else {
 			for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
+				if (multipartFile.getSize() > 1_000_000) {
+					throw new FileSizeTooLargeException("File size of screenshot: " + multipartFile.getName() + "is greater than 1MB.");
+				}
 				String endPoint = s3StorageServiceImpl.store(multipartFile);
 				screenShotsList.add(endPoint);
 			}
@@ -246,6 +251,9 @@ public class ProjectService {
 			newProject.setDataModel(dataModelList);
 		else {
 			for (MultipartFile multipartFile : projectDTO.getDataModel()) {
+				if (multipartFile.getSize() > 1_000_000) {
+					throw new FileSizeTooLargeException("File size of data model: " + multipartFile.getName() + "is greater than 1MB.");
+				}
 				String endPoint = s3StorageServiceImpl.store(multipartFile);
 				dataModelList.add(endPoint);
 			}		
@@ -262,6 +270,9 @@ public class ProjectService {
 				try {
 					// TODO produce an http status code for error getting project zip and ABORT
 					File zipArchive = fileService.download(zipLink + "/archive/master.zip");
+					if (zipArchive.length() > 1_000_000_000) {
+						throw new FileSizeTooLargeException("The file size of: " + zipArchive.getName() + "exceeds 1GB");
+					}
 					newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));
 				} catch (IOException e) {
 					e.printStackTrace();
