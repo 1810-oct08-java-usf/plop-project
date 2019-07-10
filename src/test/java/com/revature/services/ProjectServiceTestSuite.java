@@ -206,6 +206,7 @@ public class ProjectServiceTestSuite {
 		when(dummyProject.getStatus()).thenReturn(dummyString);
 		when(dummyProject.getOldProject()).thenReturn(dummySavedProject);
 		assertTrue(classUnderTest.updateProject(dummyProject, "97"));
+		
 	}
 
 	/**
