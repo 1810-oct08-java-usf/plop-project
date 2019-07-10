@@ -45,16 +45,16 @@ public class ProjectController {
 	/**
 	 * This method retrieves all of the projects stored within embedded MongoDB Uses
 	 * HTTP method GET and only retrieves JSON data.
-	 * 
+	 *
 	 * Added Spring Security annotations to prevent unauthorized users from accessing database
-	 * 
+	 *
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 *  @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-//	@PreAuthorize("hasRole('ADMIN', 'USER')")
+//	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	public List<Project> getAllProjects() {
 		System.out.println("In Project Controller getAllProjects");
 		if(projectService.findAllProjects() == null) {
@@ -66,18 +66,18 @@ public class ProjectController {
 	/**
 	 * This method retrieves project by ID Uses HTTP method GET and only retrieves
 	 * JSON data
-	 * 
+	 *
 	 * Added Spring Security annotations to prevent unauthorized users from accessing database
-	 * 
+	 *
 	 * @param id: String that serves as the id for the project
-	 * 
+	 *
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 *  @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN', 'USER')")
+//	 @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	public Project getProjectById(@PathVariable String id) {
 		System.out.println("In Project Controller getProjectById "+ id);
 		if(projectService.findById(id) == null) {
@@ -89,18 +89,18 @@ public class ProjectController {
 	/**
 	 * This method retrieves project by name Uses HTTP method GET and only retrieves
 	 * JSON data
-	 * 
-	 *Added Spring Security annotations to prevent unauthorized users from accessing database 
-	 * 
+	 *
+	 *Added Spring Security annotations to prevent unauthorized users from accessing database
+	 *
 	 * @param name: String that serves as the name of the project
-	 * 
+	 *
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-//	@PreAuthorize("hasRole('ADMIN', 'USER')")
+//	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	public List<Project> getProjectsByName(@PathVariable String name) {
 		System.out.println("In Project Controller getProjectsByName " + name);
 		if(projectService.findByName(name) == null) {
@@ -112,18 +112,18 @@ public class ProjectController {
 	/**
 	 * This method retrieves project by batch Uses HTTP method GET and only
 	 * retrieves JSON data
-	 * 
+	 *
 	 * Added Spring Security annotations to prevent outside users from accessing database
-	 * 
+	 *
 	 * @param batch: String that serves as the batch for the project
-	 * 
+	 *
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@GetMapping(value = "/batch/{batch}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-//	@PreAuthorize("hasRole('ADMIN', 'USER')")
+//	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	public List<Project> getProjectsByBatch(@PathVariable String batch) {
 		List<Project> result = projectService.findByBatch(batch);
 		if(result.isEmpty()) {
@@ -135,18 +135,18 @@ public class ProjectController {
 	/**
 	 * This method retrieves project by status Uses HTTP method GET and only
 	 * retrieves JSON data
-	 * 
+	 *
 	 * Added Spring Security annotations to prevent unauthorized users from accessing database
-	 * 
+	 *
 	 * @param status: String that serves as the status of the project
-	 * 
+	 *
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@GetMapping(value = "/status/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
 	public List<Project> getProjectsByStatus(@PathVariable String status) {
 		System.out.println("In Project Controller getProjectsByStatus " + status);
 		if(projectService.findByStatus(status) == null) {
@@ -156,13 +156,13 @@ public class ProjectController {
 	}
 
 	/**
-	 * 
+	 *
 	 * This method accepts each field of a ProjectDTO object in the form of multipart form data.
-	 * A ProjectDTO object is created from the fields and sent to the service layer to be converted 
+	 * A ProjectDTO object is created from the fields and sent to the service layer to be converted
 	 * to a Project object and saved.
-	 * 
+	 *
 	 * Added Spring Security annotations to prevent unauthorized users from accessing database
-	 * 
+	 *
 	 * @param name the name field of the form data
 	 * @param batch the batch field of the form data
 	 * @param trainer the trainer field of the form data
@@ -172,36 +172,36 @@ public class ProjectController {
 	 * @param description the description field of the form data
 	 * @param techStack the techStack field of the form data
 	 * @param status the status field of the form data
-	 * 
-	 * @return project: The Project object derived from ProjectDTO in the service layer. 
+	 *
+	 * @return project: The Project object derived from ProjectDTO in the service layer.
 	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 *  @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
-	
+
 	@PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	@PreAuthorize("hasRole('USER')")
+//	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	public Project addProject
-	( 
+	(
 		@RequestParam("name") String name,
 		@RequestParam("batch") String batch,
-		@RequestParam("trainer") String trainer, 
+		@RequestParam("trainer") String trainer,
 		@RequestParam("groupMembers") List<String> groupMembers,
-		@RequestParam("screenShots") List<MultipartFile> screenShots, 
+		@RequestParam("screenShots") List<MultipartFile> screenShots,
 		@RequestParam("zipLinks") List<String> zipLinks,
-		@RequestParam("description") String description, 
-		@RequestParam("techStack") String techStack, 
+		@RequestParam("description") String description,
+		@RequestParam("techStack") String techStack,
 		@RequestParam("status") String status
-	) 
+	)
 	{
 		if (name == null || name.equals(""))
 			throw new ProjectNotAddedException("The 'name' input cannot be empty when adding project");
 		if (batch == null || batch.equals(""))
-			throw new ProjectNotAddedException("The 'batch' input cannot be empty when adding project");		
+			throw new ProjectNotAddedException("The 'batch' input cannot be empty when adding project");
 		if (techStack == null || techStack.equals(""))
 			throw new ProjectNotAddedException("The 'tech stack' input cannot be empty when adding project");
-		
+
 		ProjectDTO projectDTO = new ProjectDTO.ProjectDTOBuilder()
 		.setName(name)
 		.setBatch(batch)
@@ -213,55 +213,55 @@ public class ProjectController {
 		.setTechStack(techStack)
 		.setStatus(status)
 		.build();
-			
+
 		return projectService.createProjectFromDTO(projectDTO);
 	}
-		
+
 	/*
 	 * This method adds a new project.
-	 * 
+	 *
 	 * Uses HTTP method POST. Retrieves form data because this method have values
 	 * that are collection.
-	 * 
+	 *
 	 * @param name: Requests a String that specifies the name from whatever hits
 	 * this endpoint.
-	 * 
+	 *
 	 * @param batch: Requests a String that specifies the batch from whatever hits
 	 * this endpoint.
-	 * 
+	 *
 	 * @param trainer: Requests a String that specifies the trainer from whatever
 	 * hits this endpoint.
-	 * 
+	 *
 	 * @param groupMembers: Requests a list collection of Strings that specifies the
 	 * groupMembers from whatever hits this endpoint.
-	 * 
+	 *
 	 * @param screenShots: Requests a list collection of MultipartFile that
 	 * specifies the screenShots from whatever hits this endpoint.
-	 * 
+	 *
 	 * @param zipLinks: Requests a list collection of Strings that specifies the
 	 * zipLinks from whatever hits this endpoint.
-	 * 
+	 *
 	 * @param description: Requests a String that specifies the description from
 	 * whatever hits this endpoint.
-	 * 
+	 *
 	 * @param techStack: Requests a String that specifies the techStack from
 	 * whatever hits this endpoint.
-	 * 
+	 *
 	 * @param status: Requests a String that specifies the status from whatever hits
 	 * this endpoint.
-	 * 
+	 *
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 */
 
 //	public Project addProject(// TODO should be retrieved from auth service
-//			@RequestParam String name, 
+//			@RequestParam String name,
 //			@RequestParam String batch,
-//			@RequestParam String trainer, 
+//			@RequestParam String trainer,
 //			@RequestParam List<String> groupMembers,
-//			@RequestParam List<MultipartFile> screenShots, 
+//			@RequestParam List<MultipartFile> screenShots,
 //			@RequestParam List<String> zipLinks,
-//			@RequestParam String description, 
-//			@RequestParam String techStack, 
+//			@RequestParam String description,
+//			@RequestParam String techStack,
 //			@RequestParam String status) {
 //		ProjectDTO projectDTO = new ProjectDTO();
 //
@@ -288,20 +288,20 @@ public class ProjectController {
 	/**
 	 * This method is used to delete an entry into the embedded MongoDB based on the
 	 * ID
-	 * 
+	 *
 	 * Uses HTTP method DELETE and only retrieves JSON data
-	 * 
+	 *
 	 * Added Spring Security annotations to prevent unauthorized users from accessing database
-	 * 
+	 *
 	 * @param id: String that serves as the id for the project
-	 * 
+	 *
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
 	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	@DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
 	public Boolean deleteById(@PathVariable String id) {
 		Project ID = projectService.findById(id);
 		if (ID == null) {
@@ -313,57 +313,57 @@ public class ProjectController {
 	/**
 	 * This method is used to update an entry into the embedded MongoDB based on the
 	 * ID
-	 * 
+	 *
 	 * Added Spring Security annotations to prevent unauthorized users from accessing database
-	 * 
+	 *
 	 * Uses HTTP method PUT. Retrieves and produces JSON data
-	 * 
+	 *
 	 * @param project: Requests that the user enters a project
-	 * 
+	 *
 	 * @param id: String that serves as the id for the project
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Sadiki Solomon (1810-Oct08-Java-USF)
 	 * @author Michael Grammens (1810-Oct22-Java-USF)
 	 * @author Bronwen Hughes (1810-Oct22-Java-USF)
 	 * @author Phillip Pride (1810-Oct22-Java-USF)
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
-	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF) 
+	 * @author Stuart Pratuch & Tucker Mitchell (190422-JAVA-SPARK-USF)
 	 */
 	// TODO should let you update screenshots and repositories
 	// TODO If the project is approved, it will keep a version of the old approved project.
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN')")
 	public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
 		Project backendProject = projectService.findById(id);
 		//check that the project exists
-		if (backendProject == null) {	
+		if (backendProject == null) {
 			throw new ProjectNotFoundException("Project with id: " + id + ", cannot be found to update this project.");
 		}
 		//check that status is valid
 		if(!project.getStatus().equalsIgnoreCase("approved") && !project.getStatus().equalsIgnoreCase("denied") && !project.getStatus().equalsIgnoreCase("pending")) {
 			throw new InvalidStatusException("Status: " + project.getStatus() + ", is unacceptable.");
 		}
-		
+
 			return projectService.updateProject(project, id);
-		
-		
+
+
 	}
 
 	/**
 	 * This method is used to send a status code into the client based on the
 	 * validity of the information sent.
-	 * 
+	 *
 	 * Exception Handler for Response Status Not found which is used for findById()
 	 * [/{id}] & deleteById() [delete/{id}]
-	 * 
+	 *
 	 * Uses @ExceptionHandler annotation. Creates a new error response
 	 * error.setStatus: Defines the value of the status code returned if
 	 * thrown(NOT_FOUND) error.setMessage: Defines a custom message sent to the
 	 * client if the exception is thrown error.setTimeStamp: Defines the time this
 	 * error was thrown
-	 * 
+	 *
 	 * @author Miles LaCue (1810-Oct08-Java-USF)
 	 * /
 	@ExceptionHandler
@@ -380,16 +380,16 @@ public class ProjectController {
 	/**
 	 * This method is used to send a status code into the client based on the
 	 * validity of the information sent.
-	 * 
+	 *
 	 * Exception Handler for Response Status Bad Request which is used for
 	 * addProject() [/add]
-	 * 
+	 *
 	 * Uses @ExceptionHandler annotation. Creates a new error response
 	 * error.setStatus: Defines the value of the status code returned if thrown
 	 * (BAD_REQUEST) error.setMessage: Defines a custom message sent to the client
 	 * if the exception is thrown error.setTimeStamp: Defines the time this error
 	 * was thrown
-	 * 
+	 *
 	 * @author Miles LaCue (1810-Oct08-Java-USF)
 	 */
 	@ExceptionHandler
@@ -401,7 +401,7 @@ public class ProjectController {
 		error.setTimeStamp(System.currentTimeMillis());
 		return error;
 	}
-	
+
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnae) {
@@ -411,21 +411,21 @@ public class ProjectController {
 		error.setTimeStamp(System.currentTimeMillis());
 		return error;
 	}
-	
+
 	/**
 	 * This method is used to send a status code into the client based on the
 	 * validity of the information sent.
-	 * 
+	 *
 	 * Exception Handler for Invalid Status Response which is used for updateProject()
-	 * 
+	 *
 	 * Uses @ExceptionHandler annotation. Creates a new error response
 	 * error.setStatus: Defines the value of the status code returned if
 	 * thrown(BAD_REQUEST) error.setMessage: Defines a custom message sent to the
 	 * client if the exception is thrown error.setTimeStamp: Defines the time this
 	 * error was thrown
-	 * 
+	 *
 	 * @author Austin Bark & Kevin Ocampo (190422-Java-Spark-USF)
-	 * 
+	 *
 	 */
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
