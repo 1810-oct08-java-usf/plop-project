@@ -214,6 +214,7 @@ public class ProjectController {
 		.setDescription(description)
 		.setTechStack(techStack)
 		.setStatus(status)
+		.setDataModel(dataModel)
 		.build();
 			
 		return projectService.createProjectFromDTO(projectDTO);
