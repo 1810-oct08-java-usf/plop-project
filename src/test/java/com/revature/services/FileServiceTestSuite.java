@@ -14,10 +14,7 @@ import com.revature.exceptions.FileSizeTooLargeException;
 @RunWith(MockitoJUnitRunner.class)
 public class FileServiceTestSuite {
 
-	// Do not mock the class you intend to test
 	private FileServiceImpl classUnderTest = new FileServiceImpl();
-	
-	
 	
 	@Test
 	public void testFileSizeTooLargeException(){
