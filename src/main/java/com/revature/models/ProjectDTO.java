@@ -3,6 +3,7 @@ package com.revature.models;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
  * 
  * @Author Unknown, from a previous batch
  */
+@Component
 public class ProjectDTO {
 
 	private String name;

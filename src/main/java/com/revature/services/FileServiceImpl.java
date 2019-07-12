@@ -33,6 +33,7 @@ public class FileServiceImpl implements FileService {
 	 */ 
 	@Transactional
 	public File download(String fileURI) throws IOException {
+		
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());    
 		HttpHeaders headers = new HttpHeaders();
