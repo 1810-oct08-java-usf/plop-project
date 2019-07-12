@@ -1,5 +1,11 @@
 package com.revature.exceptions;
 
+/**
+ * If an invalid status is inputed, then throws this exception
+ * 
+ * @author Austin Bark and Kevin Ocampo (190422-Java-Spark)
+ *
+ */
 public class InvalidStatusException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;

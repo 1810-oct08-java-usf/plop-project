@@ -155,13 +155,6 @@ public class TestGetProjectsByBatch {
 	public void testGetProjectByBatchIfBatchNameIsEmpty() throws Exception {
 		
 		String uri = "/batch/";
-//		String pathVariable = "";
-		
-//		when(mockProjectService.findByBatch(pathVariable)).thenReturn(null);
-		
-//		exceptionRule.expect(ProjectNotFoundException.class);
-//		exceptionRule.expectMessage("The 'batch' input cannot be empty when adding project");
-//		"There is no project associated with batch: " + batch + ", in the database."
 		
 		this.mockMvc.perform(get(uri)).andExpect(status().isMethodNotAllowed());
 	}

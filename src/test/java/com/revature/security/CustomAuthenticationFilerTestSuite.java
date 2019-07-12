@@ -47,7 +47,9 @@ public class CustomAuthenticationFilerTestSuite {
 	
 	
 /**
- * This is for testing the do filter. We are not testing the servlet request or the servlet response, or the filter chain. So we input mock objects. As we are unit testing, we are going to stub validate header to return true when our valid response is passed to it.
+ * This is for testing the do filter. We are not testing the servlet request or the servlet response, 
+ * or the filter chain. So we input mock objects. As we are unit testing, we are going to stub validate 
+ * header to return true when our valid response is passed to it.
  */
 	@Test
 	public void testDoFilterActuatorTrue() {
@@ -55,22 +57,19 @@ public class CustomAuthenticationFilerTestSuite {
 		//Getting past the first if statement.
 		when(mockHttpServletRequest.getRequestURI()).thenReturn("/project/actuator");
 		
-		//This bit of fun is brought about by us because we need to bypass security.
 		String aSecret = "Secret";
 		String aSalt = "Salt";
 		String validResponse = testClass.get_SHA_512_SecureHash(aSecret, aSalt);
 		
-		//When ZullConfig asks for header, then respond with our valid response.
+		//When ZuulConfig asks for header, then respond with our valid response.
 		when(mockZuulConfig.getHeader()).thenReturn(validResponse);
 		when(mockHttpServletRequest.getHeader(validResponse)).thenReturn(validResponse);
 		try {
 		testClass.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
 			verify(mockFilterChain, times(1)).doFilter(mockHttpServletRequest, mockHttpServletResponse);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ServletException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -92,17 +91,15 @@ public void testDoFilterActuatorFalse() {
 		when(mockZuulConfig.getSecret()).thenReturn(aSecret);
 		when(mockZuulConfig.getSalt()).thenReturn(aSalt);
 		
-		//When ZullConfig asks for header, then respond with our valid response.
+		//When ZuulConfig asks for header, then respond with our valid response.
 		when(mockZuulConfig.getHeader()).thenReturn(validResponse);
 		when(mockHttpServletRequest.getHeader(validResponse)).thenReturn(validResponse);
 		try {
 		testClass.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
 			verify(mockFilterChain, times(1)).doFilter(mockHttpServletRequest, mockHttpServletResponse);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ServletException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -117,10 +114,8 @@ public void testDoFilterInvalidHeader() {
 		testClass.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
 		verify(mockHttpServletRequest, times(1)).getHeader("X-FORWARDED-FOR");
 	} catch (IOException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	} catch (ServletException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 }

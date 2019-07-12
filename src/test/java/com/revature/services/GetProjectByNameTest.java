@@ -31,61 +31,61 @@ import com.revature.services.ProjectService;
 @WebMvcTest(controllers = { ProjectController.class }, secure = false)
 public class GetProjectByNameTest {
 
-				
-				@Autowired
-				private MockMvc mvc;
-				
-				@MockBean
-				private ProjectService projectService;		
-				
-				@MockBean
-				private ProjectRepository projectRepo;
-				
-				@MockBean
-				private ProjectNotFoundException pnfe;
-				
-				@Mock
-				Project project;
-				
-				private String uri = "/name/{name}";
-					
-				
-				/**
-				 * Tests whether the endpoint responds with OK or 200 status with valid request.
-				 * 
-				 * @throws Exception
-				 * 
-				 * @author Ankit Patel
-				 */
-				@Test
-				public void testGetProjectsByName() throws Exception{
-					
-					String input = "ghostbusters";
-					List<Project> projects = new ArrayList<>();
+	
+	@Autowired
+	private MockMvc mvc;
+	
+	@MockBean
+	private ProjectService projectService;		
+	
+	@MockBean
+	private ProjectRepository projectRepo;
+	
+	@MockBean
+	private ProjectNotFoundException pnfe;
+	
+	@Mock
+	Project project;
+	
+	private String uri = "/name/{name}";
+		
+	
+	/**
+	 * Tests whether the endpoint responds with OK or 200 status with valid request.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author Ankit Patel
+	 */
+	@Test
+	public void testGetProjectsByName() throws Exception{
+		
+		String input = "ghostbusters";
+		List<Project> projects = new ArrayList<>();
 
-					when(projectService.findByName(input)).thenReturn(projects);
-					
-					this.mvc.perform(get(uri,input))
-					.andExpect(status().isOk());
-				}
+		when(projectService.findByName(input)).thenReturn(projects);
+		
+		this.mvc.perform(get(uri,input))
+		.andExpect(status().isOk());
+	}
+	
+	/**
+	 * Tests the appropriate response to send with valid requests but project name
+	 * doesn't exist.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author Ankit Patel
+	 */
+	@Test
+	public void testGetNotFoundStatus() throws Exception{
+		
+		String input = "drocktnor";
+
+		when(projectService.findByName(input)).thenThrow(pnfe);
+		
+		this.mvc.perform(get(uri,input))
+		.andExpect(status().isNotFound());
 				
-				/**
-				 * Tests the appropriate response to send with valid requests but project name
-				 * doesn't exist.
-				 * 
-				 * @throws Exception
-				 * 
-				 * @author Ankit Patel
-				 */
-				@Test
-				public void testGetNotFoundStatus() throws Exception{
-					
-					String input = "drocktnor";
-			
-					when(projectService.findByName(input)).thenThrow(pnfe);
-					
-					this.mvc.perform(get(uri,input))
-					.andExpect(status().isNotFound());
-							
-				}	
+	}	
 }

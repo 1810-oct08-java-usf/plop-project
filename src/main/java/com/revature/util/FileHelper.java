@@ -19,14 +19,6 @@ public class FileHelper {
 	 * @return a File corresponding to the argued byte[]
 	 * @throws IOException in the event of failures writing to or reading from the fs
 	 */
-//	public static File convert(MultipartFile multipartFile) throws IOException {
-//		File convFile = new File("temp");
-//		convFile.createNewFile();
-//		FileOutputStream fos = new FileOutputStream(convFile);
-//		fos.write(multipartFile.getBytes());
-//		fos.close();
-//		return convFile;
-//	}
 	public static File convert(MultipartFile multipartFile) throws IOException {
 		File convFile = new File(multipartFile.getOriginalFilename());
 		FileOutputStream fos = new FileOutputStream(convFile);

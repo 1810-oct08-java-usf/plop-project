@@ -81,20 +81,6 @@ public class ProjectControllerTestSuite {
 
 	}
 
-	/**
-	 * Test if addProject throws appropriate exception if passed null.
-	 * 
-	 * @author Bjorn Pedersen (190107-Java-Spark-USF)
-	 */
-
-//	@Test
-//	public void testAddProjectIfPassedNull() {
-//		
-//		exceptionRule.expect(ProjectNotAddedException.class);
-//		exceptionRule.expectMessage("No Project Data Submitted");
-//		
-//		projectController.addProject(null);
-//	}
 
 	/**
 	 * Test if addProject throws appropriate exception if passed projectDTO with no
@@ -231,8 +217,6 @@ public class ProjectControllerTestSuite {
 		when(projectService.findAllProjects()).thenReturn(projectList);
 
 		assertEquals(projectList, projectController.getAllProjects());
-
-//		verify(projectService).findAllProjects();
 	}
 
 	// --------------------------------------------------------------------------

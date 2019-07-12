@@ -4,6 +4,9 @@ package com.revature.exceptions;
  * This project file size too large exception is utilized for projects that are being added to the database,
  * but contain data models, screenshots, or github repos that are larger than the allowed size.
  * There is a custom message for this exception to explain why the exception was thrown.
+ * 
+ * @author Kevin Ocampo (190422-Java-Spark)
+ * 
  */
 
 public class FileSizeTooLargeException extends RuntimeException {
