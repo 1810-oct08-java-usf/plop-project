@@ -38,75 +38,52 @@ import com.revature.repositories.ProjectRepository;
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectServiceTestSuite {
 
-	// Do not mock the class you intend to test
 	private ProjectService classUnderTest;
 
 	@Rule public MockitoRule rule = MockitoJUnit.rule();
 
-	/**
-	 * A simulated ProjectRespository
-	 */
+	// A simulated ProjectRespository
 	@Mock
 	private ProjectRepository testRepo;
 
-	/**
-	 * A simulated StorageService
-	 */
+	// A simulated StorageService
 	@Mock
 	private S3StorageServiceImpl testStorage;
 
-	/**
-	 * A simulated FileService
-	 */
+	// A simulated FileService
 	@Mock
 	private FileServiceImpl testFileService;
 
-	/**
-	 * A simulated ProjectDTO
-	 */
+	// A simulated ProjectDTO
 	@Mock
 	private ProjectDTO mockProjectDTO;
 
-	/**
-	 * A simulated List<Project>; this can also be accomplished using a spy.
-	 */
+	// A simulated List<Project>; this can also be accomplished using a spy.
 	@Mock
 	private List<Project> dummyList;
 
-	/**
-	 * A simulated Project; holds data for the test methods to access during assertion.
-	 */
+	// A simulated Project; holds data for the test methods to access during assertion.
 	@Mock
 	private Project dummyProject;
 
-	/**
-	 * A simulated Project; holds data for the test methods to access during assertion.
-	 */
+	// A simulated Project; holds data for the test methods to access during assertion.
 	@Mock
 	private Project dummySavedProject;
 
-	/**
-	 * A mock file
-	 */
+	// A mock file
 	@Mock
 	private File mockFile;
 
-	/**
-	 * A mock multipart file
-	 */
+	// A mock multipart file
 	@Mock
 	private MultipartFile mockMultipartFile;
 
-	/**
-	 * Can't spy or mock final classes
-	 */
+	// Can't spy or mock final classes
 	Optional<Project> optionalProject;
 
 	String dummyString = "Something";
 
-	/**
-	 * A mock list of strings
-	 */
+	// A mock list of strings
 	@Mock
 	ArrayList<String> mockListString;
 
@@ -115,14 +92,7 @@ public class ProjectServiceTestSuite {
 	public void preTestInit() {	
 		classUnderTest = new ProjectService(testRepo, testStorage, testFileService);
 		
-		// Define the behavior of dummyList
 		dummyList.add(dummyProject);
-
-		// Define the relevant behaviors of testRepo 
-//		when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
-//		when(testRepo.findByName("string")).thenReturn(dummyList);
-//		when(testRepo.findByBatch("batchin")).thenReturn(dummyList);
-
 	}
 
 	/**
@@ -211,9 +181,8 @@ public class ProjectServiceTestSuite {
 	}
 
 	/**
-	 * Test if we can create a project from a DTO. We need the lists and such to properly mock the implementation. 
-	 * TODO: Find a better way to test this thing. Good Luck.
-	 * 
+	 * Test if we can create a project from a DTO. 
+	 * We need the lists and such to properly mock the implementation. 
 	 */
 	@Test
 	public void testCreateProjectFromDTO(){
@@ -247,7 +216,6 @@ public class ProjectServiceTestSuite {
 			verify(testFileService).download("link/archive/master.zip");
 			verify(testStorage).store(mockMultipartFile);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			System.out.println("Issue with createProjectFromDTO");
 			e.printStackTrace();
 		}
