@@ -30,29 +30,17 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			/*
-			 * Disables the protection against Cross-Site Request Forgery (CSRF), otherwise
-			 * requests cannot be made to this request from the zuul-service.
-			 */
+			// Disables protection against Cross-Site Request Forgery, else requests can't be made from zuul-service
 			.csrf().disable()
 	
-			/*
-			 * Ensure that a stateless session is used; session will not be used to store
-			 * user information/state.
-			 */
+			// Ensures a stateless session; session will not store user information
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 	
-			/*
-			 * Handle any exceptions thrown during authentication by sending a response
-			 * status of Authorized (401).
-			 */
+			// Handle any authentication exceptions by sending an Unauthorized 401 response
 			.exceptionHandling()
 			.authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED)).and()
 			
-			/*
-			 * Adding our customized filter to check for the presence of the Zuul header or if that request is
-			 * to get information from the Acutator
-			 */
+			//Add customized filter to check for Zuul header, or if request is to get information from the Actuator
             .addFilterBefore(new CustomAuthenticationFilter(zuulConfig), UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
 			
@@ -63,10 +51,8 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 			// Allow only admins to access the h2-console
 			.mvcMatchers("/h2-console/**").hasRole("ADMIN")
 			
-			/*
-			 * Allow unrestricted access to the actuator/info endpoint. Otherwise, AWS ELB
-			 * cannot perform a health check on the instance and it drains the instances.
-			 */
+			// Allow unrestricted access to the actuator/info endpoint. 
+			// Otherwise, AWS ELB cannot perform a health check on the instance and it drains the instances.
 			.antMatchers(HttpMethod.GET, "/actuator/info").permitAll()
 			.antMatchers(HttpMethod.GET, "/actuator/health").permitAll()
 			.antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
@@ -74,6 +60,7 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 			
 			// Allow unrestricted access to swagger's documentation
 			.antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources", "/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
+			
 			// All other requests must be authenticated
 			.anyRequest().authenticated();
 	}
@@ -87,4 +74,3 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 		this.zuulConfig = zuulConfig;
 	}
 }
-
