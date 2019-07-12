@@ -58,7 +58,7 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 			
 			// Allow POST requests to the "/auth" and "/auth/users" endpoints
 			.mvcMatchers(HttpMethod.POST, "/auth").permitAll()
-			.mvcMatchers(HttpMethod.POST, "/project").permitAll()
+			.mvcMatchers(HttpMethod.POST, "/project").hasAnyRole("ADMIN","USER")
 
 			// Allow only admins to access the h2-console
 			.mvcMatchers("/h2-console/**").hasRole("ADMIN")
