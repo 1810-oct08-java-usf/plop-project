@@ -49,6 +49,8 @@ public class S3StorageServiceImpl implements StorageService {
 	@Transactional
 	@PostConstruct
 	public void init() {
+		System.out.println(awsAccessKeyId);
+		System.out.println(awsSecretAccessKey);
 		credentials = new BasicAWSCredentials(awsAccessKeyId, awsSecretAccessKey);
 		s3Client = AmazonS3ClientBuilder
 			.standard()
