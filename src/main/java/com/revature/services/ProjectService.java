@@ -197,6 +197,22 @@ public class ProjectService {
 
 		return false;
 	}
+	
+	/**
+	 * 
+	 * @param project
+	 * @return
+	 */
+	public boolean submitEditRequest(Project project) {
+		if(project != null) {
+			System.out.println(project.getStatus());
+			System.out.println(project.getOldProject().getBatch());
+			projectRepo.save(project);
+			return true;
+		}
+		
+		return false;
+	}
 
 	/**
 	 * ProjectService.createProjectFromDTO accepts a ProjectDTO and persists a Project.

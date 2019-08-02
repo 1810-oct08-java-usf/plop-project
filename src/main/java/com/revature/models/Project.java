@@ -60,6 +60,7 @@ public class Project implements Serializable {
 		this.description = builder.description;
 		this.techStack = builder.techStack;
 		this.status = builder.status;
+		this.oldProject = builder.oldProject;
 	}
 
 	public Project() {
@@ -143,8 +144,6 @@ public class Project implements Serializable {
 		return dataModel;
 	}
 
-	
-	
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -318,6 +317,7 @@ public class Project implements Serializable {
 		private String description;
 		private String techStack;
 		private String status;
+		private Project oldProject;
 		
 		public ProjectBuilder setName(String name) {
 			this.name = name;
@@ -357,6 +357,11 @@ public class Project implements Serializable {
 		}
 		public ProjectBuilder setStatus(String status) {
 			this.status = status;
+			return this;
+		}
+		
+		public ProjectBuilder setOldProject(Project oldProject) {
+			this.oldProject = oldProject;
 			return this;
 		}
 		

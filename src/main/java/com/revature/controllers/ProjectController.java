@@ -219,6 +219,16 @@ public class ProjectController {
 			
 		return projectService.createProjectFromDTO(projectDTO);
 	}
+	
+	/**
+	 * 
+	 */
+	@PostMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public boolean submitEditRequest(@RequestBody Project project) {
+		return projectService.submitEditRequest(project);
+	}
+	
 		
 	/*
 	 * This method adds a new project.
