@@ -43,6 +43,9 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 			//Add customized filter to check for Zuul header, or if request is to get information from the Actuator
             .addFilterBefore(new CustomAuthenticationFilter(zuulConfig), UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
+            
+            // Allow GET requests to the "/project" endpoint
+            .mvcMatchers(HttpMethod.GET, "/project").permitAll()
 			
 			// Allow POST requests to the "/auth" and "/auth/users" endpoints
 			.mvcMatchers(HttpMethod.POST, "/auth").permitAll()
@@ -63,6 +66,7 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter{
 			
 			// All other requests must be authenticated
 			.anyRequest().authenticated();
+
 	}
 	
 	@Bean
