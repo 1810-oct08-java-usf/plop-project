@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.revature.exceptions.FileSizeTooLargeException;
+import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
@@ -25,6 +26,11 @@ import com.revature.repositories.ProjectRepository;
 @Service
 public class ProjectService {
 
+	/**
+	 * This is the project initial status.
+	 * @author Testing Team (2019)
+	 */
+	private static final String INITIAL_PROJECT_STATUS = "Pending";
 	ProjectRepository projectRepo;
 	StorageService s3StorageServiceImpl;
 	FileService fileService;
@@ -214,6 +220,12 @@ public class ProjectService {
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 * @author Tucker Mitchell (190422-Java-USF)
 	 * @author Kevin Ocampo (190422-Java-USF)
+	 * 
+	 * UPDATE (Testing Team): Implemented some validations for some properties that were considered require in the
+	 * front-end, but are not enforced in the back-end.
+	 * Setting initial status for the project, in this case it will be set to "Pending".
+	 * 
+	 * @author Testing Team (ago 2019) - USF
 	 */
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public Project createProjectFromDTO(ProjectDTO projectDTO) throws FileSizeTooLargeException {
@@ -227,6 +239,26 @@ public class ProjectService {
 			.setTechStack(projectDTO.getTechStack())
 			.setStatus(projectDTO.getStatus())
 			.build();
+		
+		/*
+		 * Setting initial status of the project this way we can assure the
+		 *  project will have this status even if the status is change in the
+		 *  front end.
+		 *  Testing Team (ago 2019) - USF
+		 */
+		newProject.setStatus(INITIAL_PROJECT_STATUS);
+		
+		/*
+		 * Implementing new validations
+		 * Testing Team (ago 2019) - USF
+		 */
+		if (newProject.getDescription() == null || newProject.getDescription().isEmpty()) {
+			throw new ProjectNotAddedException("The 'description' input cannot be empty when adding project");
+		}
+		
+		if (newProject.getGroupMembers() == null || newProject.getGroupMembers().size() == 0) {
+			throw new ProjectNotAddedException("The 'group members' input cannot be empty when adding project");
+		}
 		
 		// drop screenshot images in s3 and populate project with links to those images
 		List<String> screenShotsList = new ArrayList<>();
