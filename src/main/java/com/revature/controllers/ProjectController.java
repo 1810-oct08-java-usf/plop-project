@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -155,6 +156,17 @@ public class ProjectController {
 		}
 		return projectService.findByStatus(status);
 	}
+	
+	@GetMapping(value = "/pendingprojects", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasRole('ADMIN', 'USER')")
+    public @ResponseBody List<Project> getAllPendingProjects() {
+        System.out.println("In Project Controller getAllProjects");
+        if(projectService.findAllProjects() == null) {
+            throw new ProjectNotFoundException("There are no projects in the database.");
+        }
+        return projectService.findByStatus("Pending");
+    }
 
 	/**
 	 * 
