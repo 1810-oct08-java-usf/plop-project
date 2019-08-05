@@ -238,6 +238,7 @@ public class ProjectService {
 			.setDescription(projectDTO.getDescription())
 			.setTechStack(projectDTO.getTechStack())
 			.setStatus(projectDTO.getStatus())
+			.setUserId(projectDTO.getUserId())
 			.build();
 		
 		/*
