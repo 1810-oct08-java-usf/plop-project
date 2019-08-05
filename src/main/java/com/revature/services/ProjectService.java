@@ -213,7 +213,19 @@ public class ProjectService {
 		
 		return false;
 	}
-
+	/**
+	 * This method retrieves all projects by trainer.  
+	 * This method is currently used for allowing a user(trainer only) to
+	 * view their submitted projects.
+	 * 
+	 * @param trainer: String that serves as the trainer of the project
+	 * 
+	 * @author Mikaela Enters (1905-May20-Java-USF)
+	 * @author Tevin Thomas (1905-May20-Java-USF)
+	 */
+	public List<Project> getProjectsByTrainer(String trainer){
+		return projectRepo.findByTrainer(trainer);
+	}
 	/**
 	 * ProjectService.createProjectFromDTO accepts a ProjectDTO and persists a Project.
 	 * Transaction requires a new one every time to handle each new created object.
