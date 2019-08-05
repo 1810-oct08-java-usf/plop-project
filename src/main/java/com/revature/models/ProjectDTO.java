@@ -8,10 +8,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * ProjectDTO represents the project information a user would initially submit.
- * it differs from Project in that the user will submit github repo URLs in ProjectDTO.zipLinks
- * where Project.zipLinks will contain links to their archives, and in that
- * the user will submit MultipartFile objects in ProjectDTO.screenShots where Project.screenShots
- * will contain remote URLs for those images where they have been stored
+ * it differs from Project in that the user will submit github repo URLs in
+ * ProjectDTO.zipLinks where Project.zipLinks will contain links to their
+ * archives, and in that the user will submit MultipartFile objects in
+ * ProjectDTO.screenShots where Project.screenShots will contain remote URLs for
+ * those images where they have been stored
  * 
  * @Author Unknown, from a previous batch
  */
@@ -22,8 +23,10 @@ public class ProjectDTO {
 	private String batch;
 
 	// TODO: This value should be retrieved from the auth-service.
-	// TODO: It is possible for multiple trainers per batch (i.e. a co-trainer). This should be refactored for that option.
-	// TODO: Waiting for word from the project owner to discuss with other owners about replacing the trainer String with an object.
+	// TODO: It is possible for multiple trainers per batch (i.e. a co-trainer).
+	// This should be refactored for that option.
+	// TODO: Waiting for word from the project owner to discuss with other owners
+	// about replacing the trainer String with an object.
 	private String trainer;
 
 	private List<String> groupMembers;
@@ -32,18 +35,20 @@ public class ProjectDTO {
 	private String description;
 	private String techStack;
 	private String status;
-	
-	//field for dataModel
+
+	// field for dataModel
 	private List<MultipartFile> dataModel;
+
+	private Integer userId;
 
 	public ProjectDTO() {
 		super();
 	}
 
 	/**
-	 * This constructor is private for the builder design pattern. 
-	 * This may not be implemented for creating a new DTO because it is passed in from the front-end,
-	 * but was made for consistency alongside the Project.java builder.
+	 * This constructor is private for the builder design pattern. This may not be
+	 * implemented for creating a new DTO because it is passed in from the
+	 * front-end, but was made for consistency alongside the Project.java builder.
 	 * See below the toString() for the static builder class ProjectDTOBuilder.
 	 * 
 	 * @param builder
@@ -61,6 +66,7 @@ public class ProjectDTO {
 		this.techStack = builder.techStack;
 		this.status = builder.status;
 		this.dataModel = builder.dataModel;
+		this.userId = builder.userId;
 	}
 
 	public String getName() {
@@ -141,6 +147,14 @@ public class ProjectDTO {
 
 	public void setDataModel(List<MultipartFile> dataModel) {
 		this.dataModel = dataModel;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 	@Override
@@ -230,21 +244,26 @@ public class ProjectDTO {
 	}
 
 	/**
-     * The ProjectDTO uses the builder design pattern instead of using an all-args constructor for making more readable code.
-     * Set methods can be used or ignored for setting fields of the ProjectDTO; ignored fields will be default primitive values.
-     * (The fields of the builder must be the same as the fields of the object being built)
-     * The ProjectDTOBuilder is a class within the ProjectDTO class that can be used initialize the private fields of ProjectDTO.
-     * The no-args builder constructor is needed to instantiate the builder, after which the set methods can be used.
-     * (Arguments put into the builder constructor will be mandatory for initialization; this was left as no-args for flexibility)
-     * All of the setters need to return the builder object for chaining methods (instead of void).
-     * build() is needed last to call the private ProjectDTO constructor and instantiate with the builder just created.
-     * 
-     * Based on documentation found here: https://www.journaldev.com/1425/builder-design-pattern-in-java
-     * 
+	 * The ProjectDTO uses the builder design pattern instead of using an all-args
+	 * constructor for making more readable code. Set methods can be used or ignored
+	 * for setting fields of the ProjectDTO; ignored fields will be default
+	 * primitive values. (The fields of the builder must be the same as the fields
+	 * of the object being built) The ProjectDTOBuilder is a class within the
+	 * ProjectDTO class that can be used initialize the private fields of
+	 * ProjectDTO. The no-args builder constructor is needed to instantiate the
+	 * builder, after which the set methods can be used. (Arguments put into the
+	 * builder constructor will be mandatory for initialization; this was left as
+	 * no-args for flexibility) All of the setters need to return the builder object
+	 * for chaining methods (instead of void). build() is needed last to call the
+	 * private ProjectDTO constructor and instantiate with the builder just created.
+	 * 
+	 * Based on documentation found here:
+	 * https://www.journaldev.com/1425/builder-design-pattern-in-java
+	 * 
 	 * @param builder
 	 * @Author: Daniel Shaffer 190422-USF-Java
-     */
-	public static class ProjectDTOBuilder{
+	 */
+	public static class ProjectDTOBuilder {
 		private String name;
 		private String batch;
 		private String trainer;
@@ -255,11 +274,13 @@ public class ProjectDTO {
 		private String techStack;
 		private String status;
 		private List<MultipartFile> dataModel;
-		
+
+		private Integer userId;
+
 		public ProjectDTOBuilder() {
 			super();
 		}
-		
+
 		public ProjectDTOBuilder setName(String name) {
 			this.name = name;
 			return this;
@@ -294,28 +315,31 @@ public class ProjectDTO {
 			this.description = description;
 			return this;
 		}
-		
+
 		public ProjectDTOBuilder setTechStack(String techStack) {
 			this.techStack = techStack;
 			return this;
 		}
-		
+
 		public ProjectDTOBuilder setStatus(String status) {
 			this.status = status;
 			return this;
 		}
-		
+
 		public ProjectDTOBuilder setDataModel(List<MultipartFile> dataModel) {
 			this.dataModel = dataModel;
+			return this;
+		}
+
+		public ProjectDTOBuilder setUserId(Integer userId) {
+			this.userId = userId;
 			return this;
 		}
 
 		public ProjectDTO build() {
 			return new ProjectDTO(this);
 		}
-		
-		
-	}
-	
-}
 
+	}
+
+}
