@@ -155,7 +155,28 @@ public class ProjectController {
 		}
 		return projectService.findByStatus(status);
 	}
-
+	
+	/**
+	 * This method retrieves all projects by trainer.  
+	 * This method is currently used for allowing a user(trainer only) to
+	 * view their submitted projects.
+	 * Uses HTTP method GET and only retrieves JSON data
+	 * 
+	 * @param trainer: String that serves as the trainer of the project
+	 * 
+	 * @author Mikaela Enters (1905-May20-Java-USF)
+	 * @author Tevin Thomas (1905-May20-Java-USF)
+	 */
+	@GetMapping(value = "/{trainer}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public List<Project> getProjectsByTrainer(@PathVariable String trainer) {
+		System.out.println("Trainer name: " + trainer);
+		if(projectService.getProjectsByTrainer(trainer) == null) {
+			throw new ProjectNotFoundException("There are currently no projects with trainer: " + trainer + ", in the database");
+		}
+		return projectService.getProjectsByTrainer(trainer);
+	}
+	
 	/**
 	 * 
 	 * This method accepts each field of a ProjectDTO object in the form of multipart form data.
@@ -221,7 +242,14 @@ public class ProjectController {
 	}
 	
 	/**
+	 * This method allows a user(trainer only) to submit an edit request on
+	 * one of their projects.   
+	 * Uses HTTP method POST and only consumes JSON data.
 	 * 
+	 * @param project: The new project object for the submitted edit request.
+	 * 
+	 * @author Mikaela Enters (1905-May20-Java-USF)
+	 * @author Tevin Thomas (1905-May20-Java-USF)
 	 */
 	@PostMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
