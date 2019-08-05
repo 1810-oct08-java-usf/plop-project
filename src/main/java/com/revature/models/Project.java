@@ -39,6 +39,8 @@ public class Project implements Serializable {
 	private String techStack;
 	private String status;
 	
+	private Integer userId;
+	
 	private Project oldProject;
 
 	/**
@@ -60,6 +62,7 @@ public class Project implements Serializable {
 		this.description = builder.description;
 		this.techStack = builder.techStack;
 		this.status = builder.status;
+		this.userId = builder.userId;
 	}
 
 	public Project() {
@@ -142,6 +145,11 @@ public class Project implements Serializable {
 	public List<String> getDataModel() {
 		return dataModel;
 	}
+	
+	@NotNull(message = "Please provide the user id.")
+	public Integer getUserId() {
+		return userId;
+	}
 
 	
 	
@@ -191,6 +199,10 @@ public class Project implements Serializable {
 
 	public void setOldProject(Project oldProject) {
 		this.oldProject = oldProject;
+	}
+	
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 	@Override
@@ -319,6 +331,8 @@ public class Project implements Serializable {
 		private String techStack;
 		private String status;
 		
+		private Integer userId;
+		
 		public ProjectBuilder setName(String name) {
 			this.name = name;
 			return this;
@@ -357,6 +371,11 @@ public class Project implements Serializable {
 		}
 		public ProjectBuilder setStatus(String status) {
 			this.status = status;
+			return this;
+		}
+		
+		public ProjectBuilder setUserId(Integer userId) {
+			this.userId = userId;
 			return this;
 		}
 		
