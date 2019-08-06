@@ -75,7 +75,8 @@ public class ProjectControllerTestSuite {
 
 		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
 				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
-				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel());
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel(),
+				projectDTO.getUserId());
 
 		verify(projectService).createProjectFromDTO(projectDTO);
 
@@ -99,7 +100,8 @@ public class ProjectControllerTestSuite {
 
 		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
 				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
-				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel());
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel(),
+				projectDTO.getUserId());
 	}
 
 	/**
@@ -119,7 +121,8 @@ public class ProjectControllerTestSuite {
 		
 		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
 				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
-				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel());
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel(),
+				projectDTO.getUserId());
 	}
 
 	/**
@@ -139,7 +142,8 @@ public class ProjectControllerTestSuite {
 		
 		projectController.addProject(projectDTO.getName(),projectDTO.getBatch(),projectDTO.getTrainer(),
 				projectDTO.getGroupMembers(),projectDTO.getScreenShots(),projectDTO.getZipLinks(),
-				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel());
+				projectDTO.getDescription(),projectDTO.getTechStack(),projectDTO.getStatus(),projectDTO.getDataModel(),
+				projectDTO.getUserId());
 	}
 
 	/**

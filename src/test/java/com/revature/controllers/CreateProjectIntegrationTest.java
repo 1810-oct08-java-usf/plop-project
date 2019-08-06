@@ -28,7 +28,7 @@ import com.revature.services.ProjectService;
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = { ProjectController.class }, secure = false)
 @WithMockUser(roles="ADMIN")
-public class CreateProjecIntegrationTest {
+public class CreateProjectIntegrationTest {
 	
 	private String uri = "/";
 
@@ -67,6 +67,7 @@ public class CreateProjecIntegrationTest {
 						.param("techStack", "techStack")
 						.param("status", "status")
 						.param("dataModel", new String[] {"A"})
+						.param("userId", "1")
 						.contentType(MediaType.MULTIPART_FORM_DATA_VALUE))// Set Multipart form data
 				.andExpect(MockMvcResultMatchers.status().isCreated()); // expecting Created response
 
@@ -96,6 +97,7 @@ public class CreateProjecIntegrationTest {
 						.param("techStack", "techStack")
 						.param("status", "status")
 						.param("dataModel", new String[] {"A"})
+						.param("userId", "1")
 						.contentType(MediaType.MULTIPART_FORM_DATA_VALUE))// Set Multipart form data
 				.andExpect(MockMvcResultMatchers.status().isBadRequest()); // expecting Created response
 

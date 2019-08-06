@@ -194,7 +194,8 @@ public class ProjectController {
 		@RequestParam("description") String description, 
 		@RequestParam("techStack") String techStack, 
 		@RequestParam("status") String status,
-		@RequestParam("dataModel") List<MultipartFile> dataModel
+		@RequestParam("dataModel") List<MultipartFile> dataModel,
+		@RequestParam("userId") Integer userId
 	) 
 	{
 		if (name == null || name.equals(""))
@@ -215,6 +216,7 @@ public class ProjectController {
 		.setTechStack(techStack)
 		.setStatus(status)
 		.setDataModel(dataModel)
+		.setUserId(userId)
 		.build();
 			
 		return projectService.createProjectFromDTO(projectDTO);
