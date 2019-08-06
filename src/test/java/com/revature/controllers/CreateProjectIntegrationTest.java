@@ -28,7 +28,7 @@ import com.revature.services.ProjectService;
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = { ProjectController.class }, secure = false)
 @WithMockUser(roles="ADMIN")
-public class CreateProjecIntegrationTest {
+public class CreateProjectIntegrationTest {
 	
 	private String uri = "/";
 
