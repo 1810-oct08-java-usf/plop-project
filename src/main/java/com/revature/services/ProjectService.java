@@ -331,5 +331,21 @@ public class ProjectService {
 		else
 			return null;
 	}
+	
+    /**
+     * 
+     * @param project
+     * @return
+     */
+    public boolean submitEditRequest(Project project) {
+        if(project != null) {
+            System.out.println(project.getStatus());
+//            System.out.println(project.getOldProject().getBatch());
+            projectRepo.save(project);
+            return true;
+        }
+        
+        return false;
+    }
 
 }

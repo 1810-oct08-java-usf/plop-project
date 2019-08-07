@@ -155,6 +155,26 @@ public class ProjectController {
 		}
 		return projectService.findByStatus(status);
 	}
+	
+	
+	/**
+     * This method allows a user to submit an edit request on
+     * one of their projects.   
+     * Uses HTTP method POST and only consumes JSON data.
+     * 
+     * @param project: The new project object for the submitted edit request.
+     * 
+     * @author Mikaela Enters (1905-May20-Java-USF)
+     * @author Tevin Thomas (1905-May20-Java-USF)
+     * @author Aisha Hodge (1905-May20-Java-USF)
+     * @author Matthew Alston (1905-May20-Java-USF)
+     */
+    @PostMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public boolean submitEditRequest(@RequestBody Project project) {
+        return projectService.submitEditRequest(project);
+    }
+    
 
 	/**
 	 * 
