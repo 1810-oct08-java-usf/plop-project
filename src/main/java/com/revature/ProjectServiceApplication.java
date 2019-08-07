@@ -42,6 +42,7 @@ public class ProjectServiceApplication implements CommandLineRunner {
 		String p1_name = "Revature Project Manager (RPM)";
 		String p1_batch = "1810-Oct08-Java";
 		String p1_trainer = "Wezley Singleton";
+		int UserId = 1;
 	
 		List<String> p1_grpMembers = new ArrayList<>(
 			Arrays.asList(new String[] {
@@ -77,12 +78,14 @@ public class ProjectServiceApplication implements CommandLineRunner {
 				.setName(p1_name).setBatch(p1_batch).setTrainer(p1_trainer)
 				.setGroupMembers(p1_grpMembers).setScreenShots(p1_screens)
 				.setZipLinks(p1_zips).setDataModel(p1_dataModel).setDescription(p1_desc)
-				.setTechStack(p1_stack).setStatus(p1_status).build());
+				.setTechStack(p1_stack).setStatus(p1_status).setUserId(UserId).build());
 
 		String p2_name = "Cannons and Goblins";
 		String p2_batch = "190422-Java-USF";
 		String p2_trainer = "Wezley Singleton";
-	
+		int userId = 2;
+		
+		
 		List<String> p2_grpMembers = new ArrayList<>(Arrays.asList(new String[] {"Daniel", "Justin", "Aaron"}));
 		
 		List<String> p2_screens = new ArrayList<String>();
@@ -108,11 +111,12 @@ public class ProjectServiceApplication implements CommandLineRunner {
 				.setName(p2_name).setBatch(p2_batch).setTrainer(p2_trainer)
 				.setGroupMembers(p2_grpMembers).setScreenShots(p2_screens)
 				.setZipLinks(p2_zips).setDataModel(p2_dataModel).setDescription(p2_desc)
-				.setTechStack(p2_stack).setStatus(p2_status).build());
+				.setTechStack(p2_stack).setStatus(p2_status).setUserId(userId).build());
 		
 		String p3_name = "XChange";
 		String p3_batch = "1711-Nov13-Java";
 		String p3_trainer = "Genesis Bonds";
+		int userid = 1;
 	
 		List<String> p3_grpMembers = new ArrayList<>(Arrays.asList(new String[] {"Wezley", "Nahom", "Yosef", "Matt"}));
 		
@@ -140,11 +144,12 @@ public class ProjectServiceApplication implements CommandLineRunner {
 				.setName(p3_name).setBatch(p3_batch).setTrainer(p3_trainer)
 				.setGroupMembers(p3_grpMembers).setScreenShots(p3_screens)
 				.setZipLinks(p3_zips).setDataModel(p3_dataModel).setDescription(p3_desc)
-				.setTechStack(p3_stack).setStatus(p3_status).build());
+				.setTechStack(p3_stack).setStatus(p3_status).setUserId(userid).build());
 		
 		String p4_name = "Quizzard";
 		String p4_batch = "1805-May14-JavaScript";
 		String p4_trainer = "Blake Kruppa";
+		int userID = 2;
 	
 		List<String> p4_grpMembers = new ArrayList<>(Arrays.asList(new String[] {"Terrance", "John", "Nathan", "Kimberly"}));
 		
@@ -171,7 +176,7 @@ public class ProjectServiceApplication implements CommandLineRunner {
 				.setName(p4_name).setBatch(p4_batch).setTrainer(p4_trainer)
 				.setGroupMembers(p4_grpMembers).setScreenShots(p4_screens)
 				.setZipLinks(p4_zips).setDataModel(p4_dataModel).setDescription(p4_desc)
-				.setTechStack(p4_stack).setStatus(p4_status).build());
+				.setTechStack(p4_stack).setStatus(p4_status).setUserId(userID).build());
 		
 		String p5_name = "RideForce";
 		String p5_batch = "1808-Aug13-NET";
