@@ -1,4 +1,4 @@
-	package com.revature.controllers;
+package com.revature.controllers;
 
 import java.util.List;
 
@@ -150,7 +150,6 @@ public class ProjectController {
 //	@PreAuthorize("hasRole('ADMIN')")
 	public List<Project> getProjectsByStatus(@PathVariable String status) {
 		System.out.println("In Project Controller getProjectsByStatus " + status);
-		System.out.println(projectService.findByStatus(status).get(0).getUserId());
 
 		if(projectService.findByStatus(status) == null) {
 			throw new ProjectNotFoundException("There are currently no projects with status: " + status + ", in the database");
