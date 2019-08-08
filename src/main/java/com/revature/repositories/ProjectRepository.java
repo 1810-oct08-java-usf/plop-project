@@ -36,6 +36,8 @@ public interface ProjectRepository extends MongoRepository<Project, String> {
 	 * @return a list of projects matching the given trainer
 	 */
 	public List<Project> findByTrainer(String trainer);
+	
+	public List<Project> findByUserId(String userId);
 
 	/**
 	 * ProjectRepository.findByTechStack accepts a project techStack and returns a list of projects with that techStack

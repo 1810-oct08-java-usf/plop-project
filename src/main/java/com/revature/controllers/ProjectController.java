@@ -87,6 +87,18 @@ public class ProjectController {
 		return projectService.findById(id);
 	}
 
+	
+	@GetMapping(value = "/userId/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasRole('ADMIN', 'USER')")
+    public List<Project> getProjectByUserId(@PathVariable String userId) {
+        System.out.println("In Project Controller getProjectById "+ userId);
+        if(projectService.findByUserId(userId) == null) {
+            throw new ProjectNotFoundException("There is no project with userId: " + userId + ", in the database.");
+        }
+        return projectService.findByUserId(userId);
+    }
+	
 	/**
 	 * This method retrieves project by name Uses HTTP method GET and only retrieves
 	 * JSON data

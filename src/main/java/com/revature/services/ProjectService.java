@@ -81,6 +81,11 @@ public class ProjectService {
 	public List<Project> findByTrainer(String trainer) {
 		return projectRepo.findByTrainer(trainer);
 	}
+	
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
+    public List<Project> findByUserId(String user) {
+        return projectRepo.findByUserId(user);
+    }
 
 	/**
 	 * ProjectService.findByTechStack retrieves a list of projects with a given techStack
