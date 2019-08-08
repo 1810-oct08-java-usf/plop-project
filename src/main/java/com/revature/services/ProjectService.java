@@ -83,8 +83,8 @@ public class ProjectService {
 	}
 	
 	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
-    public List<Project> findByUserId(String user) {
-        return projectRepo.findByUserId(user);
+    public List<Project> findByUserId(Integer userId) {
+        return projectRepo.findByUserId(userId);
     }
 
 	/**

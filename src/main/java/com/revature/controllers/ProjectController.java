@@ -91,7 +91,7 @@ public class ProjectController {
 	@GetMapping(value = "/userId/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
 //    @PreAuthorize("hasRole('ADMIN', 'USER')")
-    public List<Project> getProjectByUserId(@PathVariable String userId) {
+    public List<Project> getProjectByUserId(@PathVariable Integer userId) {
         System.out.println("In Project Controller getProjectById "+ userId);
         if(projectService.findByUserId(userId) == null) {
             throw new ProjectNotFoundException("There is no project with userId: " + userId + ", in the database.");
