@@ -204,6 +204,35 @@ public class ProjectServiceApplication implements CommandLineRunner {
 				.setGroupMembers(p5_grpMembers).setScreenShots(p5_screens)
 				.setZipLinks(p5_zips).setDataModel(p5_dataModel).setDescription(p5_desc)
 				.setTechStack(p5_stack).setStatus(p5_status).build());
+		
+		
+		
+		String p6_name = "Tuition Reimbursement Application";
+		String p6_batch = "1905-nick-java";
+		String p6_trainer = "Nick Jurczak";
+	
+		List<String> p6_grpMembers = new ArrayList<>(Arrays.asList(new String[] {"Zak", "Craig", "Rebecca", "Bradley"}));
+		
+		List<String> p6_screens = new ArrayList<String>();
+		p6_screens.add("fake-screen-link");
+		
+		List<String> p6_zips = new ArrayList<String>();
+		p6_zips.add("fake-zip-link");
+		p6_zips.add("fake-zip-link");
+		
+		List<String> p6_dataModel= new ArrayList<String>();
+		p6_dataModel.add("fake-data-model.sql");
+		
+		String p6_desc = "The Tuition Reimbursement System, TRMS, allows users to submit reimbursements for courses and training. The submitted reimbursement must be approved by that employee's supervisor, department head, and benefits coordinator. The benefits coordinator then reviews the grade received before finalizing the reimbursement.";
+		
+		String p6_stack = "Spring Boot, Angular, Restful API";
+		String p6_status = "Denied";
+
+		projectRepo.save(new Project.ProjectBuilder()
+				.setName(p6_name).setBatch(p6_batch).setTrainer(p6_trainer)
+				.setGroupMembers(p6_grpMembers).setScreenShots(p6_screens)
+				.setZipLinks(p6_zips).setDataModel(p6_dataModel).setDescription(p6_desc)
+				.setTechStack(p6_stack).setStatus(p6_status).setUserId(UserId).build());
 	}
 	
 }
