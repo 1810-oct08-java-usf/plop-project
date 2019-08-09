@@ -57,7 +57,6 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.OK)
 //	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public List<Project> getAllProjects() {
-		System.out.println("In Project Controller getAllProjects");
 		if(projectService.findAllProjects() == null) {
 			throw new ProjectNotFoundException("There are no projects in the database.");
 		}
@@ -80,7 +79,6 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.OK)
 //	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public Project getProjectById(@PathVariable String id) {
-		System.out.println("In Project Controller getProjectById "+ id);
 		if(projectService.findById(id) == null) {
 			throw new ProjectNotFoundException("There is no project with id: " + id + ", in the database.");
 		}
@@ -103,7 +101,6 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.OK)
 //	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public List<Project> getProjectsByName(@PathVariable String name) {
-		System.out.println("In Project Controller getProjectsByName " + name);
 		if(projectService.findByName(name) == null) {
 			throw new ProjectNotFoundException("There is no project named: " + name + ", in the database.");
 		}
@@ -149,7 +146,6 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.OK)
 //	@PreAuthorize("hasRole('ADMIN')")
 	public List<Project> getProjectsByStatus(@PathVariable String status) {
-		System.out.println("In Project Controller getProjectsByStatus " + status);
 		if(projectService.findByStatus(status) == null) {
 			throw new ProjectNotFoundException("There are currently no projects with status: " + status + ", in the database");
 		}
