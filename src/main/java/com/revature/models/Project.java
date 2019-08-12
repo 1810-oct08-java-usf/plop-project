@@ -297,12 +297,17 @@ public class Project implements Serializable {
 		return true;
 	}
 
+
+
 	@Override
 	public String toString() {
 		return "Project [id=" + id + ", name=" + name + ", batch=" + batch + ", trainer=" + trainer + ", groupMembers="
 				+ groupMembers + ", screenShots=" + screenShots + ", dataModel=" + dataModel + ", zipLinks=" + zipLinks
-				+ ", description=" + description + ", techStack=" + techStack + ", status=" + status + "]";
+				+ ", description=" + description + ", techStack=" + techStack + ", status=" + status + ", userId="
+				+ userId + ", oldProject=" + oldProject + "]";
 	}
+
+
 
 	/**
      * The Project class uses the builder design pattern instead of using an all-args constructor for making more readable code.
