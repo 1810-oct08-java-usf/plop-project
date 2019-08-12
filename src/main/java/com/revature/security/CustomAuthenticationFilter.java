@@ -13,6 +13,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -38,6 +40,7 @@ import com.revature.exceptions.SubversionAttemptException;
 public class CustomAuthenticationFilter extends GenericFilterBean {
 	
 	private ZuulConfig zuulConfig;
+	private static Logger log;
 
 	/**
 	 * Constructor for CustomAuthenticationFilter that instantiates the ZuulConfig
@@ -75,7 +78,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 				 */
 				SecurityContextHolder.clearContext();
 				((HttpServletResponse) response).setStatus(401);
-				// Log this
+				log.log(Level.ERROR, "ZUUL header is " + headerZuul);
 				throw new SubversionAttemptException("ZUUL header is " + headerZuul);
 			}
 		} catch (SubversionAttemptException e) {
@@ -90,8 +93,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			}
 
 			String appUrl = request.getScheme() + "://" + request.getLocalAddr();
-			System.out.println("URL     " + appUrl);
-			// throw new RuntimeException(ipAddress + " " + appUrl, e);
+			log.log(Level.INFO,"URL     " + appUrl);
 		}
 		// Activates the next filter if there is any.
 		filterChain.doFilter(request, response);
@@ -128,7 +130,6 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			return false;
 		}
 		return header.equals(get_SHA_512_SecureHash(zuulConfig.getSecret(), zuulConfig.getSalt()));
-
 	}
 }
 
