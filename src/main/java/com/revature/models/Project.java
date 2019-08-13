@@ -63,6 +63,7 @@ public class Project implements Serializable {
 		this.techStack = builder.techStack;
 		this.status = builder.status;
 		this.userId = builder.userId;
+		this.oldProject= builder.oldProject;
 	}
 
 	public Project() {
@@ -338,6 +339,8 @@ public class Project implements Serializable {
 		
 		private Integer userId;
 		
+		private Project oldProject;
+		
 		public ProjectBuilder setName(String name) {
 			this.name = name;
 			return this;
@@ -384,8 +387,15 @@ public class Project implements Serializable {
 			return this;
 		}
 		
+		public ProjectBuilder setOldProject(Project oldProject) {
+			this.oldProject =oldProject;
+			return this;
+		}
+		
 		public Project build() {
 			return new Project(this);
 		}
+
+
 	}
 }

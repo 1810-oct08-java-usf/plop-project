@@ -57,7 +57,6 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.OK)
 //	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public List<Project> getAllProjects() {
-		System.out.println("In Project Controller getAllProjects");
 		if(projectService.findAllProjects() == null) {
 			throw new ProjectNotFoundException("There are no projects in the database.");
 		}
@@ -80,7 +79,6 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.OK)
 //	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public Project getProjectById(@PathVariable String id) {
-		System.out.println("In Project Controller getProjectById "+ id);
 		if(projectService.findById(id) == null) {
 			throw new ProjectNotFoundException("There is no project with id: " + id + ", in the database.");
 		}
@@ -103,7 +101,6 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.OK)
 //	@PreAuthorize("hasRole('ADMIN', 'USER')")
 	public List<Project> getProjectsByName(@PathVariable String name) {
-		System.out.println("In Project Controller getProjectsByName " + name);
 		if(projectService.findByName(name) == null) {
 			throw new ProjectNotFoundException("There is no project named: " + name + ", in the database.");
 		}
@@ -149,14 +146,31 @@ public class ProjectController {
 	@ResponseStatus(HttpStatus.OK)
 //	@PreAuthorize("hasRole('ADMIN')")
 	public List<Project> getProjectsByStatus(@PathVariable String status) {
-		System.out.println("In Project Controller getProjectsByStatus " + status);
-		System.out.println(projectService.findByStatus(status).get(0).getUserId());
-
 		if(projectService.findByStatus(status) == null) {
 			throw new ProjectNotFoundException("There are currently no projects with status: " + status + ", in the database");
 		}
 		return projectService.findByStatus(status);
 	}
+	
+	
+	/**
+     * This method allows a user to submit an edit request on
+     * one of their projects.   
+     * Uses HTTP method POST and only consumes JSON data.
+     * 
+     * @param project: The new project object for the submitted edit request.
+     * 
+     * @author Mikaela Enters (1905-May20-Java-USF)
+     * @author Tevin Thomas (1905-May20-Java-USF)
+     * @author Aisha Hodge (1905-May20-Java-USF)
+     * @author Matthew Alston (1905-May20-Java-USF)
+     */
+    @PostMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public boolean submitEditRequest(@RequestBody Project project) {
+        return projectService.submitEditRequest(project);
+    }
+    
 
 	/**
 	 * 

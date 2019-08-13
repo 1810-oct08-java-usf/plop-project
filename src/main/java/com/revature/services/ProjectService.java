@@ -331,5 +331,19 @@ public class ProjectService {
 		else
 			return null;
 	}
+	
+    /**
+     * 
+     * @param project
+     * @return
+     */
+    public boolean submitEditRequest(Project project) {
+        if(project != null) {
+            projectRepo.save(project);
+            return true;
+        }
+        
+        return false;
+    }
 
 }

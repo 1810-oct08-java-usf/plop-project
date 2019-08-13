@@ -28,7 +28,7 @@ import com.revature.security.ZuulConfig;
  */
 
 @RunWith(MockitoJUnitRunner.class)
-public class CustomAuthenticationFilerTestSuite {
+public class CustomAuthenticationFilterTestSuite {
 	
 	@Mock
 	ZuulConfig mockZuulConfig;
@@ -57,9 +57,7 @@ public class CustomAuthenticationFilerTestSuite {
 		//Getting past the first if statement.
 		when(mockHttpServletRequest.getRequestURI()).thenReturn("/project/actuator");
 		
-		String aSecret = "Secret";
-		String aSalt = "Salt";
-		String validResponse = testClass.get_SHA_512_SecureHash(aSecret, aSalt);
+		String validResponse = testClass.get_SHA_512_SecureHash("Secret", "Salt");
 		
 		//When ZuulConfig asks for header, then respond with our valid response.
 		when(mockZuulConfig.getHeader()).thenReturn(validResponse);
@@ -83,13 +81,9 @@ public void testDoFilterActuatorFalse() {
 		
 		//Getting past the first if statement.
 		when(mockHttpServletRequest.getRequestURI()).thenReturn("/somethingElse");
-		
-		//This bit of fun is brought about by us because we need to bypass security.
-		String aSecret = "Secret";
-		String aSalt = "Salt";
-		String validResponse = testClass.get_SHA_512_SecureHash(aSecret, aSalt);
-		when(mockZuulConfig.getSecret()).thenReturn(aSecret);
-		when(mockZuulConfig.getSalt()).thenReturn(aSalt);
+		when(mockZuulConfig.getSecret()).thenReturn("Secret");
+		when(mockZuulConfig.getSalt()).thenReturn("Salt");
+		String validResponse = testClass.get_SHA_512_SecureHash("Secret", "Salt");
 		
 		//When ZuulConfig asks for header, then respond with our valid response.
 		when(mockZuulConfig.getHeader()).thenReturn(validResponse);
