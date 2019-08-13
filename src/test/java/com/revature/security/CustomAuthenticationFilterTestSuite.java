@@ -28,7 +28,7 @@ import com.revature.security.ZuulConfig;
  */
 
 @RunWith(MockitoJUnitRunner.class)
-public class CustomAuthenticationFilerTestSuite {
+public class CustomAuthenticationFilterTestSuite {
 	
 	@Mock
 	ZuulConfig mockZuulConfig;
@@ -110,6 +110,7 @@ public void testDoFilterActuatorFalse() {
 @Test
 public void testDoFilterInvalidHeader() {
 	when(mockHttpServletRequest.getRequestURI()).thenReturn("/somethingElse");
+
 	try {
 		testClass.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
 		verify(mockHttpServletRequest, times(1)).getHeader("X-FORWARDED-FOR");
