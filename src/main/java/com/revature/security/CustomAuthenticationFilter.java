@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,8 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -40,7 +41,7 @@ import com.revature.exceptions.SubversionAttemptException;
 public class CustomAuthenticationFilter extends GenericFilterBean {
 	
 	private ZuulConfig zuulConfig;
-	private static Logger logger;
+	private static Logger logger = Logger.getLogger("DRIVER_LOGGER");
 
 	/**
 	 * Constructor for CustomAuthenticationFilter that instantiates the ZuulConfig
@@ -93,7 +94,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			}
 
 			String appUrl = request.getScheme() + "://" + request.getLocalAddr();
-			logger.log(Level.INFO, "URL     " + appUrl);
+			logger.log(Level.INFO, "URL:" + appUrl);
 		}
 		// Activates the next filter if there is any.
 		filterChain.doFilter(request, response);

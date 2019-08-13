@@ -81,7 +81,8 @@ public void testDoFilterActuatorFalse() {
 		
 		//Getting past the first if statement.
 		when(mockHttpServletRequest.getRequestURI()).thenReturn("/somethingElse");
-
+		when(mockZuulConfig.getSecret()).thenReturn("Secret");
+		when(mockZuulConfig.getSalt()).thenReturn("Salt");
 		String validResponse = testClass.get_SHA_512_SecureHash("Secret", "Salt");
 		
 		//When ZuulConfig asks for header, then respond with our valid response.
@@ -103,7 +104,6 @@ public void testDoFilterActuatorFalse() {
 @Test
 public void testDoFilterInvalidHeader() {
 	when(mockHttpServletRequest.getRequestURI()).thenReturn("/somethingElse");
-	when(mockZuulConfig.getHeader()).thenReturn("X-FORWARDED-FOR");
 	try {
 		testClass.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
 		verify(mockHttpServletRequest, times(1)).getHeader("X-FORWARDED-FOR");
