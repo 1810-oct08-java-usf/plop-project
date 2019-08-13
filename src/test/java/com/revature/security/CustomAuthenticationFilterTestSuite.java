@@ -57,9 +57,7 @@ public class CustomAuthenticationFilterTestSuite {
 		//Getting past the first if statement.
 		when(mockHttpServletRequest.getRequestURI()).thenReturn("/project/actuator");
 		
-		String aSecret = "Secret";
-		String aSalt = "Salt";
-		String validResponse = testClass.get_SHA_512_SecureHash(aSecret, aSalt);
+		String validResponse = testClass.get_SHA_512_SecureHash("Secret", "Salt");
 		
 		//When ZuulConfig asks for header, then respond with our valid response.
 		when(mockZuulConfig.getHeader()).thenReturn(validResponse);
@@ -83,13 +81,8 @@ public void testDoFilterActuatorFalse() {
 		
 		//Getting past the first if statement.
 		when(mockHttpServletRequest.getRequestURI()).thenReturn("/somethingElse");
-		
-		//This bit of fun is brought about by us because we need to bypass security.
-		String aSecret = "Secret";
-		String aSalt = "Salt";
-		String validResponse = testClass.get_SHA_512_SecureHash(aSecret, aSalt);
-		when(mockZuulConfig.getSecret()).thenReturn(aSecret);
-		when(mockZuulConfig.getSalt()).thenReturn(aSalt);
+
+		String validResponse = testClass.get_SHA_512_SecureHash("Secret", "Salt");
 		
 		//When ZuulConfig asks for header, then respond with our valid response.
 		when(mockZuulConfig.getHeader()).thenReturn(validResponse);
@@ -110,7 +103,7 @@ public void testDoFilterActuatorFalse() {
 @Test
 public void testDoFilterInvalidHeader() {
 	when(mockHttpServletRequest.getRequestURI()).thenReturn("/somethingElse");
-
+	when(mockZuulConfig.getHeader()).thenReturn("X-FORWARDED-FOR");
 	try {
 		testClass.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
 		verify(mockHttpServletRequest, times(1)).getHeader("X-FORWARDED-FOR");

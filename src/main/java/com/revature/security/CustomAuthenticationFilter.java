@@ -93,9 +93,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			}
 
 			String appUrl = request.getScheme() + "://" + request.getLocalAddr();
-			System.out.println("URL     " + appUrl);
-//			logger.log(Level.INFO, "URL     " + appUrl);
-			// throw new RuntimeException(ipAddress + " " + appUrl, e);
+			logger.log(Level.INFO, "URL     " + appUrl);
 		}
 		// Activates the next filter if there is any.
 		filterChain.doFilter(request, response);
@@ -128,11 +126,10 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 	 * @param header The retrieved header from the request object
 	 */
 	public boolean validateHeader(String header) {
-//		if (header == null) {
-//			return false;
-//		}
-//		return header.equals(get_SHA_512_SecureHash(zuulConfig.getSecret(), zuulConfig.getSalt()));
-		return true;
+		if (header == null) {
+			return false;
+		}
+		return header.equals(get_SHA_512_SecureHash(zuulConfig.getSecret(), zuulConfig.getSalt()));
 	}
 }
 
