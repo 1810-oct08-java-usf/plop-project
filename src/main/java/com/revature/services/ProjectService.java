@@ -81,11 +81,6 @@ public class ProjectService {
 	public List<Project> findByTrainer(String trainer) {
 		return projectRepo.findByTrainer(trainer);
 	}
-	
-	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
-    public List<Project> findByUserId(Integer userId) {
-        return projectRepo.findByUserId(userId);
-    }
 
 	/**
 	 * ProjectService.findByTechStack retrieves a list of projects with a given techStack
@@ -336,5 +331,19 @@ public class ProjectService {
 		else
 			return null;
 	}
+	
+    /**
+     * 
+     * @param project
+     * @return
+     */
+    public boolean submitEditRequest(Project project) {
+        if(project != null) {
+            projectRepo.save(project);
+            return true;
+        }
+        
+        return false;
+    }
 
 }

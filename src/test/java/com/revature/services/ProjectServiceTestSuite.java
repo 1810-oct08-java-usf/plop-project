@@ -135,6 +135,11 @@ public class ProjectServiceTestSuite {
 		when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
 		assertThat(classUnderTest.findById("floop")).isInstanceOf(Project.class);
 	}
+	
+	@Test
+	public void shouldReturnProjectOnGoodEditSubmission() {
+		assertThat(classUnderTest.submitEditRequest(dummySavedProject)).isEqualTo(Boolean.TRUE);
+	}
 
 	/**
 	 * Assertion should verify that searching with a bad id value returns null
@@ -411,4 +416,6 @@ public class ProjectServiceTestSuite {
 		assertNotNull(result); // Project should not be null
 		verify(testRepo, times(1)).save(Mockito.any());
 	}
+	
+	
 }
