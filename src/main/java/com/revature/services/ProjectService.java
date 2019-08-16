@@ -42,6 +42,10 @@ public class ProjectService {
 		this.fileService = fileService;
 	}
 
+	@Transactional(readOnly=true, isolation=Isolation.READ_COMMITTED)
+    public List<Project> findByUserId(Integer userId) {
+        return projectRepo.findByUserId(userId);
+    }
 
 	/**
 	 * ProjectService.findByName retrieves a list of projects with a given name
