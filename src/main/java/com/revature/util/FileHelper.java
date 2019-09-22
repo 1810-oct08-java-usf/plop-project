@@ -1,4 +1,4 @@
-package com.revature.helpers;
+package com.revature.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,8 +20,7 @@ public class FileHelper {
 	 * @throws IOException in the event of failures writing to or reading from the fs
 	 */
 	public static File convert(MultipartFile multipartFile) throws IOException {
-		File convFile = new File("temp");
-		convFile.createNewFile();
+		File convFile = new File(multipartFile.getOriginalFilename());
 		FileOutputStream fos = new FileOutputStream(convFile);
 		fos.write(multipartFile.getBytes());
 		fos.close();

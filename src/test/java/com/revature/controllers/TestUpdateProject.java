@@ -1,4 +1,4 @@
-package com.revature.tests;
+package com.revature.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -59,8 +59,19 @@ public class TestUpdateProject {
 	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	
-	private static Project proj = new Project("name","batch","trainer", new ArrayList<String>(), new ArrayList<String>(),new ArrayList<String>(),"description","techstack","approved");
-
+	private static Project proj = new Project.ProjectBuilder()
+			.setName("name")
+			.setBatch("batch")
+			.setTrainer("trainer")
+			.setGroupMembers(new ArrayList<String>())
+			.setScreenShots(new ArrayList<String>())
+			.setDataModel(new ArrayList<String>())
+			.setZipLinks(new ArrayList<String>())
+			.setDescription("description")
+			.setTechStack("techstack")
+			.setStatus("approved")
+			.build();
+	
 	/**
 	 * This method is going to test if our context loads and is not null.
 	 * 
@@ -146,7 +157,6 @@ public class TestUpdateProject {
 	@Test
 	public void testUpdateProjectWithDeniedProject() throws Exception {
 
-		// The expected result from the controller
 		String expectedResult = "true";
 		proj.setStatus("Denied");
 
@@ -179,7 +189,6 @@ public class TestUpdateProject {
 	@Test
 	public void testUpdateProjectWithPendingProject() throws Exception {
 
-		// The expected result from the controller
 		String expectedResult = "true";
 		proj.setStatus("Pending");
 
@@ -219,8 +228,8 @@ public class TestUpdateProject {
 		String requestJson = asJsonString(proj);
 
 		/*
-		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
-		 * ) and the expected result is returned.
+		 * Test our PUT mapping for updateProject() and check if the status is OK (200)
+		 * and the expected result is returned.
 		 */
 		this.mockMvc.perform(put(URI + id).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 				.andExpect(status().is4xxClientError());

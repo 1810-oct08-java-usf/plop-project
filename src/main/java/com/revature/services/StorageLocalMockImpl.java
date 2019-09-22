@@ -5,8 +5,10 @@ import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,46 +21,50 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.revature.util.FileHelper;
 
 @Service
-@Profile("!local")
-public class S3StorageServiceImpl implements StorageService {
-
-	@Value("${aws.config.aws-access-key-id}")
+@Profile("local")
+@PropertySource("classpath:credentials.properties")
+public class StorageLocalMockImpl implements StorageService {
+	
+	@Value("${ACCESS_KEY_ID}")
 	private String awsAccessKeyId;
 
-	@Value("${aws.config.aws-secret-access-key}")
+	@Value("${SECRET_ACCESS_KEY}")
 	private String awsSecretAccessKey;
 
-	@Value("${aws.config.bucket-name}")
+	@Value("${BUCKET_NAME}")
 	private String bucketName;
 
-	@Value("${aws.config.bucket-region}")
+	@Value("${BUCKET_REGION}")
 	private String bucketRegion;
 	
-	@Value("${aws.config.s3-endpoint}")
+	@Value("${S3_ENDPOINT}")
 	private String s3EndPoint;
 
 	private AWSCredentials credentials;
 	private AmazonS3 s3Client;
 
+	Logger logger = Logger.getLogger(StorageLocalMockImpl.class);
+	
 	/**
 	 * init draws on environment variables setting up an s3Client used to store objects
 	 * Added @Transactional
 	 * 
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
+	@Override
 	@Transactional
 	@PostConstruct
 	public void init() {
-		System.out.println(awsAccessKeyId);
-		System.out.println(awsSecretAccessKey);
 		credentials = new BasicAWSCredentials(awsAccessKeyId, awsSecretAccessKey);
+		System.out.println("awsAccessKeyId: " + awsAccessKeyId);
+		System.out.println("awsSecretAccessKey: " + awsSecretAccessKey);
 		s3Client = AmazonS3ClientBuilder
 			.standard()
 			.withCredentials(new AWSStaticCredentialsProvider(credentials))
 			.withRegion(bucketRegion)
 			.build();
 	}
-
+	
 	/**
 	 * store puts an object in the configured s3 bucket
 	 * Added @Transactional
@@ -67,10 +73,10 @@ public class S3StorageServiceImpl implements StorageService {
 	 * @return the link to the new object
 	 * @author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
-	
+	@Override
 	@Transactional
 	public String store(MultipartFile multipartFile) {
-
+		System.out.println("inside store(multipartFile) method");
 		try {
 			s3Client.putObject(bucketName, multipartFile.getOriginalFilename(), FileHelper.convert(multipartFile));
 			return  s3EndPoint + '/' + bucketName + '/' + multipartFile.getOriginalFilename();
@@ -92,7 +98,7 @@ public class S3StorageServiceImpl implements StorageService {
 	 * @return the link to the new object
 	 *@author Stuart Pratuch (190422-JAVA-SPARK-USF)
 	 */
-	
+	@Override
 	@Transactional
 	public String store(File file) {
 		s3Client.putObject(bucketName, file.getName(), file);
