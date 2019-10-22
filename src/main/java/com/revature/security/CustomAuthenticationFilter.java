@@ -15,31 +15,24 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.revature.exceptions.SubversionAttemptException;
 
-
 /**
- * The purpose of this class is to create custom filters for this service to only
- * accept and authorize requests from zuul or to anything that wants info about the 
- * health of the service. Currently, it looks for this header from zuul using the ZuulConfig.
- * object. If anything tries to hit an end point for actuator it lets it through regardless
- * of headers. This is allowed for now as ELB on AWS will check actuator/info in order
- * to evaluate the health of the service. If it does not get through to that end point,
- * ELB will shut down the service and start a new one within 3 minutes.
- *
- * @author Sean Doyle (1810-Oct22-Java-USF)
- * @author Josh Jibilian (1810-Oct22-Java-USF)
- * @author Colt Ossoff (1810-Oct22-Java-USF)
- * @author Bronwen Hughes (1810-Oct22-Java-USF)
- * @author John Savath (1810-Oct22-Java-USF)
+ * The purpose of this class is to create custom filters for this service to
+ * only accept and authorize requests from zuul or to anything that wants info
+ * about the health of the service. Currently, it looks for this header from
+ * zuul using the ZuulConfig. object. If anything tries to hit an end point for
+ * actuator it lets it through regardless of headers. This is allowed for now as
+ * ELB on AWS will check actuator/info in order to evaluate the health of the
+ * service. If it does not get through to that end point, ELB will shut down the
+ * service and start a new one within 3 minutes.
  */
 public class CustomAuthenticationFilter extends GenericFilterBean {
-	
+
 	private ZuulConfig zuulConfig;
 	private static Logger logger = Logger.getLogger("DRIVER_LOGGER");
 
@@ -47,16 +40,15 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 	 * Constructor for CustomAuthenticationFilter that instantiates the ZuulConfig
 	 * field.
 	 * 
-	 * @param zuulConfig Provides configuration for validating that requests came through Zuul
+	 * @param zuulConfig Provides configuration for validating that requests came
+	 *                   through Zuul
 	 */
 	public CustomAuthenticationFilter(ZuulConfig zuulConfig) {
 		this.zuulConfig = zuulConfig;
 	}
-	
+
 	/**
 	 * This is the filter that is used to authenticate specific traffic.
-	 * 
-	 * @author Sean Doyle (1810-Oct22-Java-USF)
 	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
@@ -65,7 +57,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 		String headerZuul = httpRequest.getHeader(zuulConfig.getHeader());
 		try {
 			// This is where the main check if the actuator end point is being hit or
-			//	that the zuul header is present.
+			// that the zuul header is present.
 			if (httpRequest.getRequestURI().contains("/project/actuator")) {
 				Authentication auth = new AccessAuthenticationToken(headerZuul, "ROLE_ACTUATOR", new ArrayList<>());
 				SecurityContextHolder.getContext().setAuthentication(auth);
@@ -84,8 +76,8 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 			}
 		} catch (SubversionAttemptException e) {
 			/*
-			 * TODO This should be refactored to log the failed authentication attempt,
-			 * including the IP address of the requester.
+			 * TODO: This should be refactored to log the failed authentication attempt
+			 * TODO: including the IP address of the requester.
 			 */
 			e.printStackTrace();
 			String ipAddress = ((HttpServletRequest) request).getHeader("X-FORWARDED-FOR");
@@ -102,7 +94,8 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 
 	/**
 	 * Method to perform a SHA-512 hash. Retrieved from:
-	 * {@link https://stackoverflow.com/questions/33085493/how-to-hash-a-password-with-sha-512-in-java}
+	 * 
+	 * @Link https://stackoverflow.com/questions/33085493/how-to-hash-a-password-with-sha-512-in-java
 	 */
 	public String get_SHA_512_SecureHash(String passwordToHash, String salt) {
 		String generatedPassword = null;
@@ -120,7 +113,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 		}
 		return generatedPassword;
 	}
-	
+
 	/**
 	 * Method to check if the header matches that provided by Zuul
 	 * 
@@ -133,4 +126,3 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
 		return header.equals(get_SHA_512_SecureHash(zuulConfig.getSecret(), zuulConfig.getSalt()));
 	}
 }
-
