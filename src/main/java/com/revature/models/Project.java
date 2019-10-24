@@ -3,11 +3,9 @@ package com.revature.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.stereotype.Component;
 
@@ -22,12 +20,9 @@ public class Project implements Serializable {
 
   @Id
   private String id;
-
   private String name;
   private String batch;
-
   private String trainer;
-
   private List<String> groupMembers;
   private List<String> screenShots;
   private List<String> dataModel;
@@ -35,9 +30,7 @@ public class Project implements Serializable {
   private String description;
   private String techStack;
   private String status;
-
   private Integer userId;
-
   private Project oldProject;
 
   /**
@@ -329,9 +322,7 @@ public class Project implements Serializable {
     private String description;
     private String techStack;
     private String status;
-
     private Integer userId;
-
     private Project oldProject;
 
     public ProjectBuilder setName(String name) {
