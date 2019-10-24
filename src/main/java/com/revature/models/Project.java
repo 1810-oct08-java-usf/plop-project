@@ -11,18 +11,21 @@ import javax.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
 import org.springframework.stereotype.Component;
 
-/** the Project class (implementing Serializable) represents a successfully-submitted project */
+/**
+ * the Project class (implementing Serializable) represents a
+ * successfully-submitted project
+ */
 @Component
 public class Project implements Serializable {
 
   private static final long serialVersionUID = -1295401907345421001L;
 
-  @Id private String id;
+  @Id
+  private String id;
 
   private String name;
   private String batch;
 
-  // TODO: This value should be retrieved from the auth-service.
   private String trainer;
 
   private List<String> groupMembers;
@@ -38,8 +41,8 @@ public class Project implements Serializable {
   private Project oldProject;
 
   /**
-   * This constructor is private for the builder design pattern. See below the toString() for the
-   * static builder class ProjectBuilder.
+   * This constructor is private for the builder design pattern. See below the
+   * toString() for the static builder class ProjectBuilder.
    *
    * @param builder
    */
@@ -74,10 +77,7 @@ public class Project implements Serializable {
     return id;
   }
 
-  @Size(
-      min = 3,
-      max = 30,
-      message = "'Project Name' must have a minimum of 3 characters with a max of 30.")
+  @Size(min = 3, max = 30, message = "'Project Name' must have a minimum of 3 characters with a max of 30.")
   @NotNull(message = "Please provide a project name.")
   @NotBlank(message = "Please provide a project name.")
   public String getName() {
@@ -114,10 +114,7 @@ public class Project implements Serializable {
     return zipLinks;
   }
 
-  @Size(
-      min = 20,
-      max = 500,
-      message = "Project Description must be a minimum of 20 characters with a max of 500.")
+  @Size(min = 20, max = 500, message = "Project Description must be a minimum of 20 characters with a max of 500.")
   @NotNull(message = "Please provide a valid project description.")
   @NotBlank(message = "Please provide a valid project description.")
   public String getDescription() {
@@ -222,93 +219,100 @@ public class Project implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
     Project other = (Project) obj;
     if (batch == null) {
-      if (other.batch != null) return false;
-    } else if (!batch.equals(other.batch)) return false;
+      if (other.batch != null)
+        return false;
+    } else if (!batch.equals(other.batch))
+      return false;
     if (dataModel == null) {
-      if (other.dataModel != null) return false;
-    } else if (!dataModel.equals(other.dataModel)) return false;
+      if (other.dataModel != null)
+        return false;
+    } else if (!dataModel.equals(other.dataModel))
+      return false;
     if (description == null) {
-      if (other.description != null) return false;
-    } else if (!description.equals(other.description)) return false;
+      if (other.description != null)
+        return false;
+    } else if (!description.equals(other.description))
+      return false;
     if (groupMembers == null) {
-      if (other.groupMembers != null) return false;
-    } else if (!groupMembers.equals(other.groupMembers)) return false;
+      if (other.groupMembers != null)
+        return false;
+    } else if (!groupMembers.equals(other.groupMembers))
+      return false;
     if (id == null) {
-      if (other.id != null) return false;
-    } else if (!id.equals(other.id)) return false;
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
     if (name == null) {
-      if (other.name != null) return false;
-    } else if (!name.equals(other.name)) return false;
+      if (other.name != null)
+        return false;
+    } else if (!name.equals(other.name))
+      return false;
     if (oldProject == null) {
-      if (other.oldProject != null) return false;
-    } else if (!oldProject.equals(other.oldProject)) return false;
+      if (other.oldProject != null)
+        return false;
+    } else if (!oldProject.equals(other.oldProject))
+      return false;
     if (screenShots == null) {
-      if (other.screenShots != null) return false;
-    } else if (!screenShots.equals(other.screenShots)) return false;
+      if (other.screenShots != null)
+        return false;
+    } else if (!screenShots.equals(other.screenShots))
+      return false;
     if (status == null) {
-      if (other.status != null) return false;
-    } else if (!status.equals(other.status)) return false;
+      if (other.status != null)
+        return false;
+    } else if (!status.equals(other.status))
+      return false;
     if (techStack == null) {
-      if (other.techStack != null) return false;
-    } else if (!techStack.equals(other.techStack)) return false;
+      if (other.techStack != null)
+        return false;
+    } else if (!techStack.equals(other.techStack))
+      return false;
     if (trainer == null) {
-      if (other.trainer != null) return false;
-    } else if (!trainer.equals(other.trainer)) return false;
+      if (other.trainer != null)
+        return false;
+    } else if (!trainer.equals(other.trainer))
+      return false;
     if (zipLinks == null) {
-      if (other.zipLinks != null) return false;
-    } else if (!zipLinks.equals(other.zipLinks)) return false;
+      if (other.zipLinks != null)
+        return false;
+    } else if (!zipLinks.equals(other.zipLinks))
+      return false;
     return true;
   }
 
   @Override
   public String toString() {
-    return "Project [id="
-        + id
-        + ", name="
-        + name
-        + ", batch="
-        + batch
-        + ", trainer="
-        + trainer
-        + ", groupMembers="
-        + groupMembers
-        + ", screenShots="
-        + screenShots
-        + ", dataModel="
-        + dataModel
-        + ", zipLinks="
-        + zipLinks
-        + ", description="
-        + description
-        + ", techStack="
-        + techStack
-        + ", status="
-        + status
-        + ", userId="
-        + userId
-        + ", oldProject="
-        + oldProject
-        + "]";
+    return "Project [id=" + id + ", name=" + name + ", batch=" + batch + ", trainer=" + trainer + ", groupMembers="
+        + groupMembers + ", screenShots=" + screenShots + ", dataModel=" + dataModel + ", zipLinks=" + zipLinks
+        + ", description=" + description + ", techStack=" + techStack + ", status=" + status + ", userId=" + userId
+        + ", oldProject=" + oldProject + "]";
   }
 
   /**
-   * The Project class uses the builder design pattern instead of using an all-args constructor for
-   * making more readable code. Set methods can be used or ignored for setting fields of the
-   * Project; ignored fields will be default primitive values. (The fields of the builder must be
-   * the same as the fields of the object being built) The ProjectBuilder is a class within the
-   * Project class that can be used initialize the private fields of Project. The no-args builder
-   * constructor is needed to instantiate the builder, after which the set methods can be used.
-   * (Arguments put into the builder constructor will be mandatory for initialization; this was left
-   * as no-args for flexibility) All of the setters need to return the builder object for chaining
-   * methods (instead of void). build() is needed last to call the private Project constructor and
-   * instantiate with the builder just created.
+   * The Project class uses the builder design pattern instead of using an
+   * all-args constructor for making more readable code. Set methods can be used
+   * or ignored for setting fields of the Project; ignored fields will be default
+   * primitive values. (The fields of the builder must be the same as the fields
+   * of the object being built) The ProjectBuilder is a class within the Project
+   * class that can be used initialize the private fields of Project. The no-args
+   * builder constructor is needed to instantiate the builder, after which the set
+   * methods can be used. (Arguments put into the builder constructor will be
+   * mandatory for initialization; this was left as no-args for flexibility) All
+   * of the setters need to return the builder object for chaining methods
+   * (instead of void). build() is needed last to call the private Project
+   * constructor and instantiate with the builder just created.
    *
-   * <p>Based on documentation found here:
+   * <p>
+   * Based on documentation found here:
    * https://www.journaldev.com/1425/builder-design-pattern-in-java
    *
    * @param builder
