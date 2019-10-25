@@ -3,10 +3,8 @@ package com.revature.swagger;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
