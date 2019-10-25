@@ -1,7 +1,6 @@
 package com.revature.models;
 
 import java.util.List;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,26 +16,16 @@ public class ProjectDTO {
 
   private String name;
   private String batch;
-
-  // TODO: This value should be retrieved from the auth-service.
-  // TODO: It is possible for multiple trainers per batch (i.e. a co-trainer).
-  // This should be refactored for that option.
-  // TODO: Waiting for word from the project owner to discuss with other owners
-  // about replacing the trainer String with an object.
   private String trainer;
-
   private List<String> groupMembers;
   private List<MultipartFile> screenShots;
   private List<String> zipLinks;
   private String description;
   private String techStack;
   private String status;
-
   // field for dataModel
   private List<MultipartFile> dataModel;
-
   private Integer userId;
-
   public ProjectDTO() {
     super();
   }
