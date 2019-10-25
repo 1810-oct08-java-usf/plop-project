@@ -1,7 +1,6 @@
 package com.revature.security;
 
 import java.util.Collection;
-
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -12,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 public class AccessAuthenticationToken extends AbstractAuthenticationToken {
 
   private static final long serialVersionUID = 8214607188015458452L;
-
   private final Object principal;
   private Object credentials;
 
@@ -46,7 +44,6 @@ public class AccessAuthenticationToken extends AbstractAuthenticationToken {
       throw new IllegalArgumentException(
           "Cannot set this token to trusted - use constructor which takes a GrantedAuthority list instead");
     }
-
     super.setAuthenticated(false);
   }
 
