@@ -41,7 +41,6 @@ public class SwaggerConfig {
    * in relation to only the controller class,
    * build the JSON documentation, and display it.
    *
-   * @author Bronwen Hughes (1810-Oct22-Java-USF)
    */
   @Bean
   public Docket api() {
