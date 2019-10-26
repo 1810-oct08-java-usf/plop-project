@@ -3,10 +3,8 @@ package com.revature.swagger;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -43,7 +41,6 @@ public class SwaggerConfig {
    * in relation to only the controller class,
    * build the JSON documentation, and display it.
    *
-   * @author Bronwen Hughes (1810-Oct22-Java-USF)
    */
   @Bean
   public Docket api() {

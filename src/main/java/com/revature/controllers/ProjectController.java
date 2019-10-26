@@ -1,7 +1,6 @@
 package com.revature.controllers;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.revature.exceptions.InvalidStatusException;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
@@ -206,74 +204,6 @@ public class ProjectController {
 
     return projectService.createProjectFromDTO(projectDTO);
   }
-
-  /*
-   * This method adds a new project.
-   *
-   * Uses HTTP method POST. Retrieves form data because this method have values
-   * that are collection.
-   *
-   * @param name: Requests a String that specifies the name from whatever hits
-   * this endpoint.
-   *
-   * @param batch: Requests a String that specifies the batch from whatever hits
-   * this endpoint.
-   *
-   * @param trainer: Requests a String that specifies the trainer from whatever
-   * hits this endpoint.
-   *
-   * @param groupMembers: Requests a list collection of Strings that specifies the
-   * groupMembers from whatever hits this endpoint.
-   *
-   * @param screenShots: Requests a list collection of MultipartFile that
-   * specifies the screenShots from whatever hits this endpoint.
-   *
-   * @param zipLinks: Requests a list collection of Strings that specifies the
-   * zipLinks from whatever hits this endpoint.
-   *
-   * @param description: Requests a String that specifies the description from
-   * whatever hits this endpoint.
-   *
-   * @param techStack: Requests a String that specifies the techStack from
-   * whatever hits this endpoint.
-   *
-   * @param status: Requests a String that specifies the status from whatever hits
-   * this endpoint.
-   *
-   */
-
-  //	public Project addProject(// TODO should be retrieved from auth service
-  //			@RequestParam String name,
-  //			@RequestParam String batch,
-  //			@RequestParam String trainer,
-  //			@RequestParam List<String> groupMembers,
-  //			@RequestParam List<MultipartFile> screenShots,
-  //			@RequestParam List<String> zipLinks,
-  //			@RequestParam String description,
-  //			@RequestParam String techStack,
-  //			@RequestParam String status) {
-  //		ProjectDTO projectDTO = new ProjectDTO();
-  //
-  //		projectDTO.setName(name);
-  //		projectDTO.setBatch(batch);
-  //		projectDTO.setTrainer(trainer);
-  //		projectDTO.setScreenShots(screenShots);
-  //		projectDTO.setGroupMembers(groupMembers);
-  //		projectDTO.setZipLinks(zipLinks);
-  //		projectDTO.setDescription(description);
-  //		projectDTO.setTechStack(techStack);
-  //		projectDTO.setStatus(status);
-  //
-  //		if (projectDTO.getBatch() == null)
-  //			throw new ProjectNotAddedException("The 'batch' input cannot be null when adding project");
-  //		if (projectDTO.getName() == null)
-  //			throw new ProjectNotAddedException("The 'name' input cannot be null when adding project");
-  //		if (projectDTO.getTechStack() == null)
-  //			throw new ProjectNotAddedException("The 'tech stack' input cannot be null when adding
-  // project");
-  //
-  //		return projectService.createProjectFromDTO(projectDTO);
-  //	}
 
   /**
    * This method is used to delete an entry into the embedded MongoDB based on the ID
