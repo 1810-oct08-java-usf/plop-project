@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,15 +14,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
 import com.revature.controllers.ProjectController;
 import com.revature.models.Project;
 import com.revature.repositories.ProjectRepository;
 import com.revature.services.ProjectService;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = { ProjectController.class }, secure = false)
-@WithMockUser(roles="ADMIN")
+@WebMvcTest(
+    controllers = {ProjectController.class},
+    secure = false)
+@WithMockUser(roles = "ADMIN")
 public class IntegrationTestSuite {
 	
 	@Autowired
