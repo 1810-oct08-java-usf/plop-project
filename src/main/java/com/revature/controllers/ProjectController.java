@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import com.revature.exceptions.BadRequestException;
 import com.revature.exceptions.InvalidStatusException;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
@@ -42,12 +44,10 @@ public class ProjectController {
    * <br>
    * Added Spring Security annotations to prevent unauthorized users from accessing database
    */
-  @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getAllProjects() {
-    if (projectService.findAllProjects() == null) {
-      throw new ProjectNotFoundException("There are no projects in the database.");
-    }
+    
     return projectService.findAllProjects();
   }
 
@@ -61,10 +61,7 @@ public class ProjectController {
   @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Project getProjectById(@PathVariable String id) {
-    if (projectService.findById(id) == null) {
-      throw new ProjectNotFoundException(
-          "There is no project with id: " + id + ", in the database.");
-    }
+    
     return projectService.findById(id);
   }
 
@@ -72,11 +69,7 @@ public class ProjectController {
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getProjectByUserId(@PathVariable Integer userId) {
     System.out.println("In Project Controller getProjectById " + userId);
-    if (projectService.findByUserId(userId) == null) {
-      throw new ProjectNotFoundException(
-          "There is no project with userId: " + userId + ", in the database.");
-    }
-    return projectService.findByUserId(userId);
+        return projectService.findByUserId(userId);
   }
 
   /**
@@ -89,10 +82,7 @@ public class ProjectController {
   @GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getProjectsByName(@PathVariable String name) {
-    if (projectService.findByName(name) == null) {
-      throw new ProjectNotFoundException(
-          "There is no project named: " + name + ", in the database.");
-    }
+    
     return projectService.findByName(name);
   }
 
@@ -106,11 +96,7 @@ public class ProjectController {
   @GetMapping(value = "/batch/{batch}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getProjectsByBatch(@PathVariable String batch) {
-    List<Project> result = projectService.findByBatch(batch);
-    if (result.isEmpty()) {
-      throw new ProjectNotFoundException(
-          "There is no project associated with batch: " + batch + ", in the database.");
-    }
+    
     return projectService.findByBatch(batch);
   }
 
@@ -124,10 +110,7 @@ public class ProjectController {
   @GetMapping(value = "/status/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getProjectsByStatus(@PathVariable String status) {
-    if (projectService.findByStatus(status) == null) {
-      throw new ProjectNotFoundException(
-          "There are currently no projects with status: " + status + ", in the database");
-    }
+    
     return projectService.findByStatus(status);
   }
 
@@ -137,7 +120,7 @@ public class ProjectController {
    *
    * @param project: The new project object for the submitted edit request.
    */
-  @PostMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
+  @PutMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public boolean submitEditRequest(@RequestBody Project project) {
     return projectService.submitEditRequest(project);
@@ -166,7 +149,7 @@ public class ProjectController {
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  //	@PreAuthorize("hasRole('USER')")
+  //@PreAuthorize("hasRole('USER')")
   public Project addProject(
       @RequestParam("name") String name,
       @RequestParam("batch") String batch,
@@ -179,14 +162,7 @@ public class ProjectController {
       @RequestParam("status") String status,
       @RequestParam("dataModel") List<MultipartFile> dataModel,
       @RequestParam("userId") Integer userId) {
-    if (name == null || name.equals(""))
-      throw new ProjectNotAddedException("The 'name' input cannot be empty when adding project");
-    if (batch == null || batch.equals(""))
-      throw new ProjectNotAddedException("The 'batch' input cannot be empty when adding project");
-    if (techStack == null || techStack.equals(""))
-      throw new ProjectNotAddedException(
-          "The 'tech stack' input cannot be empty when adding project");
-
+   
     ProjectDTO projectDTO =
         new ProjectDTO.ProjectDTOBuilder()
             .setName(name)
@@ -217,11 +193,7 @@ public class ProjectController {
   @DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Boolean deleteById(@PathVariable String id) {
-    Project ID = projectService.findById(id);
-    if (ID == null) {
-      throw new ProjectNotFoundException(
-          "Project with id: " + id + ", cannot be found to delete this project.");
-    }
+   
     return projectService.deleteById(id);
   }
 
@@ -236,26 +208,13 @@ public class ProjectController {
    * @param id: String that serves as the id for the project
    */
   @PutMapping(
-      value = "/{id}",
       produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   //	@PreAuthorize("hasRole('ADMIN')")
-  public Boolean updateProject(@RequestBody Project project, @PathVariable String id) {
-    Project backendProject = projectService.findById(id);
-    // check that the project exists
-    if (backendProject == null) {
-      throw new ProjectNotFoundException(
-          "Project with id: " + id + ", cannot be found to update this project.");
-    }
-    // check that status is valid
-    if (!project.getStatus().equalsIgnoreCase("approved")
-        && !project.getStatus().equalsIgnoreCase("denied")
-        && !project.getStatus().equalsIgnoreCase("pending")) {
-      throw new InvalidStatusException("Status: " + project.getStatus() + ", is unacceptable.");
-    }
-
-    return projectService.updateProject(project, id);
+  public Boolean updateProject(@RequestBody Project project) {
+   
+    return projectService.updateProject(project);
   }
 
   /**
@@ -271,10 +230,10 @@ public class ProjectController {
    */
   @ExceptionHandler
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ProjectErrorResponse handleExceptions(ProjectNotAddedException pnae) {
+  public ProjectErrorResponse handleExceptions(ProjectNotAddedException br) {
     ProjectErrorResponse error = new ProjectErrorResponse();
     error.setStatus(HttpStatus.BAD_REQUEST.value());
-    error.setMessage(pnae.getMessage());
+    error.setMessage(br.getMessage());
     error.setTimeStamp(System.currentTimeMillis());
     return error;
   }
@@ -302,10 +261,10 @@ public class ProjectController {
    */
   @ExceptionHandler
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ProjectErrorResponse handleExceptions(InvalidStatusException ise) {
+  public ProjectErrorResponse handleExceptions(BadRequestException br) {
     ProjectErrorResponse error = new ProjectErrorResponse();
     error.setStatus(HttpStatus.BAD_REQUEST.value());
-    error.setMessage(ise.getMessage());
+    error.setMessage(br.getMessage());
     error.setTimeStamp(System.currentTimeMillis());
     return error;
   }

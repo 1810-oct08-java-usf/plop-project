@@ -27,7 +27,7 @@ import com.revature.services.ProjectService;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = { ProjectController.class }, secure = false)
-@WithMockUser(roles="ADMIN")
+//@WithMockUser(roles="ADMIN")
 public class CreateProjectIntegrationTest {
 	
 	private String uri = "/";
@@ -51,7 +51,7 @@ public class CreateProjectIntegrationTest {
 	 * @throws Exception
 	 */
 	@Test
-	@WithMockUser(roles = { "ADMIN" })
+	//@WithMockUser(roles = { "ADMIN" })
 	public void createProject_ShouldReturnCreatedStatus() throws Exception {
 
 		// Setting the mock request
@@ -80,7 +80,7 @@ public class CreateProjectIntegrationTest {
 	 * @throws Exception
 	 */
 	@Test
-	@WithMockUser(roles = { "ADMIN" })
+	//@WithMockUser(roles = { "ADMIN" })
 	public void createProject_ShouldReturnBadRequestStatus() throws Exception {
 		String batch = null;
 

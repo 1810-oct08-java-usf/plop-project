@@ -5,18 +5,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.revature.exceptions.BadRequestException;
 import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
+import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
 
+// TODO include transactional annotations to specify propagation and isolation levels
 /** ProjectService provides an interface to interact with a ProjectRepository */
 @Service
 public class ProjectService {
@@ -24,13 +29,12 @@ public class ProjectService {
   /** This is the project initial status. */
   private static final String INITIAL_PROJECT_STATUS = "Pending";
 
-  ProjectRepository projectRepo;
-  StorageService s3StorageServiceImpl;
-  FileService fileService;
+  private ProjectRepository projectRepo;
+  private StorageService s3StorageServiceImpl;
+  private FileService fileService;
 
   @Autowired
-  public ProjectService(
-      ProjectRepository projectRepo, StorageService s3StorageServiceImpl, FileService fileService) {
+  public ProjectService(ProjectRepository projectRepo, StorageService s3StorageServiceImpl, FileService fileService) {
     this.projectRepo = projectRepo;
     this.s3StorageServiceImpl = s3StorageServiceImpl;
     this.fileService = fileService;
@@ -38,7 +42,19 @@ public class ProjectService {
 
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByUserId(Integer userId) {
-    return projectRepo.findByUserId(userId);
+	  
+	  if (userId == null) {
+		  throw new BadRequestException("Invalid fields found on project");
+	    }
+
+    List<Project> currProject = projectRepo.findByUserId(userId);
+
+    if (currProject.isEmpty()) {
+	      throw new ProjectNotFoundException(
+		          "There is no project with id: " + userId + ", in the database.");
+		    }
+    
+    return currProject;
   }
 
   /**
@@ -50,7 +66,16 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByName(String name) {
-    return projectRepo.findByName(name);
+	  if (name == null) {
+		  throw new BadRequestException("Invalid fields found on project");
+	    }
+	  
+	  List<Project> project = projectRepo.findByBatch(name);
+	  if (project.isEmpty()) {
+	      throw new ProjectNotFoundException(
+	          "There is no project named: " + name + ", in the database.");
+	    }
+    return project;
   }
 
   /**
@@ -62,7 +87,15 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByBatch(String batch) {
-    return projectRepo.findByBatch(batch);
+	  if (batch == null) {
+		  throw new BadRequestException("Invalid fields found on project");
+	    }
+	  List<Project> result = projectRepo.findByBatch(batch);
+	    if (result.isEmpty()) {
+	      throw new ProjectNotFoundException(
+	          "There is no project associated with batch: " + batch + ", in the database.");
+	    }
+    return result;
   }
 
   /**
@@ -74,7 +107,17 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByTrainer(String trainer) {
-    return projectRepo.findByTrainer(trainer);
+	  
+	  if (trainer == null) {
+		  throw new BadRequestException("Invalid fields found on project");
+	    }
+	  
+	  List<Project> project = projectRepo.findByTrainer(trainer);
+	  if (project.isEmpty()) {
+	      throw new ProjectNotFoundException(
+	          "There is no project named: " + trainer + ", in the database.");
+	    }
+    return project;
   }
 
   /**
@@ -86,7 +129,16 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByTechStack(String techStack) {
-    return projectRepo.findByTechStack(techStack);
+	  if (techStack == null) {
+		  throw new BadRequestException("Invalid fields found on project");
+	  }
+	  List<Project> project = projectRepo.findByTechStack(techStack);
+	  if (project.isEmpty()) {
+	      throw new ProjectNotFoundException(
+	          "There is no project named: " + techStack + ", in the database.");
+	    }
+    return project;
+    
   }
 
   /**
@@ -98,7 +150,16 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByStatus(String status) {
-    return projectRepo.findByStatus(status);
+	  
+	  if (status == null) {
+		  throw new BadRequestException("Invalid fields found on project");
+	    }
+	  List<Project> project = projectRepo.findByStatus(status);
+	  if (project.isEmpty()) {
+	      throw new ProjectNotFoundException(
+	          "There is no project with: " + status + ", in the database.");
+	    }
+    return project;
   }
 
   /**
@@ -109,7 +170,12 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findAllProjects() {
-    return projectRepo.findAll();
+	  
+	  List<Project>  projects = projectRepo.findAll();
+	  if (projects.isEmpty()) {
+	      throw new ProjectNotFoundException("There are no projects in the database.");
+	    }
+    return projects;
   }
 
   /**
@@ -121,12 +187,14 @@ public class ProjectService {
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Boolean deleteById(String id) {
-    if (id != null) {
-      projectRepo.deleteById(id);
-      return true;
-    } else {
-      return false;
-    }
+	  
+    if (id == null || id == "" || !projectRepo.findById(id).isPresent()) {
+    	throw new ProjectNotFoundException(
+  	          "There is no project with: " + id + ", in the database.");
+  	    }
+    
+    projectRepo.deleteById(id);
+    return true;
   }
 
   /**
@@ -139,49 +207,14 @@ public class ProjectService {
    *     information for a specific value in the model. If they have then that is what is updated.
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public Boolean updateProject(Project project, String id) {
-    Optional<Project> savedProject = projectRepo.findById(id);
-
-    if (savedProject.isPresent()) {
-
-      Project currentProject = savedProject.get();
-
-      if (project.getName() != null) {
-        currentProject.setName(project.getName());
-      }
-      if (project.getBatch() != null) {
-        currentProject.setBatch(project.getBatch());
-      }
-      if (project.getTrainer() != null) {
-        currentProject.setTrainer(project.getTrainer());
-      }
-      if (project.getGroupMembers() != null) {
-        currentProject.setGroupMembers(project.getGroupMembers());
-      }
-      if (project.getScreenShots() != null) {
-        currentProject.setScreenShots(project.getScreenShots());
-      }
-      if (project.getZipLinks() != null) {
-        currentProject.setZipLinks(project.getZipLinks());
-      }
-      if (project.getDescription() != null) {
-        currentProject.setDescription(project.getDescription());
-      }
-      if (project.getTechStack() != null) {
-        currentProject.setTechStack(project.getTechStack());
-      }
-      if (project.getStatus() != null) {
-        currentProject.setStatus(project.getStatus());
-      }
-      if (project.getOldProject() != null) {
-        currentProject.setOldProject(project.getOldProject());
-      }
-
-      projectRepo.save(currentProject);
-      return true;
+  public Boolean updateProject(Project project) {
+ 
+    if(!isValidFields(project)) {
+    	return false;
     }
-
-    return false;
+    
+      projectRepo.save(project);
+    return true;
   }
 
   /**
@@ -222,18 +255,9 @@ public class ProjectService {
      */
     newProject.setStatus(INITIAL_PROJECT_STATUS);
 
-    /*
-     * Implementing new validations
-     */
-    if (newProject.getDescription() == null || newProject.getDescription().isEmpty()) {
-      throw new ProjectNotAddedException(
-          "The 'description' input cannot be empty when adding project");
-    }
-
-    if (newProject.getGroupMembers() == null || newProject.getGroupMembers().size() == 0) {
-      throw new ProjectNotAddedException(
-          "The 'group members' input cannot be empty when adding project");
-    }
+    if (!isValidFields(newProject)) {
+		  throw new ProjectNotAddedException("Empty/Invalid fields found on project"); 		  
+	    }
 
     // drop screenshot images in s3 and populate project with links to those images
     List<String> screenShotsList = new ArrayList<>();
@@ -285,18 +309,26 @@ public class ProjectService {
         }
       }
     }
-    projectRepo.save(newProject);
-    return newProject;
+    
+   return projectRepo.save(newProject);
   }
 
   /** the transaction is read-only and only reads committed data */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public Project findById(String id) {
+	  
+	  if (id == null) {
+		  throw new BadRequestException("Invalid fields found on project"); 		  
+	    }
 
     Optional<Project> currProject = projectRepo.findById(id);
 
-    if (currProject.isPresent()) return currProject.get();
-    else return null;
+    if (!currProject.isPresent()) {
+	      throw new ProjectNotFoundException(
+		          "There is no project with id: " + id + ", in the database.");
+		    }
+    
+    return currProject.get();
   }
 
   /**
@@ -306,11 +338,25 @@ public class ProjectService {
    * @return boolean - true if the project was updated
    */
   public boolean submitEditRequest(Project project) {
-    if (project != null) {
-      projectRepo.save(project);
-      return true;
+   
+	  if (!isValidFields(project)) {
+      return false;
     }
-
-    return false;
+    
+	  projectRepo.save(project);
+      return true;
+  }
+  
+  public boolean isValidFields(Project project) {
+	  
+	  if(project.getDescription() == null || project.getDescription().trim().equals("")) return false;
+	  if(project.getName() == null || project.getName().trim().equals("")) return false;
+	  if(project.getBatch() == null || project.getBatch().trim().equals("")) return false;
+	  if(project.getGroupMembers() == null || project.getGroupMembers().isEmpty()) return false;
+	  if(project.getTechStack() == null || project.getTechStack().trim().equals("")) return false;
+	  if(project.getTrainer() == null || project.getTrainer().equals("")) return false;
+	  if(project.getUserId() == null || project.getUserId().equals(0)) return false;
+	  
+	  return true;
   }
 }
