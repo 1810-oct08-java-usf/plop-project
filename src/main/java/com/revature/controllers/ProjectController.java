@@ -151,7 +151,7 @@ public class ProjectController {
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  @PreAuthorize("hasRole('USER')")
+  //@PreAuthorize("hasRole('USER')")
   public Project addProject(
       @RequestParam("name") String name,
       @RequestParam("batch") String batch,
@@ -250,11 +250,11 @@ public class ProjectController {
    * error was thrown
    */
   @ExceptionHandler
-  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-  public ProjectErrorResponse handleExceptions(ProjectNotAddedException pnae) {
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ProjectErrorResponse handleExceptions(ProjectNotAddedException br) {
     ProjectErrorResponse error = new ProjectErrorResponse();
-    error.setStatus(HttpStatus.UNPROCESSABLE_ENTITY.value());
-    error.setMessage(pnae.getMessage());
+    error.setStatus(HttpStatus.BAD_REQUEST.value());
+    error.setMessage(br.getMessage());
     error.setTimeStamp(System.currentTimeMillis());
     return error;
   }

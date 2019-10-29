@@ -58,18 +58,19 @@ public class IntegrationTestSuite {
 	
 	@Test
 	public void testDelete() throws Exception {
-		when(mockProjectService.findById("0")).thenReturn(mockProject);
-		this.mockMvc.perform(delete("/id/0")).andExpect(status().isOk());
+		when(mockProjectService.findById("1")).thenReturn(mockProject);
+		this.mockMvc.perform(delete("/id/1")).andExpect(status().isOk());
 	}
 	
 	@Test
 	public void testDeleteWhenGivenNull() throws Exception {
-		this.mockMvc.perform(delete("/id/0")).andExpect(status().is4xxClientError());
+		when(mockProjectService.deleteById(null)).thenReturn(false);
+		this.mockMvc.perform(delete("/id/")).andExpect(status().is4xxClientError());
 	}
 	
 	@Test
-	public void testDeleteWhenReturnedNull() throws Exception {
-		when(mockProjectService.findById("0")).thenReturn(null);
-		this.mockMvc.perform(delete("/id/0")).andExpect(status().isNotFound());
+	public void testDeleteWhenGivenEmpty() throws Exception {
+		when(mockProjectService.deleteById("")).thenReturn(false);
+		this.mockMvc.perform(delete("/id/")).andExpect(status().is4xxClientError());
 	}
 }

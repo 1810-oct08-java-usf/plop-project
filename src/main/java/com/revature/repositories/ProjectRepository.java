@@ -59,6 +59,4 @@ public interface ProjectRepository extends MongoRepository<Project, String> {
    * @return a list of projects matching the given status
    */
   public List<Project> findByStatus(String status);
-  
-  //public List<Project> update(Project project);
 }

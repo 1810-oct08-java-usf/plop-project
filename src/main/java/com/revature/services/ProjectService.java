@@ -29,9 +29,9 @@ public class ProjectService {
   /** This is the project initial status. */
   private static final String INITIAL_PROJECT_STATUS = "Pending";
 
-  ProjectRepository projectRepo;
-  StorageService s3StorageServiceImpl;
-  FileService fileService;
+  private ProjectRepository projectRepo;
+  private StorageService s3StorageServiceImpl;
+  private FileService fileService;
 
   @Autowired
   public ProjectService(ProjectRepository projectRepo, StorageService s3StorageServiceImpl, FileService fileService) {
@@ -157,7 +157,7 @@ public class ProjectService {
 	  List<Project> project = projectRepo.findByStatus(status);
 	  if (project.isEmpty()) {
 	      throw new ProjectNotFoundException(
-	          "There is no project named: " + status + ", in the database.");
+	          "There is no project with: " + status + ", in the database.");
 	    }
     return project;
   }
@@ -187,9 +187,12 @@ public class ProjectService {
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Boolean deleteById(String id) {
-    if (id == null) {
-      return false;
-    } 
+	  
+    if (id == null || id == "" || !projectRepo.findById(id).isPresent()) {
+    	throw new ProjectNotFoundException(
+  	          "There is no project with: " + id + ", in the database.");
+  	    }
+    
     projectRepo.deleteById(id);
     return true;
   }
@@ -253,7 +256,7 @@ public class ProjectService {
     newProject.setStatus(INITIAL_PROJECT_STATUS);
 
     if (!isValidFields(newProject)) {
-		  throw new BadRequestException("Invalid fields found on project"); 		  
+		  throw new ProjectNotAddedException("Empty/Invalid fields found on project"); 		  
 	    }
 
     // drop screenshot images in s3 and populate project with links to those images
