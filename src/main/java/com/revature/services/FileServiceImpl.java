@@ -3,7 +3,6 @@ package com.revature.services;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,7 +12,6 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-
 import com.revature.util.FileHelper;
 
 /** FileServiceImpl implements FileService */

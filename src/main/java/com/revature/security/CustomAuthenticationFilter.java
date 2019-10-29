@@ -7,18 +7,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
-
 import com.revature.exceptions.SubversionAttemptException;
 
 /**
@@ -51,8 +48,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     String headerZuul = httpRequest.getHeader(zuulConfig.getHeader());
     try {
-      // This is where the main check if the actuator end point is being hit or
-      // that the zuul header is present.
+      // Checks if the actuator end point is being hit or that the zuul header is present.
       if (httpRequest.getRequestURI().contains("/project/actuator")) {
         Authentication auth =
             new AccessAuthenticationToken(headerZuul, "ROLE_ACTUATOR", new ArrayList<>());
@@ -72,10 +68,6 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
         throw new SubversionAttemptException("ZUUL header is " + headerZuul);
       }
     } catch (SubversionAttemptException e) {
-      /*
-       * TODO: This should be refactored to log the failed authentication attempt
-       * TODO: including the IP address of the requester.
-       */
       e.printStackTrace();
       String ipAddress = ((HttpServletRequest) request).getHeader("X-FORWARDED-FOR");
       if (ipAddress == null) {
