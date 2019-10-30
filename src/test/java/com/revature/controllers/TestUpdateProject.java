@@ -115,7 +115,7 @@ public class TestUpdateProject {
 				//service checks if there's a previous project attached to this one
 				when(mockProject.getOldProject()).thenReturn(null);
 				//when it calls the service return true
-				when(mockProjectService.updateProject(proj)).thenReturn(true);
+				when(mockProjectService.evaluateProject(proj)).thenReturn(true);
 				
 
 				/*
@@ -168,7 +168,7 @@ public class TestUpdateProject {
 		//service checks if there's a previous project attached to this one
 		when(mockProject.getOldProject()).thenReturn(null);
 		//when it calls the service return true
-		when(mockProjectService.updateProject(proj)).thenReturn(true);
+		when(mockProjectService.evaluateProject(proj)).thenReturn(true);
 
 		/*
 		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
@@ -200,7 +200,7 @@ public class TestUpdateProject {
 		//service checks if there's a previous project attached to this one
 		when(mockProject.getOldProject()).thenReturn(null);
 		//when it calls the service return true
-		when(mockProjectService.updateProject(proj)).thenReturn(true);
+		when(mockProjectService.evaluateProject(proj)).thenReturn(true);
 
 		/*
 		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
