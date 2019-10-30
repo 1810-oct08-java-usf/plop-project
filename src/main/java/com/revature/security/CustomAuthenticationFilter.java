@@ -67,6 +67,7 @@ public class CustomAuthenticationFilter extends GenericFilterBean {
         // Log this
         throw new SubversionAttemptException("ZUUL header is " + headerZuul);
       }
+      System.out.println(headerZuul);
     } catch (SubversionAttemptException e) {
       e.printStackTrace();
       String ipAddress = ((HttpServletRequest) request).getHeader("X-FORWARDED-FOR");

@@ -1,12 +1,12 @@
 package com.revature.services;
 
 import static org.junit.Assert.assertTrue;
+import com.revature.exceptions.FileSizeTooLargeException;
 import java.io.File;
 import java.io.IOException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import com.revature.exceptions.FileSizeTooLargeException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FileServiceTestSuite {

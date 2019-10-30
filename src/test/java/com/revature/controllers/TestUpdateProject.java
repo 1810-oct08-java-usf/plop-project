@@ -23,190 +23,221 @@ import com.revature.controllers.ProjectController;
 import com.revature.models.Project;
 import com.revature.repositories.ProjectRepository;
 import com.revature.services.ProjectService;
-
 /**
  * Class containing MockMVC tests for the update project method in the project
  * controller.
+ * 
+ * @author Jose Rivera (190107-Java-Spark-USF)
+ *
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = { ProjectController.class }, secure = false)
-@WithMockUser(roles = { "USER", "ADMIN" })
+@WithMockUser(roles= {"USER","ADMIN"})
 public class TestUpdateProject {
 
-  @Autowired
-  private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-  @Mock
-  private Project mockProject;
+	@Mock
+	private Project mockProject;
 
-  @MockBean
-  private ProjectService mockProjectService;
+	@MockBean
+	private ProjectService mockProjectService;
 
-  @MockBean
-  private ProjectRepository mockProjectRepository;
+	@MockBean
+	private ProjectRepository mockProjectRepository;
 
-  private static final String URI = "/";
+	private static final String URI = "/";
+	
+	// An id to use to check for a project
+	String id = "1";
 
-  // An id to use to check for a project
-  String id = "1";
+	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
+			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+	
+	private static Project proj = new Project.ProjectBuilder()
+			.setName("name")
+			.setBatch("batch")
+			.setTrainer("trainer")
+			.setGroupMembers(new ArrayList<String>())
+			.setScreenShots(new ArrayList<String>())
+			.setDataModel(new ArrayList<String>())
+			.setZipLinks(new ArrayList<String>())
+			.setDescription("description")
+			.setTechStack("techstack")
+			.setStatus("approved")
+			.build();
+	
+	/**
+	 * This method is going to test if our context loads and is not null.
+	 * 
+	 * @throws Exception: If the context fails to load or is null, an exception will
+	 *                    be thrown.
+	 * 
+	 * @author Jose Rivera (190107-Java-Spark-USF)
+	 */
+	@Test
+	public void testContextLoads() throws Exception {
+		assertThat(this.mockMvc).isNotNull();
+	}
 
-  public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-      MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+	/**
+	 * This method will test updating a project through the controller. The
+	 * controller will accept a PUT request with an id to update the proper project.
+	 * The project that will be updated will be passed through the request body.
+	 * 
+	 * @throws Exception: If the test fails, an exception will be thrown.
+	 * 
+	 * @author Jose Rivera (190107-Java-Spark-USF)
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 */
+	@Test
+	public void testUpdateProjectWhenApproved() throws Exception {
 
-  private static Project proj = new Project.ProjectBuilder().setName("name").setBatch("batch").setTrainer("trainer")
-      .setGroupMembers(new ArrayList<String>()).setScreenShots(new ArrayList<String>())
-      .setDataModel(new ArrayList<String>()).setZipLinks(new ArrayList<String>()).setDescription("description")
-      .setTechStack("techstack").setStatus("approved").build();
+		// The expected result from the controller
+				String expectedResult = "true";
+				proj.setStatus("approved");
 
-  /**
-   * This method is going to test if our context loads and is not null.
-   *
-   * @throws Exception: If the context fails to load or is null, an exception will
-   *                    be thrown.
-   */
-  @Test
-  public void testContextLoads() throws Exception {
-    assertThat(this.mockMvc).isNotNull();
-  }
+				/*
+				 * When our ProjectService.findById() is invoked, we tell it to return a mock
+				 * project and a mock status so our get request can return a proper result 
+				 * as if it was not mocked.
+				 */
+				when(mockProjectService.findById(proj.getId())).thenReturn(mockProject);
+				when(mockProject.getStatus()).thenReturn("pending");
+				
+				
+				String requestJson = asJsonString(proj);
+				//service checks if there's a previous project attached to this one
+				when(mockProject.getOldProject()).thenReturn(null);
+				//when it calls the service return true
+				when(mockProjectService.evaluateProject(proj)).thenReturn(true);
+				
 
-  /**
-   * This method will test updating a project through the controller. The
-   * controller will accept a PUT request with an id to update the proper project.
-   * The project that will be updated will be passed through the request body.
-   *
-   * @throws Exception: If the test fails, an exception will be thrown.
-   */
-  @Test
-  public void testUpdateProjectWhenApproved() throws Exception {
+				/*
+				 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
+				 * ) and the expected result is returned.
+				 */
+				this.mockMvc.perform(put(URI).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+						.andExpect(status().isOk()).andExpect(content().string(expectedResult));
 
-    // The expected result from the controller
-    String expectedResult = "true";
-    proj.setStatus("approved");
+	}
+	
+	/**
+	 * This method will test updating a project when given null values.
+	 * This should return an HTTP status of 404.
+	 * 
+	 * @throws Exception: If the test fails, an exception will be thrown.
+	 * 
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 */
+	@Test
+	public void testUpdateWithNullProject() throws Exception {		
+		when(mockProjectService.submitEditRequest(null)).thenReturn(false);
+		String requestJson = asJsonString(null);
+		
+		this.mockMvc.perform(put(URI)
+				.contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+				.andExpect(status().isBadRequest());		
+	}
+	
+	/**
+	 * This method will test that updating a denied project
+	 * will not get a different result than an approved one.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 */
+	
+	@Test
+	public void testUpdateProjectWithDeniedProject() throws Exception {
 
-    /*
-     * When our ProjectService.findById() is invoked, we tell it to return a mock
-     * project and a mock status so our get request can return a proper result as if
-     * it was not mocked.
-     */
-    when(mockProjectService.findById(id)).thenReturn(mockProject);
-    when(mockProject.getStatus()).thenReturn("pending");
+		String expectedResult = "true";
+		proj.setStatus("Denied");
 
-    String requestJson = asJsonString(proj);
-    // service checks if there's a previous project attached to this one
-    when(mockProject.getOldProject()).thenReturn(null);
-    // when it calls the service return true
-    // when(mockProjectService.updateProject(proj, id)).thenReturn(true);
+		when(mockProjectService.findById(id)).thenReturn(mockProject);
+		when(mockProject.getStatus()).thenReturn("pending");
+		
+		
+		String requestJson = asJsonString(proj);
+		//service checks if there's a previous project attached to this one
+		when(mockProject.getOldProject()).thenReturn(null);
+		//when it calls the service return true
+		when(mockProjectService.evaluateProject(proj)).thenReturn(true);
 
-    /*
-     * Test our PUT mapping for updateProject() and check if the status is OK ( 200
-     * ) and the expected result is returned.
-     */
-    this.mockMvc.perform(put(URI + id).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
-        .andExpect(status().isOk()).andExpect(content().string(expectedResult));
-  }
+		/*
+		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
+		 * ) and the expected result is returned.
+		 */
+		this.mockMvc.perform(put(URI).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
+	}
+	
+	/**
+	 * This method will test that updating a project with a pending status
+	 * will not get a different result than an approved one.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 */
+	@Test
+	public void testUpdateProjectWithPendingProject() throws Exception {
 
-  /**
-   * This method will test updating a project when given null values. This should
-   * return an HTTP status of 404.
-   *
-   * @throws Exception: If the test fails, an exception will be thrown.
-   */
-  @Test
-  public void testUpdateWithNullProject() throws Exception {
-    when(mockProjectService.findById(id)).thenReturn(null);
-    String requestJson = asJsonString(proj);
+		String expectedResult = "true";
+		proj.setStatus("Pending");
 
-    this.mockMvc.perform(put(URI + id).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
-        .andExpect(status().isNotFound());
-  }
+		when(mockProjectService.findById(id)).thenReturn(mockProject);
+		when(mockProject.getStatus()).thenReturn("pending");
+		
+		
+		String requestJson = asJsonString(proj);
+		//service checks if there's a previous project attached to this one
+		when(mockProject.getOldProject()).thenReturn(null);
+		//when it calls the service return true
+		when(mockProjectService.evaluateProject(proj)).thenReturn(true);
 
-  /**
-   * This method will test that updating a denied project will not get a different
-   * result than an approved one.
-   *
-   * @throws Exception
-   */
-  @Test
-  public void testUpdateProjectWithDeniedProject() throws Exception {
+		/*
+		 * Test our PUT mapping for updateProject() and check if the status is OK ( 200
+		 * ) and the expected result is returned.
+		 */
+		this.mockMvc.perform(put(URI).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+				.andExpect(status().isOk()).andExpect(content().string(expectedResult));
+	}
+	
+	/**
+	 * This method will test that updating a project
+	 * with an invalid status will not be allowed.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 */
+	@Test
+	public void testUpdateProjectWithBadStatus() throws Exception {
+		proj.setStatus("bad status");
 
-    String expectedResult = "true";
-    proj.setStatus("Denied");
+		when(mockProjectService.findById(proj.getId())).thenReturn(mockProject);
+		when(mockProject.getStatus()).thenReturn("pending");
+		
+		String requestJson = asJsonString(proj);
 
-    when(mockProjectService.findById(id)).thenReturn(mockProject);
-    when(mockProject.getStatus()).thenReturn("pending");
-
-    String requestJson = asJsonString(proj);
-    // service checks if there's a previous project attached to this one
-    when(mockProject.getOldProject()).thenReturn(null);
-    // when it calls the service return true
-    // when(mockProjectService.updateProject(proj, id)).thenReturn(true);
-
-    /*
-     * Test our PUT mapping for updateProject() and check if the status is OK ( 200
-     * ) and the expected result is returned.
-     */
-    this.mockMvc.perform(put(URI + id).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
-        .andExpect(status().isOk()).andExpect(content().string(expectedResult));
-  }
-
-  /**
-   * This method will test that updating a project with a pending status will not
-   * get a different result than an approved one.
-   *
-   * @throws Exception
-   */
-  @Test
-  public void testUpdateProjectWithPendingProject() throws Exception {
-
-    String expectedResult = "true";
-    proj.setStatus("Pending");
-
-    when(mockProjectService.findById(id)).thenReturn(mockProject);
-    when(mockProject.getStatus()).thenReturn("pending");
-
-    String requestJson = asJsonString(proj);
-    // service checks if there's a previous project attached to this one
-    when(mockProject.getOldProject()).thenReturn(null);
-    // when it calls the service return true
-    // when(mockProjectService.updateProject(proj, id)).thenReturn(true);
-
-    /*
-     * Test our PUT mapping for updateProject() and check if the status is OK ( 200
-     * ) and the expected result is returned.
-     */
-    this.mockMvc.perform(put(URI + id).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
-        .andExpect(status().isOk()).andExpect(content().string(expectedResult));
-  }
-
-  /**
-   * This method will test that updating a project with an invalid status will not
-   * be allowed.
-   *
-   * @throws Exception
-   */
-  @Test
-  public void testUpdateProjectWithBadStatus() throws Exception {
-    proj.setStatus("bad status");
-
-    when(mockProjectService.findById(id)).thenReturn(mockProject);
-    when(mockProject.getStatus()).thenReturn("pending");
-
-    String requestJson = asJsonString(proj);
-
-    /*
-     * Test our PUT mapping for updateProject() and check if the status is OK (200)
-     * and the expected result is returned.
-     */
-    this.mockMvc.perform(put(URI + id).contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
-        .andExpect(status().is4xxClientError());
-  }
-
-  /**
-   * This is a helper method to convert a project to a JSON String
-   *
-   * @throws JsonProcessingException
-   */
-  private static String asJsonString(Project p) throws JsonProcessingException {
-    return new ObjectMapper().writeValueAsString(p);
-  }
+		/*
+		 * Test our PUT mapping for updateProject() and check if the status is OK (200)
+		 * and the expected result is returned.
+		 */
+		this.mockMvc.perform(put(URI).contentType( MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+				.andExpect(status().isOk());
+	}
+	
+	/**
+	 * This is a helper method to convert a project to a JSON String
+	 * @author Jaitee Pitts (190107-Java-Spark-USF)
+	 * @throws JsonProcessingException 
+	 */
+	private static String asJsonString(Project p) throws JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(p);
+	}
 }
+

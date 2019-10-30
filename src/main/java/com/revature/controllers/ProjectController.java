@@ -31,7 +31,7 @@ import com.revature.services.ProjectService;
  * Projects
  */
 @RestController
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ProjectController {
 
   private ProjectService projectService;
@@ -41,29 +41,7 @@ public class ProjectController {
     this.projectService = projectService;
   }
 
-  /**
-   * This method retrieves all of the projects stored within embedded MongoDB Uses
-   * HTTP method GET and only retrieves JSON data. <br>
-   * <br>
-   * Added Spring Security annotations to prevent unauthorized users from
-   * accessing database
-   */
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(HttpStatus.OK)
-  public List<Project> getAllProjects() {
-
-    return projectService.findAllProjects();
-  }
-
-  /**
-   * This method retrieves project by ID Uses HTTP method GET and only retrieves
-   * JSON data <br>
-   * <br>
-   * Added Spring Security annotations to prevent unauthorized users from
-   * accessing database
-   *
-   * @param id: String that serves as the id for the project
-   */
+ 
   @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Project getProjectById(@PathVariable String id) {
@@ -71,64 +49,9 @@ public class ProjectController {
     return projectService.findById(id);
   }
 
-  @GetMapping(value = "/userId/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(HttpStatus.OK)
-  public List<Project> getProjectByUserId(@PathVariable Integer userId) {
-    System.out.println("In Project Controller getProjectById " + userId);
-    return projectService.findByUserId(userId);
-  }
-
   /**
-   * This method retrieves project by name Uses HTTP method GET and only retrieves
-   * JSON data <br>
-   * <br>
-   * Added Spring Security annotations to prevent unauthorized users from
-   * accessing database
-   *
-   * @param name: String that serves as the name of the project
-   */
-  @GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(HttpStatus.OK)
-  public List<Project> getProjectsByName(@PathVariable String name) {
-
-    return projectService.findByName(name);
-  }
-
-  /**
-   * This method retrieves project by batch Uses HTTP method GET and only
-   * retrieves JSON data <br>
-   * <br>
-   * Added Spring Security annotations to prevent outside users from accessing
-   * database
-   *
-   * @param batch: String that serves as the batch for the project
-   */
-  @GetMapping(value = "/batch/{batch}", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(HttpStatus.OK)
-  public List<Project> getProjectsByBatch(@PathVariable String batch) {
-
-    return projectService.findByBatch(batch);
-  }
-
-  /**
-   * This method retrieves project by status Uses HTTP method GET and only
-   * retrieves JSON data <br>
-   * <br>
-   * Added Spring Security annotations to prevent unauthorized users from
-   * accessing database
-   *
-   * @param status: String that serves as the status of the project
-   */
-  @GetMapping(value = "/status/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(HttpStatus.OK)
-  public List<Project> getProjectsByStatus(@PathVariable String status) {
-
-    return projectService.findByStatus(status);
-  }
-
-  /**
-   * This method allows a user to submit an edit request on one of their projects.
-   * Uses HTTP method POST and only consumes JSON data.
+   * This method allows a user to submit an edit request on one of their projects. Uses HTTP method
+   * POST and only consumes JSON data.
    *
    * @param project: The new project object for the submitted edit request.
    */
@@ -207,12 +130,37 @@ public class ProjectController {
    */
   @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
-  // @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ADMIN')")
   public Boolean updateProject(@RequestBody Project project) {
-
-    return projectService.updateProject(project);
+   
+    return projectService.evaluateProject(project);
   }
 
+  @GetMapping(value="/q", produces="application/json")
+  @ResponseStatus(HttpStatus.OK)
+	public List<Project> getProjectFieldValue(@RequestParam("field") String field, @RequestParam("value") String value) {
+		
+		switch(field) {
+		case "status":
+			return projectService.findByStatus(value);
+		case "name":
+			return projectService.findByName(value);
+		case "trainer":
+			return projectService.findByTrainer(value);
+		case "techStack":
+			return projectService.findByTechStack(value);
+		case "batch": 
+			return projectService.findByBatch(value);
+		case "userId":
+			return projectService.findByUserId(Integer.valueOf(value));
+		case "all":
+			return projectService.findAllProjects();
+		default:
+			throw new BadRequestException("Invalid field param value specified!");
+				
+		}
+		
+	}
   /**
    * This method is used to send a status code into the client based on the
    * validity of the information sent. <br>
