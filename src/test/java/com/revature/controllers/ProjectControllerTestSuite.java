@@ -173,18 +173,6 @@ public class ProjectControllerTestSuite {
 
   // --------------------------------------------------------------------------
 
-  /** Test for returning list with only one project. */
-  @Test
-  public void testGetAllProjectsOnlyOneProject() {
-    List<Project> projectList2 = new ArrayList<>();
-    projectList2.add(project);
-
-    when(projectService.findAllProjects()).thenReturn(projectList2);
-
-    assertEquals(projectList2, projectController.getAllProjects());
-  }
-
-  // --------------------------------------------------------------------------
   /** Test for returning a project by valid id */
   @Test
   public void testGetProjectByValidId() {
