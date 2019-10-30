@@ -171,23 +171,6 @@ public class ProjectControllerTestSuite {
   @Mock
   ProjectNotAddedException projectNotAddedException;
 
-  // --------------------------------------------------------------------------------------------
-
-  /** Test for returning a non-empty list of projects. */
-  @Test
-  public void testGetAllProjectsMoreThanOneProject() {
-    Project project1 = new Project.ProjectBuilder().build();
-    Project project2 = new Project.ProjectBuilder().build();
-    List<Project> projectList = new ArrayList<>();
-
-    projectList.add(project1);
-    projectList.add(project2);
-
-    when(projectService.findAllProjects()).thenReturn(projectList);
-
-    assertEquals(projectList, projectController.getAllProjects());
-  }
-
   // --------------------------------------------------------------------------
 
   /** Test for returning list with only one project. */
@@ -202,53 +185,6 @@ public class ProjectControllerTestSuite {
   }
 
   // --------------------------------------------------------------------------
-  /** Test for returning a list of projects by valid name */
-  @Test
-  public void testGetProjectsByNameIfValidName() {
-    Project project3 = new Project.ProjectBuilder().build();
-    Project project4 = new Project.ProjectBuilder().build();
-
-    project3.setName("Kamaria");
-    project4.setName("Kamaria");
-
-    List<Project> projectList3 = new ArrayList<>();
-    projectList3.add(project3);
-    projectList3.add(project4);
-
-    when(projectService.findByName("Kamaria")).thenReturn(projectList3);
-    assertEquals(projectList3, projectController.getProjectsByName("Kamaria"));
-  }
-
-  /** Test for returning a list of projects by valid batch */
-  @Test
-  public void testGetProjetsByBatchIfValid() {
-    Project project3 = new Project.ProjectBuilder().build();
-    Project project4 = new Project.ProjectBuilder().build();
-
-    project3.setBatch("Wezley");
-    project4.setBatch("Wezley");
-
-    List<Project> projectList3 = new ArrayList<>();
-    projectList3.add(project3);
-    projectList3.add(project4);
-
-    when(projectService.findByBatch("Wezley")).thenReturn(projectList3);
-    assertEquals(projectList3, projectController.getProjectsByBatch("Wezley"));
-  }
-
-  /** Test for returning a list of projects by status */
-  @Test
-  public void testGetProjectsByStatusIfValid() {
-    Project project5 = new Project.ProjectBuilder().build();
-    project5.setStatus("Approved");
-
-    List<Project> projectList = new ArrayList<>();
-    projectList.add(project5);
-
-    when(projectService.findByStatus("Approved")).thenReturn(projectList);
-    assertEquals(projectList, projectController.getProjectsByStatus("Approved"));
-  }
-
   /** Test for returning a project by valid id */
   @Test
   public void testGetProjectByValidId() {
