@@ -20,57 +20,51 @@ import com.revature.repositories.ProjectRepository;
 import com.revature.services.ProjectService;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(
-    controllers = {ProjectController.class},
-    secure = false)
+@WebMvcTest(controllers = { ProjectController.class }, secure = false)
 @WithMockUser(roles = "ADMIN")
 public class IntegrationTestSuite {
-	
-	@Autowired
-	private MockMvc mockMvc;
-	@Mock
-	private Project mockProject;
-	
-	@MockBean
-	private ProjectRepository repository;
-	
-	
-	@MockBean
-	private ProjectService mockProjectService;
-	
-	
-	
-	@Before
-	public void setup() {		
-		
-	}
-	/**
-	 * This method is going to test if our context loads and is not null.
-	 * 
-	 * @throws Exception: If the context fails to load or is null, an exception will
-	 *                    be thrown.
-	 * 
-	*/
-	@Test
-	public void testContextLoads() throws Exception {
-		assertThat(this.mockMvc).isNotNull();
-	}
-	
-	@Test
-	public void testDelete() throws Exception {
-		when(mockProjectService.findById("1")).thenReturn(mockProject);
-		this.mockMvc.perform(delete("/id/1")).andExpect(status().isOk());
-	}
-	
-	@Test
-	public void testDeleteWhenGivenNull() throws Exception {
-		when(mockProjectService.deleteById(null)).thenReturn(false);
-		this.mockMvc.perform(delete("/id/")).andExpect(status().is4xxClientError());
-	}
-	
-	@Test
-	public void testDeleteWhenGivenEmpty() throws Exception {
-		when(mockProjectService.deleteById("")).thenReturn(false);
-		this.mockMvc.perform(delete("/id/")).andExpect(status().is4xxClientError());
-	}
+
+  @Autowired
+  private MockMvc mockMvc;
+  @Mock
+  private Project mockProject;
+
+  @MockBean
+  private ProjectRepository repository;
+
+  @MockBean
+  private ProjectService mockProjectService;
+
+  @Before
+  public void setup() {
+  }
+
+  /**
+   * This method is going to test if our context loads and is not null.
+   *
+   * @throws Exception: If the context fails to load or is null, an exception will
+   *                    be thrown.
+   */
+  @Test
+  public void testContextLoads() throws Exception {
+    assertThat(this.mockMvc).isNotNull();
+  }
+
+  @Test
+  public void testDelete() throws Exception {
+    when(mockProjectService.findById("1")).thenReturn(mockProject);
+    this.mockMvc.perform(delete("/id/1")).andExpect(status().isOk());
+  }
+
+  @Test
+  public void testDeleteWhenGivenNull() throws Exception {
+    when(mockProjectService.deleteById(null)).thenReturn(false);
+    this.mockMvc.perform(delete("/id/")).andExpect(status().is4xxClientError());
+  }
+
+  @Test
+  public void testDeleteWhenGivenEmpty() throws Exception {
+    when(mockProjectService.deleteById("")).thenReturn(false);
+    this.mockMvc.perform(delete("/id/")).andExpect(status().is4xxClientError());
+  }
 }
