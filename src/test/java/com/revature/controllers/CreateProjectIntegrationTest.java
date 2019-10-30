@@ -26,32 +26,20 @@ import com.revature.services.ProjectService;
 //@WithMockUser(roles="ADMIN")
 public class CreateProjectIntegrationTest {
 
-  private String uri = "/";
+	private String uri = "/";
 
-	/**
-	 * This test was created to make sure that the user is going to perform validation for the
-	 * updateUser method, we provide valid fields for the AppUser, so we are expecting a
-	 * successful result in this case (OK: 200).
-	 * @throws Exception
-	 */
-	@Test
-	//@WithMockUser(roles = { "ADMIN" })
-	public void createProject_ShouldReturnCreatedStatus() throws Exception {
-
-  @MockBean private ProjectRepository repository;
-
-	}
+	@Autowired
+	private MockMvc mockMvc;
+	@Mock
+	private Project mockProject;
 	
-	/**
-	 * This testing was created to test if the method is able to handle null values.
-	 * In case a null value is passed to the test this will throw an Exception and returns
-	 * a bad request.
-	 * @throws Exception
-	 */
-	@Test
-	//@WithMockUser(roles = { "ADMIN" })
-	public void createProject_ShouldReturnBadRequestStatus() throws Exception {
-		String batch = null;
+	@MockBean
+	private ProjectRepository repository;
+	
+	
+	@MockBean
+	private ProjectService mockProjectService;
+  
 
   /**
    * This test was created to make sure that the user is going to perform validation for the
