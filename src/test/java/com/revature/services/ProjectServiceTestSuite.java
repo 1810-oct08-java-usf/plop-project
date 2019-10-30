@@ -2,19 +2,18 @@ package com.revature.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,7 +26,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.models.Project;
@@ -41,36 +39,46 @@ public class ProjectServiceTestSuite {
 
   private ProjectService classUnderTest;
 
-  @Rule public MockitoRule rule = MockitoJUnit.rule();
+  @Rule
+  public MockitoRule rule = MockitoJUnit.rule();
 
   // A simulated ProjectRespository
-  @Mock private ProjectRepository testRepo;
+  @Mock
+  private ProjectRepository testRepo;
 
   // A simulated StorageService
-  @Mock private S3StorageServiceImpl testStorage;
+  @Mock
+  private S3StorageServiceImpl testStorage;
 
   // A simulated FileService
-  @Mock private FileServiceImpl testFileService;
+  @Mock
+  private FileServiceImpl testFileService;
 
   // A simulated ProjectDTO
-  @Mock private ProjectDTO mockProjectDTO;
+  @Mock
+  private ProjectDTO mockProjectDTO;
 
   // A simulated List<Project>; this can also be accomplished using a spy.
-  @Mock private List<Project> dummyList;
+  @Mock
+  private List<Project> dummyList;
 
   // A simulated Project; holds data for the test methods to access during
   // assertion.
-  @Mock private Project dummyProject;
+  @Mock
+  private Project dummyProject;
 
   // A simulated Project; holds data for the test methods to access during
   // assertion.
-  @Mock private Project dummySavedProject;
+  @Mock
+  private Project dummySavedProject;
 
   // A mock file
-  @Mock private File mockFile;
+  @Mock
+  private File mockFile;
 
   // A mock multipart file
-  @Mock private MultipartFile mockMultipartFile;
+  @Mock
+  private MultipartFile mockMultipartFile;
 
   // Can't spy or mock final classes
   Optional<Project> optionalProject;
@@ -81,11 +89,12 @@ public class ProjectServiceTestSuite {
   ArrayList<String> mockListString = new ArrayList<>();
 
   /**
-   * + Creating exception rule, this is useful when we are expecting the method to throw an
-   * exception. + Moved the listMultipartFile and listZipLink to a class variable to use them in
-   * other testing methods.
+   * + Creating exception rule, this is useful when we are expecting the method to
+   * throw an exception. + Moved the listMultipartFile and listZipLink to a class
+   * variable to use them in other testing methods.
    */
-  @Rule public ExpectedException exceptionRule = ExpectedException.none();
+  @Rule
+  public ExpectedException exceptionRule = ExpectedException.none();
 
   ArrayList<MultipartFile> listMultipartFile = new ArrayList<MultipartFile>();
   ArrayList<String> listZipLink = new ArrayList<String>();
@@ -125,27 +134,17 @@ public class ProjectServiceTestSuite {
   }
 
   /**
-   * Assert that method should return an ArrayList given a correct string parameter for findByName()
-   * .
+   * Assert that method should return an ArrayList given a correct string
+   * parameter for findByName() .
    */
   @Test
   public void shouldReturnArrayListByName() {
     assertThat(classUnderTest.findByName("string")).isInstanceOf(List.class);
   }
 
-  /** Assert that method should return a value of true on a valid id parameter for deleteById(). */
-  @Test
-  public void shouldReturnTrueOnValidDelete() {
-    assertThat(classUnderTest.deleteById("floop")).isEqualTo(Boolean.TRUE);
-  }
-
-  /** Assert that method should return a value of true on any string parameter for deleteById(). */
-  @Test
-  public void shouldReturnTrueOnAnyString() {
-    assertThat(classUnderTest.deleteById("floop")).isEqualTo(Boolean.TRUE);
-  }
-
-  /** Assert that method should return false on a null parameter for deleteById(). */
+  /**
+   * Assert that method should return false on a null parameter for deleteById().
+   */
   @Test
   public void shouldReturnFalseOnNullParameter() {
     assertThat(classUnderTest.deleteById(null)).isEqualTo(Boolean.FALSE);
@@ -161,24 +160,21 @@ public class ProjectServiceTestSuite {
   @Test
   public void testUpdateProject() {
     optionalProject = Optional.of(dummySavedProject);
-    when(testRepo.findById("97")).thenReturn(optionalProject);
+    when(dummyProject.getDescription()).thenReturn(dummyString);
     when(dummyProject.getName()).thenReturn(dummyString);
     when(dummyProject.getBatch()).thenReturn(dummyString);
     when(dummyProject.getTrainer()).thenReturn(dummyString);
     when(dummyProject.getGroupMembers()).thenReturn(mockListString);
-    when(dummyProject.getScreenShots()).thenReturn(mockListString);
     when(dummyProject.getZipLinks()).thenReturn(mockListString);
-    when(dummyProject.getDescription()).thenReturn(dummyString);
     when(dummyProject.getTechStack()).thenReturn(dummyString);
     when(dummyProject.getStatus()).thenReturn(dummyString);
-    when(dummyProject.getOldProject()).thenReturn(dummySavedProject);
-    //	assertTrue(classUnderTest.updateProject(dummyProject, "97"));
+    assertTrue(classUnderTest.evaluateProject(dummyProject));
 
   }
 
   /**
-   * Test if we can create a project from a DTO. We need the lists and such to properly mock the
-   * implementation.
+   * Test if we can create a project from a DTO. We need the lists and such to
+   * properly mock the implementation.
    */
   @Test
   public void testCreateProjectFromDTO() {
@@ -203,15 +199,17 @@ public class ProjectServiceTestSuite {
       // verifying that these methods are being used during this test
       verify(testFileService).download("link/archive/master.zip");
       verify(testStorage).store(mockMultipartFile);
+
     } catch (Exception e) {
       System.out.println("Issue with createProjectFromDTO");
       e.printStackTrace();
+      assertFalse(true);
     }
   }
 
   /**
-   * This test will start from having an initial state of approved, then it will be set to pending
-   * before we call the save method.
+   * This test will start from having an initial state of approved, then it will
+   * be set to pending before we call the save method.
    *
    * @throws IOException
    */
@@ -249,11 +247,14 @@ public class ProjectServiceTestSuite {
   /**
    * Test if an exception is thrown if the file size is over set limitation
    *
-   * <p>Calls the createProjectFromDTO() method using mostly dummy data and a sample file found on
-   * github that is currently 57707774 bytes. It should trigger a FileSizeTooLargeException.
+   * <p>
+   * Calls the createProjectFromDTO() method using mostly dummy data and a sample
+   * file found on github that is currently 57707774 bytes. It should trigger a
+   * FileSizeTooLargeException.
    *
-   * <p>If there is ever any future errors with this test. Make sure to check that the link(s) added
-   * to listZipLink are still valid first.
+   * <p>
+   * If there is ever any future errors with this test. Make sure to check that
+   * the link(s) added to listZipLink are still valid first.
    */
   @Test
   public void testCreateProjectFromDTOFileSizeTooLarge() {
@@ -294,14 +295,17 @@ public class ProjectServiceTestSuite {
     when(mockProjectDTO.getDescription()).thenReturn(dummyString);
     when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
     when(mockProjectDTO.getStatus()).thenReturn(dummyString);
-    //		when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
-    //		when(mockMultipartFile.getSize()).thenReturn((long) 1000001);
+    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
+    when(mockMultipartFile.getSize()).thenReturn((long) 1000001);
 
     // Call method to be tested
     classUnderTest.createProjectFromDTO(mockProjectDTO);
   }
 
-  /** Testing if project's description is not provided, it is going to raise an exception. */
+  /**
+   * Testing if project's description is not provided, it is going to raise an
+   * exception.
+   */
   @Test
   public void testAddProjectIfNoDescriptionIsProvided() {
 
@@ -316,9 +320,9 @@ public class ProjectServiceTestSuite {
     when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
     when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
     when(mockProjectDTO.getStatus()).thenReturn(dummyString);
-    //		when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
-    //		when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
-    //		when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
+    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
+    when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
 
     // setting description to null
     when(mockProjectDTO.getDescription()).thenReturn(null);
@@ -328,7 +332,8 @@ public class ProjectServiceTestSuite {
   }
 
   /**
-   * Testing if project's GitHub links are not provided, if so, test should complete successfully.
+   * Testing if project's GitHub links are not provided, if so, test should
+   * complete successfully.
    */
   @Test
   public void testAddProjectIfNoGitHubLinkIsProvided() {
