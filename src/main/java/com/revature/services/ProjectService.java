@@ -43,7 +43,7 @@ public class ProjectService {
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByUserId(Integer userId) {
 	  
-	  if (userId == null) {
+	  if (userId == null || userId <= 0) {
 		  throw new BadRequestException("Invalid fields found on project");
 	    }
 
@@ -66,11 +66,11 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByName(String name) {
-	  if (name == null) {
+	  if (name == null || name == "") {
 		  throw new BadRequestException("Invalid fields found on project");
 	    }
 	  
-	  List<Project> project = projectRepo.findByBatch(name);
+	  List<Project> project = projectRepo.findByName(name);
 	  if (project.isEmpty()) {
 	      throw new ProjectNotFoundException(
 	          "There is no project named: " + name + ", in the database.");
@@ -87,7 +87,7 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByBatch(String batch) {
-	  if (batch == null) {
+	  if (batch == null || batch == "") {
 		  throw new BadRequestException("Invalid fields found on project");
 	    }
 	  List<Project> result = projectRepo.findByBatch(batch);
@@ -108,14 +108,14 @@ public class ProjectService {
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByTrainer(String trainer) {
 	  
-	  if (trainer == null) {
+	  if (trainer == null || trainer == "") {
 		  throw new BadRequestException("Invalid fields found on project");
 	    }
 	  
 	  List<Project> project = projectRepo.findByTrainer(trainer);
 	  if (project.isEmpty()) {
 	      throw new ProjectNotFoundException(
-	          "There is no project named: " + trainer + ", in the database.");
+	          "There is no trainer named: " + trainer + ", in the database.");
 	    }
     return project;
   }
@@ -129,13 +129,13 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByTechStack(String techStack) {
-	  if (techStack == null) {
+	  if (techStack == null || techStack == "") {
 		  throw new BadRequestException("Invalid fields found on project");
 	  }
 	  List<Project> project = projectRepo.findByTechStack(techStack);
 	  if (project.isEmpty()) {
 	      throw new ProjectNotFoundException(
-	          "There is no project named: " + techStack + ", in the database.");
+	          "There is no tech stack named: " + techStack + ", in the database.");
 	    }
     return project;
     
@@ -151,7 +151,7 @@ public class ProjectService {
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByStatus(String status) {
 	  
-	  if (status == null) {
+	  if (status == null || status == "") {
 		  throw new BadRequestException("Invalid fields found on project");
 	    }
 	  List<Project> project = projectRepo.findByStatus(status);
@@ -188,7 +188,7 @@ public class ProjectService {
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Boolean deleteById(String id) {
 	  
-    if (id == null || id == "" || !projectRepo.findById(id).isPresent()) {
+    if (id == null || id == "") {
     	throw new ProjectNotFoundException(
   	          "There is no project with: " + id + ", in the database.");
   	    }
@@ -207,7 +207,7 @@ public class ProjectService {
    *     information for a specific value in the model. If they have then that is what is updated.
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public Boolean updateProject(Project project) {
+  public Boolean evaluateProject(Project project) {
  
     if(!isValidFields(project)) {
     	return false;
