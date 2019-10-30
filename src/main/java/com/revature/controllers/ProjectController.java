@@ -26,7 +26,10 @@ import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 
-/** The ProjectController maps service endpoints for essential CRUD operations on Projects */
+/**
+ * The ProjectController maps service endpoints for essential CRUD operations on
+ * Projects
+ */
 @RestController
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ProjectController {
@@ -39,29 +42,32 @@ public class ProjectController {
   }
 
   /**
-   * This method retrieves all of the projects stored within embedded MongoDB Uses HTTP method GET
-   * and only retrieves JSON data. <br>
+   * This method retrieves all of the projects stored within embedded MongoDB Uses
+   * HTTP method GET and only retrieves JSON data. <br>
    * <br>
-   * Added Spring Security annotations to prevent unauthorized users from accessing database
+   * Added Spring Security annotations to prevent unauthorized users from
+   * accessing database
    */
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getAllProjects() {
-    
+
     return projectService.findAllProjects();
   }
 
   /**
-   * This method retrieves project by ID Uses HTTP method GET and only retrieves JSON data <br>
+   * This method retrieves project by ID Uses HTTP method GET and only retrieves
+   * JSON data <br>
    * <br>
-   * Added Spring Security annotations to prevent unauthorized users from accessing database
+   * Added Spring Security annotations to prevent unauthorized users from
+   * accessing database
    *
    * @param id: String that serves as the id for the project
    */
   @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Project getProjectById(@PathVariable String id) {
-    
+
     return projectService.findById(id);
   }
 
@@ -69,54 +75,60 @@ public class ProjectController {
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getProjectByUserId(@PathVariable Integer userId) {
     System.out.println("In Project Controller getProjectById " + userId);
-        return projectService.findByUserId(userId);
+    return projectService.findByUserId(userId);
   }
 
   /**
-   * This method retrieves project by name Uses HTTP method GET and only retrieves JSON data <br>
+   * This method retrieves project by name Uses HTTP method GET and only retrieves
+   * JSON data <br>
    * <br>
-   * Added Spring Security annotations to prevent unauthorized users from accessing database
+   * Added Spring Security annotations to prevent unauthorized users from
+   * accessing database
    *
    * @param name: String that serves as the name of the project
    */
   @GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getProjectsByName(@PathVariable String name) {
-    
+
     return projectService.findByName(name);
   }
 
   /**
-   * This method retrieves project by batch Uses HTTP method GET and only retrieves JSON data <br>
+   * This method retrieves project by batch Uses HTTP method GET and only
+   * retrieves JSON data <br>
    * <br>
-   * Added Spring Security annotations to prevent outside users from accessing database
+   * Added Spring Security annotations to prevent outside users from accessing
+   * database
    *
    * @param batch: String that serves as the batch for the project
    */
   @GetMapping(value = "/batch/{batch}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getProjectsByBatch(@PathVariable String batch) {
-    
+
     return projectService.findByBatch(batch);
   }
 
   /**
-   * This method retrieves project by status Uses HTTP method GET and only retrieves JSON data <br>
+   * This method retrieves project by status Uses HTTP method GET and only
+   * retrieves JSON data <br>
    * <br>
-   * Added Spring Security annotations to prevent unauthorized users from accessing database
+   * Added Spring Security annotations to prevent unauthorized users from
+   * accessing database
    *
    * @param status: String that serves as the status of the project
    */
   @GetMapping(value = "/status/{status}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getProjectsByStatus(@PathVariable String status) {
-    
+
     return projectService.findByStatus(status);
   }
 
   /**
-   * This method allows a user to submit an edit request on one of their projects. Uses HTTP method
-   * POST and only consumes JSON data.
+   * This method allows a user to submit an edit request on one of their projects.
+   * Uses HTTP method POST and only consumes JSON data.
    *
    * @param project: The new project object for the submitted edit request.
    */
@@ -127,106 +139,92 @@ public class ProjectController {
   }
 
   /**
-   * This method accepts each field of a ProjectDTO object in the form of multipart form data. A
-   * ProjectDTO object is created from the fields and sent to the service layer to be converted to a
-   * Project object and saved. <br>
+   * This method accepts each field of a ProjectDTO object in the form of
+   * multipart form data. A ProjectDTO object is created from the fields and sent
+   * to the service layer to be converted to a Project object and saved. <br>
    * <br>
-   * Added Spring Security annotations to prevent unauthorized users from accessing database
+   * Added Spring Security annotations to prevent unauthorized users from
+   * accessing database
    *
-   * @param name the name field of the form data
-   * @param batch the batch field of the form data
-   * @param trainer the trainer field of the form data
+   * @param name         the name field of the form data
+   * @param batch        the batch field of the form data
+   * @param trainer      the trainer field of the form data
    * @param groupMembers the groupMembers field of the form data
-   * @param screenShots the screenShots field of the form data
-   * @param zipLinks the zipLinks field of the form data
-   * @param description the description field of the form data
-   * @param techStack the techStack field of the form data
-   * @param status the status field of the form data
-   * @return project: The Project object derived from ProjectDTO in the service layer.
+   * @param screenShots  the screenShots field of the form data
+   * @param zipLinks     the zipLinks field of the form data
+   * @param description  the description field of the form data
+   * @param techStack    the techStack field of the form data
+   * @param status       the status field of the form data
+   * @return project: The Project object derived from ProjectDTO in the service
+   *         layer.
    */
-  @PostMapping(
-      value = "/",
-      consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  //@PreAuthorize("hasRole('USER')")
-  public Project addProject(
-      @RequestParam("name") String name,
-      @RequestParam("batch") String batch,
-      @RequestParam("trainer") String trainer,
-      @RequestParam("groupMembers") List<String> groupMembers,
-      @RequestParam("screenShots") List<MultipartFile> screenShots,
-      @RequestParam("zipLinks") List<String> zipLinks,
-      @RequestParam("description") String description,
-      @RequestParam("techStack") String techStack,
-      @RequestParam("status") String status,
-      @RequestParam("dataModel") List<MultipartFile> dataModel,
+  // @PreAuthorize("hasRole('USER')")
+  public Project addProject(@RequestParam("name") String name, @RequestParam("batch") String batch,
+      @RequestParam("trainer") String trainer, @RequestParam("groupMembers") List<String> groupMembers,
+      @RequestParam("screenShots") List<MultipartFile> screenShots, @RequestParam("zipLinks") List<String> zipLinks,
+      @RequestParam("description") String description, @RequestParam("techStack") String techStack,
+      @RequestParam("status") String status, @RequestParam("dataModel") List<MultipartFile> dataModel,
       @RequestParam("userId") Integer userId) {
-   
-    ProjectDTO projectDTO =
-        new ProjectDTO.ProjectDTOBuilder()
-            .setName(name)
-            .setBatch(batch)
-            .setTrainer(trainer)
-            .setGroupMembers(groupMembers)
-            .setScreenShots(screenShots)
-            .setZipLinks(zipLinks)
-            .setDescription(description)
-            .setTechStack(techStack)
-            .setStatus(status)
-            .setDataModel(dataModel)
-            .setUserId(userId)
-            .build();
+
+    ProjectDTO projectDTO = new ProjectDTO.ProjectDTOBuilder().setName(name).setBatch(batch).setTrainer(trainer)
+        .setGroupMembers(groupMembers).setScreenShots(screenShots).setZipLinks(zipLinks).setDescription(description)
+        .setTechStack(techStack).setStatus(status).setDataModel(dataModel).setUserId(userId).build();
 
     return projectService.createProjectFromDTO(projectDTO);
   }
 
   /**
-   * This method is used to delete an entry into the embedded MongoDB based on the ID <br>
+   * This method is used to delete an entry into the embedded MongoDB based on the
+   * ID <br>
    * <br>
    * Uses HTTP method DELETE and only retrieves JSON data <br>
    * <br>
-   * Added Spring Security annotations to prevent unauthorized users from accessing database
+   * Added Spring Security annotations to prevent unauthorized users from
+   * accessing database
    *
    * @param id: String that serves as the id for the project
    */
   @DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Boolean deleteById(@PathVariable String id) {
-   
+
     return projectService.deleteById(id);
   }
 
   /**
-   * This method is used to update an entry into the embedded MongoDB based on the ID <br>
+   * This method is used to update an entry into the embedded MongoDB based on the
+   * ID <br>
    * <br>
-   * Added Spring Security annotations to prevent unauthorized users from accessing database <br>
+   * Added Spring Security annotations to prevent unauthorized users from
+   * accessing database <br>
    * <br>
    * Uses HTTP method PUT. Retrieves and produces JSON data
    *
    * @param project: Requests that the user enters a project
-   * @param id: String that serves as the id for the project
+   * @param id:      String that serves as the id for the project
    */
-  @PutMapping(
-      produces = MediaType.APPLICATION_JSON_VALUE,
-      consumes = MediaType.APPLICATION_JSON_VALUE)
+  @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
-  //	@PreAuthorize("hasRole('ADMIN')")
+  // @PreAuthorize("hasRole('ADMIN')")
   public Boolean updateProject(@RequestBody Project project) {
-   
+
     return projectService.updateProject(project);
   }
 
   /**
-   * This method is used to send a status code into the client based on the validity of the
-   * information sent. <br>
+   * This method is used to send a status code into the client based on the
+   * validity of the information sent. <br>
    * <br>
-   * Exception Handler for Response Status Bad Request which is used for addProject() [/add] <br>
+   * Exception Handler for Response Status Bad Request which is used for
+   * addProject() [/add] <br>
    * <br>
-   * Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
-   * value of the status code returned if thrown (BAD_REQUEST) error.setMessage: Defines a custom
-   * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
-   * error was thrown
+   * Uses @ExceptionHandler annotation. Creates a new error response
+   * error.setStatus: Defines the value of the status code returned if thrown
+   * (BAD_REQUEST) error.setMessage: Defines a custom message sent to the client
+   * if the exception is thrown error.setTimeStamp: Defines the time this error
+   * was thrown
    */
   @ExceptionHandler
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -249,14 +247,16 @@ public class ProjectController {
   }
 
   /**
-   * This method is used to send a status code into the client based on the validity of the
-   * information sent. <br>
+   * This method is used to send a status code into the client based on the
+   * validity of the information sent. <br>
    * <br>
-   * Exception Handler for Invalid Status Response which is used for updateProject() <br>
+   * Exception Handler for Invalid Status Response which is used for
+   * updateProject() <br>
    * <br>
-   * Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
-   * value of the status code returned if thrown(BAD_REQUEST) error.setMessage: Defines a custom
-   * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
+   * Uses @ExceptionHandler annotation. Creates a new error response
+   * error.setStatus: Defines the value of the status code returned if
+   * thrown(BAD_REQUEST) error.setMessage: Defines a custom message sent to the
+   * client if the exception is thrown error.setTimeStamp: Defines the time this
    * error was thrown
    */
   @ExceptionHandler
