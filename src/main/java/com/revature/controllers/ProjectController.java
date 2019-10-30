@@ -1,11 +1,21 @@
 package com.revature.controllers;
 
+import com.revature.exceptions.BadRequestException;
+import com.revature.exceptions.ProjectNotAddedException;
+import com.revature.exceptions.ProjectNotFoundException;
+import com.revature.models.Project;
+import com.revature.models.ProjectDTO;
+import com.revature.models.ProjectErrorResponse;
+import com.revature.services.ProjectService;
+import com.revature.services.StorageService;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,32 +27,64 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.revature.exceptions.BadRequestException;
-import com.revature.exceptions.InvalidStatusException;
-import com.revature.exceptions.ProjectNotAddedException;
-import com.revature.exceptions.ProjectNotFoundException;
-import com.revature.models.Project;
-import com.revature.models.ProjectDTO;
-import com.revature.models.ProjectErrorResponse;
-import com.revature.services.ProjectService;
 
 /** The ProjectController maps service endpoints for essential CRUD operations on Projects */
 @RestController
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
+// @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ProjectController {
 
   private ProjectService projectService;
+  private StorageService s3Service;
 
   @Autowired
-  public ProjectController(ProjectService projectService) {
+  public ProjectController(ProjectService projectService, StorageService s3) {
     this.projectService = projectService;
+    this.s3Service = s3;
+  }
+  /**
+   * This methods allows us to hit the endpoint needed to download a requested file from AWS S3
+   * bucket to present in our CodeBase Viewer
+   *
+   * @param keyname
+   * @return request file from AWS S3 bucket
+   */
+  @GetMapping(value = "/downloads/{keyname}")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<byte[]> download(@PathVariable String keyname) {
+
+    ByteArrayOutputStream downloadInputStream = s3Service.downloadFile(keyname);
+
+    return ResponseEntity.ok()
+        .contentType(contentType(keyname))
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + keyname + "\"")
+        .body(downloadInputStream.toByteArray());
   }
 
- 
+  /**
+   * Ensures the proper content type is returned
+   *
+   * @param keyname
+   * @return content type of the key we are looking for
+   */
+  private MediaType contentType(String keyname) {
+    String[] arr = keyname.split("\\.");
+    String type = arr[arr.length - 1];
+    switch (type) {
+      case "txt":
+        return MediaType.TEXT_PLAIN;
+      case "png":
+        return MediaType.IMAGE_PNG;
+      case "jpg":
+        return MediaType.IMAGE_JPEG;
+      default:
+        return MediaType.APPLICATION_OCTET_STREAM;
+    }
+  }
+
   @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Project getProjectById(@PathVariable String id) {
-    
+
     return projectService.findById(id);
   }
 
@@ -81,7 +123,7 @@ public class ProjectController {
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  //@PreAuthorize("hasRole('USER')")
+  // @PreAuthorize("hasRole('USER')")
   public Project addProject(
       @RequestParam("name") String name,
       @RequestParam("batch") String batch,
@@ -94,7 +136,7 @@ public class ProjectController {
       @RequestParam("status") String status,
       @RequestParam("dataModel") List<MultipartFile> dataModel,
       @RequestParam("userId") Integer userId) {
-   
+
     ProjectDTO projectDTO =
         new ProjectDTO.ProjectDTOBuilder()
             .setName(name)
@@ -125,7 +167,7 @@ public class ProjectController {
   @DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Boolean deleteById(@PathVariable String id) {
-   
+
     return projectService.deleteById(id);
   }
 
@@ -145,35 +187,42 @@ public class ProjectController {
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasRole('ADMIN')")
   public Boolean updateProject(@RequestBody Project project) {
-   
+
     return projectService.evaluateProject(project);
   }
 
-  @GetMapping(value="/q", produces="application/json")
+  /**
+   * This method takes in a query param and returns the proper get method based on the field and
+   * value provided
+   *
+   * @param field
+   * @param value
+   * @return - proper get method
+   */
+  @GetMapping(value = "/q", produces = "application/json")
   @ResponseStatus(HttpStatus.OK)
-	public List<Project> getProjectFieldValue(@RequestParam("field") String field, @RequestParam("value") String value) {
-		
-		switch(field) {
-		case "status":
-			return projectService.findByStatus(value);
-		case "name":
-			return projectService.findByName(value);
-		case "trainer":
-			return projectService.findByTrainer(value);
-		case "techStack":
-			return projectService.findByTechStack(value);
-		case "batch": 
-			return projectService.findByBatch(value);
-		case "userId":
-			return projectService.findByUserId(Integer.valueOf(value));
-		case "all":
-			return projectService.findAllProjects();
-		default:
-			throw new BadRequestException("Invalid field param value specified!");
-				
-		}
-		
-	}
+  public List<Project> getProjectFieldValue(
+      @RequestParam("field") String field, @RequestParam("value") String value) {
+
+    switch (field) {
+      case "status":
+        return projectService.findByStatus(value);
+      case "name":
+        return projectService.findByName(value);
+      case "trainer":
+        return projectService.findByTrainer(value);
+      case "techStack":
+        return projectService.findByTechStack(value);
+      case "batch":
+        return projectService.findByBatch(value);
+      case "userId":
+        return projectService.findByUserId(Integer.valueOf(value));
+      case "all":
+        return projectService.findAllProjects();
+      default:
+        throw new BadRequestException("Invalid field param value specified!");
+    }
+  }
   /**
    * This method is used to send a status code into the client based on the validity of the
    * information sent.

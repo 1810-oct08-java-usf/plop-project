@@ -1,5 +1,6 @@
 package com.revature.services;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,4 +25,6 @@ public interface StorageService {
    * @return the link to the new object
    */
   String store(File file);
+
+  ByteArrayOutputStream downloadFile(String keyName);
 }
