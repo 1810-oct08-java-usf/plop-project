@@ -5,12 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.revature.exceptions.BadRequestException;
-import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
@@ -24,19 +21,22 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.multipart.MultipartFile;
 
 /** Test suite for ProjectService. */
 @SpringBootTest
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Theories.class)
+// @RunWith(MockitoJUnitRunner.class)
 public class ProjectServiceTestSuite {
 
   private ProjectService classUnderTest;
@@ -44,38 +44,40 @@ public class ProjectServiceTestSuite {
   @Rule public MockitoRule rule = MockitoJUnit.rule();
 
   // A simulated ProjectRespository
-  @Mock private ProjectRepository testRepo;
+  private ProjectRepository testRepo = Mockito.mock(ProjectRepository.class);
 
   // A simulated StorageService
-  @Mock private S3StorageServiceImpl testStorage;
+  private S3StorageServiceImpl testStorage = Mockito.mock(S3StorageServiceImpl.class);
 
   // A simulated FileService
-  @Mock private FileServiceImpl testFileService;
+  private FileServiceImpl testFileService = Mockito.mock(FileServiceImpl.class);
 
   // A simulated ProjectDTO
-  @Mock private ProjectDTO mockProjectDTO;
+  private ProjectDTO mockProjectDTO = Mockito.mock(ProjectDTO.class);
 
   // A simulated List<Project>; this can also be accomplished using a spy.
-  @Mock private List<Project> dummyList;
+  private List<Project> dummyList = Mockito.mock(List.class);
 
   // A simulated Project; holds data for the test methods to access during
   // assertion.
-  @Mock private Project dummyProject;
+  private Project dummyProject = Mockito.mock(Project.class);
 
   // A simulated Project; holds data for the test methods to access during
   // assertion.
-  @Mock private Project dummySavedProject;
+  private Project dummySavedProject = Mockito.mock(Project.class);
 
   // A mock file
-  @Mock private File mockFile;
+  private File mockFile = Mockito.mock(File.class);
 
   // A mock multipart file
-  @Mock private MultipartFile mockMultipartFile;
+  private MultipartFile mockMultipartFile = Mockito.mock(MultipartFile.class);
 
   // Can't spy or mock final classes
   Optional<Project> optionalProject;
+  String dummyString = "dummyString";
 
-  String dummyString = "Something";
+  @DataPoints("string cases")
+  public static String[] dummyStrings = {null, ""};
 
   // A mock list of strings
   ArrayList<String> mockListString = new ArrayList<>();
@@ -262,8 +264,8 @@ public class ProjectServiceTestSuite {
       assertTrue(classUnderTest.createProjectFromDTO(mockProjectDTO) instanceof Project);
 
       // verifying that these methods are being used during this test
-      verify(testFileService).download("link/archive/master.zip");
-      verify(testStorage).store(mockMultipartFile);
+      Mockito.verify(testFileService).download("link/archive/master.zip");
+      Mockito.verify(testStorage).store(mockMultipartFile);
     } catch (Exception e) {
       System.out.println("Issue with createProjectFromDTO");
       e.printStackTrace();
@@ -301,8 +303,8 @@ public class ProjectServiceTestSuite {
     assertEquals("Pending", result.getStatus());
 
     // verifying that these methods are being used during this test
-    verify(testFileService).download("link/archive/master.zip");
-    verify(testStorage).store(mockMultipartFile);
+    Mockito.verify(testFileService).download("link/archive/master.zip");
+    Mockito.verify(testStorage).store(mockMultipartFile);
   }
 
   /**
@@ -313,28 +315,34 @@ public class ProjectServiceTestSuite {
    * If there is ever any future errors with this test. Make sure to check that the link(s) added to
    * listZipLink are still valid first.
    */
-  @Test
-  public void testCreateProjectFromDTOFileSizeTooLarge() {
+  @Theory
+  public void testCreateProjectFromDTOFileSizeTooLarge(
+      @FromDataPoints("string cases") String dummyString1,
+      @FromDataPoints("string cases") String dummyString2) {
 
-    when(mockProjectDTO.getName()).thenReturn(dummyString);
-    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
-    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
+    when(mockProjectDTO.getUserId()).thenReturn(1);
+    when(mockProjectDTO.getName()).thenReturn(dummyString1);
+    when(mockProjectDTO.getBatch()).thenReturn(dummyString2);
+    when(mockProjectDTO.getTrainer()).thenReturn(dummyString2);
     when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
-    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
-    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
-    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
+    when(mockProjectDTO.getDescription()).thenReturn(dummyString2);
+    when(mockProjectDTO.getTechStack()).thenReturn(dummyString2);
+    when(mockProjectDTO.getStatus()).thenReturn(dummyString2);
     when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
     when(mockMultipartFile.getSize()).thenReturn((long) 1000001);
 
-    boolean thrown = false;
-    try {
-      classUnderTest.createProjectFromDTO(mockProjectDTO);
-    } catch (FileSizeTooLargeException fstle) {
-      System.out.println("FileSizeTooLargeException caught in test.");
-      thrown = true;
-    }
-    assertTrue(thrown);
+    assertThatExceptionOfType(ProjectNotAddedException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.createProjectFromDTO(mockProjectDTO);
+            });
   }
+
+  /*
+   * Validates the output of createProjectDTO when a valid project is passed in but the file size
+   * exceeds the acceptable limit. If operating correctly, a FileSizeTooLargeException should be
+   * issued.
+   */
 
   /** Testing that validates when the group members are not provided. */
   @Test
@@ -359,30 +367,26 @@ public class ProjectServiceTestSuite {
     classUnderTest.createProjectFromDTO(mockProjectDTO);
   }
 
-  /** Testing if project's description is not provided, it is going to raise an exception. */
+  /**
+   * Verify that creating a project DTO with a null description raises an exception. If operating
+   * correctly, a ProjectNotAddedException should be raised.
+   */
   @Test
-  public void testAddProjectIfNoDescriptionIsProvided() {
+  public void T_createProjectFromDTO_NullDescription() {
 
-    // Setting expectations
-    exceptionRule.expect(ProjectNotAddedException.class);
-    exceptionRule.expectMessage("The 'description' input cannot be empty when adding project");
-
-    // Initializing mock
     when(mockProjectDTO.getName()).thenReturn(dummyString);
     when(mockProjectDTO.getBatch()).thenReturn(dummyString);
     when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
     when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
     when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
     when(mockProjectDTO.getStatus()).thenReturn(dummyString);
-    // when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
-    // when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
-    // when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
-
-    // setting description to null
     when(mockProjectDTO.getDescription()).thenReturn(null);
 
-    // executing method
-    classUnderTest.createProjectFromDTO(mockProjectDTO);
+    assertThatExceptionOfType(ProjectNotAddedException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.createProjectFromDTO(mockProjectDTO);
+            });
   }
 
   /**
@@ -411,6 +415,6 @@ public class ProjectServiceTestSuite {
 
     // assert
     assertNotNull(result); // Project should not be null
-    verify(testRepo, times(1)).save(Mockito.any());
+    Mockito.verify(testRepo, Mockito.times(1)).save(Mockito.any());
   }
 }
