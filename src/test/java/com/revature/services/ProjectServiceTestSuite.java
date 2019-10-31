@@ -8,6 +8,12 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.revature.exceptions.FileSizeTooLargeException;
+import com.revature.exceptions.ProjectNotAddedException;
+import com.revature.models.Project;
+import com.revature.models.ProjectDTO;
+import com.revature.repositories.ProjectRepository;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,11 +32,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.multipart.MultipartFile;
-import com.revature.exceptions.FileSizeTooLargeException;
-import com.revature.exceptions.ProjectNotAddedException;
-import com.revature.models.Project;
-import com.revature.models.ProjectDTO;
-import com.revature.repositories.ProjectRepository;
 
 /** Test suite for ProjectService. */
 @SpringBootTest
@@ -39,46 +40,36 @@ public class ProjectServiceTestSuite {
 
   private ProjectService classUnderTest;
 
-  @Rule
-  public MockitoRule rule = MockitoJUnit.rule();
+  @Rule public MockitoRule rule = MockitoJUnit.rule();
 
   // A simulated ProjectRespository
-  @Mock
-  private ProjectRepository testRepo;
+  @Mock private ProjectRepository testRepo;
 
   // A simulated StorageService
-  @Mock
-  private S3StorageServiceImpl testStorage;
+  @Mock private S3StorageServiceImpl testStorage;
 
   // A simulated FileService
-  @Mock
-  private FileServiceImpl testFileService;
+  @Mock private FileServiceImpl testFileService;
 
   // A simulated ProjectDTO
-  @Mock
-  private ProjectDTO mockProjectDTO;
+  @Mock private ProjectDTO mockProjectDTO;
 
   // A simulated List<Project>; this can also be accomplished using a spy.
-  @Mock
-  private List<Project> dummyList;
+  @Mock private List<Project> dummyList;
 
   // A simulated Project; holds data for the test methods to access during
   // assertion.
-  @Mock
-  private Project dummyProject;
+  @Mock private Project dummyProject;
 
   // A simulated Project; holds data for the test methods to access during
   // assertion.
-  @Mock
-  private Project dummySavedProject;
+  @Mock private Project dummySavedProject;
 
   // A mock file
-  @Mock
-  private File mockFile;
+  @Mock private File mockFile;
 
   // A mock multipart file
-  @Mock
-  private MultipartFile mockMultipartFile;
+  @Mock private MultipartFile mockMultipartFile;
 
   // Can't spy or mock final classes
   Optional<Project> optionalProject;
@@ -89,12 +80,11 @@ public class ProjectServiceTestSuite {
   ArrayList<String> mockListString = new ArrayList<>();
 
   /**
-   * + Creating exception rule, this is useful when we are expecting the method to
-   * throw an exception. + Moved the listMultipartFile and listZipLink to a class
-   * variable to use them in other testing methods.
+   * + Creating exception rule, this is useful when we are expecting the method to throw an
+   * exception. + Moved the listMultipartFile and listZipLink to a class variable to use them in
+   * other testing methods.
    */
-  @Rule
-  public ExpectedException exceptionRule = ExpectedException.none();
+  @Rule public ExpectedException exceptionRule = ExpectedException.none();
 
   ArrayList<MultipartFile> listMultipartFile = new ArrayList<MultipartFile>();
   ArrayList<String> listZipLink = new ArrayList<String>();
@@ -134,17 +124,15 @@ public class ProjectServiceTestSuite {
   }
 
   /**
-   * Assert that method should return an ArrayList given a correct string
-   * parameter for findByName() .
+   * Assert that method should return an ArrayList given a correct string parameter for findByName()
+   * .
    */
   @Test
   public void shouldReturnArrayListByName() {
     assertThat(classUnderTest.findByName("string")).isInstanceOf(List.class);
   }
 
-  /**
-   * Assert that method should return false on a null parameter for deleteById().
-   */
+  /** Assert that method should return false on a null parameter for deleteById(). */
   @Test
   public void shouldReturnFalseOnNullParameter() {
     assertThat(classUnderTest.deleteById(null)).isEqualTo(Boolean.FALSE);
@@ -211,8 +199,8 @@ public class ProjectServiceTestSuite {
   }
 
   /**
-   * This test will start from having an initial state of approved, then it will
-   * be set to pending before we call the save method.
+   * This test will start from having an initial state of approved, then it will be set to pending
+   * before we call the save method.
    *
    * @throws IOException
    */
@@ -250,14 +238,11 @@ public class ProjectServiceTestSuite {
   /**
    * Test if an exception is thrown if the file size is over set limitation
    *
-   * <p>
-   * Calls the createProjectFromDTO() method using mostly dummy data and a sample
-   * file found on github that is currently 57707774 bytes. It should trigger a
-   * FileSizeTooLargeException.
+   * <p>Calls the createProjectFromDTO() method using mostly dummy data and a sample file found on
+   * github that is currently 57707774 bytes. It should trigger a FileSizeTooLargeException.
    *
-   * <p>
-   * If there is ever any future errors with this test. Make sure to check that
-   * the link(s) added to listZipLink are still valid first.
+   * <p>If there is ever any future errors with this test. Make sure to check that the link(s) added
+   * to listZipLink are still valid first.
    */
   @Test
   public void testCreateProjectFromDTOFileSizeTooLarge() {
@@ -305,10 +290,7 @@ public class ProjectServiceTestSuite {
     classUnderTest.createProjectFromDTO(mockProjectDTO);
   }
 
-  /**
-   * Testing if project's description is not provided, it is going to raise an
-   * exception.
-   */
+  /** Testing if project's description is not provided, it is going to raise an exception. */
   @Test
   public void testAddProjectIfNoDescriptionIsProvided() {
 
@@ -335,8 +317,7 @@ public class ProjectServiceTestSuite {
   }
 
   /**
-   * Testing if project's GitHub links are not provided, if so, test should
-   * complete successfully.
+   * Testing if project's GitHub links are not provided, if so, test should complete successfully.
    */
   @Test
   public void testAddProjectIfNoGitHubLinkIsProvided() {
