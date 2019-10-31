@@ -19,7 +19,6 @@ import com.revature.repositories.ProjectRepository;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
@@ -198,10 +197,26 @@ public class ProjectServiceTestSuite {
     assertThat(classUnderTest.deleteById(null)).isEqualTo(Boolean.FALSE);
   }
 
-  /** Assert that findAllProjects returns a LinkedList */
+  /**
+   * Verifies behavior of findAllProjects when no projects exist. If operating correctly, a
+   * ProjectNotFoundException is expected.
+   */
   @Test
-  public void shouldReturnLinkedList() {
-    assertThat(classUnderTest.findAllProjects()).isInstanceOf(LinkedList.class);
+  public void T_findAllProjects_None() {
+    assertThatExceptionOfType(ProjectNotFoundException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findAllProjects();
+            });
+  }
+
+  /**
+   * Checks that calling findAllProjects on dummyList will return a list of projects greater than 0.
+   */
+  @Test
+  public void T_findAllProjects_Exist() {
+    when(testRepo.findAll()).thenReturn(dummyList);
+    assertThat(classUnderTest.findAllProjects().size()).isGreaterThan(0);
   }
 
   /** Check if we can update all parts of a project */
