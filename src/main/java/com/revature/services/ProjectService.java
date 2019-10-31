@@ -338,25 +338,33 @@ public class ProjectService {
    * @return boolean - true if the project was updated
    */
   public boolean submitEditRequest(Project project) {
-   
-	  if (!isValidFields(project)) {
+
+    if (!isValidFields(project)) {
       return false;
     }
-    
-	  projectRepo.save(project);
-      return true;
+
+    projectRepo.save(project);
+    return true;
   }
-  
+
   public boolean isValidFields(Project project) {
-	  
-	  if(project.getDescription() == null || project.getDescription().trim().equals("")) return false;
-	  if(project.getName() == null || project.getName().trim().equals("")) return false;
-	  if(project.getBatch() == null || project.getBatch().trim().equals("")) return false;
-	  if(project.getGroupMembers() == null || project.getGroupMembers().isEmpty()) return false;
-	  if(project.getTechStack() == null || project.getTechStack().trim().equals("")) return false;
-	  if(project.getTrainer() == null || project.getTrainer().equals("")) return false;
-	  if(project.getUserId() == null || project.getUserId().equals(0)) return false;
-	  
-	  return true;
+
+    if (project.getUserId() == null
+        || project.getUserId() < 1
+        || project.getDescription() == null
+        || project.getDescription().trim().equals("")
+        || project.getName() == null
+        || project.getName().trim().equals("")
+        || project.getBatch() == null
+        || project.getBatch().trim().equals("")
+        || project.getGroupMembers() == null
+        || project.getGroupMembers().isEmpty()
+        || project.getTechStack() == null
+        || project.getTechStack().trim().equals("")
+        || project.getTrainer() == null
+        || project.getTrainer().equals("")
+        || project.getZipLinks() == null
+        || project.getZipLinks().isEmpty()) return false;
+    else return true;
   }
 }

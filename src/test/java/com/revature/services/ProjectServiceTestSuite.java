@@ -156,25 +156,28 @@ public class ProjectServiceTestSuite {
     assertThat(classUnderTest.findAllProjects()).isInstanceOf(LinkedList.class);
   }
 
-  /** Check if we can update all parts of a project */
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null
+   */
   @Test
-  public void testUpdateProject() {
+  public void T_evaluateProject_Valid() {
     optionalProject = Optional.of(dummySavedProject);
+    when(dummyProject.getUserId()).thenReturn(1);
     when(dummyProject.getDescription()).thenReturn(dummyString);
     when(dummyProject.getName()).thenReturn(dummyString);
     when(dummyProject.getBatch()).thenReturn(dummyString);
-    when(dummyProject.getTrainer()).thenReturn(dummyString);
     when(dummyProject.getGroupMembers()).thenReturn(mockListString);
     when(dummyProject.getZipLinks()).thenReturn(mockListString);
     when(dummyProject.getTechStack()).thenReturn(dummyString);
     when(dummyProject.getStatus()).thenReturn(dummyString);
+    when(dummyProject.getTrainer()).thenReturn(dummyString);
     assertTrue(classUnderTest.evaluateProject(dummyProject));
-
   }
 
   /**
-   * Test if we can create a project from a DTO. We need the lists and such to
-   * properly mock the implementation.
+   * Test if we can create a project from a DTO. We need the lists and such to properly mock the
+   * implementation.
    */
   @Test
   public void testCreateProjectFromDTO() {
