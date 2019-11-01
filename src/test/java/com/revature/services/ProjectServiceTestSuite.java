@@ -158,38 +158,39 @@ public class ProjectServiceTestSuite {
     when(dummyProject.getGroupMembers()).thenReturn(mockListString);
     when(dummyProject.getZipLinks()).thenReturn(mockListString);
     when(dummyProject.getTechStack()).thenReturn(dummyString);
-    when(dummyProject.getStatus()).thenReturn(dummyString);
     when(dummyProject.getTrainer()).thenReturn(dummyString);
+    when(dummyProject.getDataModel()).thenReturn(mockListString);
+    when(dummyProject.getScreenShots()).thenReturn(mockListString);
     assertTrue(classUnderTest.evaluateProject(dummyProject));
   }
 
   /**
    * Test if we can create a project from a DTO. We need the lists and such to properly mock the
    * implementation.
+   *
+   * @throws IOException
    */
   @Test
-  public void testCreateProjectFromDTO() {
+  public void T_CreateProjectFromDTO_Valid() throws IOException {
 
+    when(mockProjectDTO.getUserId()).thenReturn(1);
     when(mockProjectDTO.getName()).thenReturn(dummyString);
     when(mockProjectDTO.getBatch()).thenReturn(dummyString);
     when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
     when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
     when(mockProjectDTO.getDescription()).thenReturn(dummyString);
     when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
-    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
     when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getDataModel()).thenReturn(listMultipartFile);
     when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
-    when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
+    when(testRepo.save(Mockito.any())).thenReturn(new Project());
 
     try {
-      when(testFileService.download("link/archive/master.zip")).thenReturn(mockFile);
+      when(testFileService.download(Mockito.anyString())).thenReturn(mockFile);
+      when(mockFile.length()).thenReturn(1_000L);
       when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
 
       assertTrue(classUnderTest.createProjectFromDTO(mockProjectDTO) instanceof Project);
-
-      // verifying that these methods are being used during this test
-      verify(testFileService).download("link/archive/master.zip");
-      verify(testStorage).store(mockMultipartFile);
 
     } catch (Exception e) {
       System.out.println("Issue with createProjectFromDTO");

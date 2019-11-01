@@ -239,32 +239,24 @@ public class ProjectService {
 
     Project newProject =
         new Project.ProjectBuilder()
+            .setUserId(projectDTO.getUserId())
+            .setDescription(projectDTO.getDescription())
             .setName(projectDTO.getName())
             .setBatch(projectDTO.getBatch())
-            .setTrainer(projectDTO.getTrainer())
             .setGroupMembers(projectDTO.getGroupMembers())
-            .setDescription(projectDTO.getDescription())
             .setTechStack(projectDTO.getTechStack())
-            .setStatus(projectDTO.getStatus())
-            .setUserId(projectDTO.getUserId())
+            .setTrainer(projectDTO.getTrainer())
+            .setStatus(INITIAL_PROJECT_STATUS)
             .build();
-
-    /*
-     * Setting initial status of the project this way we can assure the project will
-     * have this status even if the status is change in the front end.
-     */
-    newProject.setStatus(INITIAL_PROJECT_STATUS);
-
-    if (!isValidFields(newProject)) {
-		  throw new ProjectNotAddedException("Empty/Invalid fields found on project"); 		  
-	    }
 
     // drop screenshot images in s3 and populate project with links to those images
     List<String> screenShotsList = new ArrayList<>();
 
-    if (projectDTO.getScreenShots() == null) newProject.setScreenShots(screenShotsList);
+    if (projectDTO.getScreenShots() == null)
+      throw new ProjectNotAddedException("ScreenShots not Present for Project");
     else {
       for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
+        System.out.println("Within for loop for screenshot: " + multipartFile.getName());
         if (multipartFile.getSize() > 1_000_000) {
           throw new FileSizeTooLargeException(
               "File size of screenshot: " + multipartFile.getName() + "is greater than 1MB.");
@@ -278,9 +270,11 @@ public class ProjectService {
     // load sql files in s3 and populate project with links to those files
     List<String> dataModelList = new ArrayList<>();
 
-    if (projectDTO.getDataModel() == null) newProject.setDataModel(dataModelList);
+    if (projectDTO.getDataModel() == null)
+      throw new ProjectNotAddedException("ScreenShots not Present for Project");
     else {
       for (MultipartFile multipartFile : projectDTO.getDataModel()) {
+        System.out.println("Within for loop for sql Files: " + multipartFile.getName());
         if (multipartFile.getSize() > 1_000_000) {
           throw new FileSizeTooLargeException(
               "File size of data model: " + multipartFile.getName() + "is greater than 1MB.");
@@ -291,43 +285,59 @@ public class ProjectService {
       newProject.setDataModel(dataModelList);
     }
 
+    List<String> zipLinks = projectDTO.getZipLinks();
     // download a zip archive for each repo from github and store them in our s3
     // bucket,
     // populating the project object with links to those zip files
     if (projectDTO.getZipLinks() == null) newProject.setZipLinks(new ArrayList<String>());
     else {
-      for (String zipLink : projectDTO.getZipLinks()) {
+      for (int i = 0; i < zipLinks.size(); i++) {
         try {
+          String zipLink = zipLinks.get(i);
+          System.out.println("Within for loop for Ziplink: " + zipLink);
           File zipArchive = fileService.download(zipLink + "/archive/master.zip");
           if (zipArchive.length() > 1_000_000_000) {
             throw new FileSizeTooLargeException(
                 "The file size of: " + zipArchive.getName() + "exceeds 1GB");
           }
-          newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));
+          System.out.println("Within for loop for Ziplink: File was not too big");
+          String end = s3StorageServiceImpl.store(zipArchive);
+          System.out.println("Within for loop for Ziplink: File was stored");
+          newProject.addZipLink(end);
+          System.out.println("Within for loop for Ziplink: File was added");
+
         } catch (IOException e) {
+          System.out.println(
+              "Within for loop for Ziplink: Exception was thrown = " + e.getMessage());
           e.printStackTrace();
         }
       }
     }
-    
-   return projectRepo.save(newProject);
+
+    if (!isValidFields(newProject)) {
+      throw new ProjectNotAddedException("Empty/Invalid fields found on project");
+    }
+
+    Project result = projectRepo.save(newProject);
+    System.out.println("Finished result: " + result);
+    return result;
   }
 
   /** the transaction is read-only and only reads committed data */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public Project findById(String id) {
-	  
-	  if (id == null) {
-		  throw new BadRequestException("Invalid fields found on project"); 		  
-	    }
+
+    if (id == null) {
+      throw new BadRequestException("Invalid fields found on project");
+    }
 
     Optional<Project> currProject = projectRepo.findById(id);
 
     if (!currProject.isPresent()) {
-	      throw new ProjectNotFoundException(
-		          "There is no project with id: " + id + ", in the database.");
-		    }
-    
+      throw new ProjectNotFoundException(
+          "There is no project with id: " + id + ", in the database.");
+    }
+
     return currProject.get();
   }
 
@@ -347,6 +357,13 @@ public class ProjectService {
     return true;
   }
 
+  /**
+   * Checks UserId, Description, Name, Batch, GroupMembers, TechStack, Trainer, and Ziplinks if they
+   * are valid fields.
+   *
+   * @param project
+   * @return true on fields are valid
+   */
   public boolean isValidFields(Project project) {
 
     if (project.getUserId() == null
@@ -364,7 +381,11 @@ public class ProjectService {
         || project.getTrainer() == null
         || project.getTrainer().equals("")
         || project.getZipLinks() == null
-        || project.getZipLinks().isEmpty()) return false;
+        || project.getZipLinks().isEmpty()
+        || project.getDataModel() == null
+        || project.getDataModel().isEmpty()
+        || project.getScreenShots() == null
+        || project.getScreenShots().isEmpty()) return false;
     else return true;
   }
 }
