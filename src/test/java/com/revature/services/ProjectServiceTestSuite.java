@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.revature.exceptions.BadRequestException;
+import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
@@ -22,9 +23,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -77,7 +76,7 @@ public class ProjectServiceTestSuite {
   String dummyString = "dummyString";
 
   @DataPoints("string cases")
-  public static String[] dummyStrings = {null, ""};
+  public static String[] dummyStrings = {null, "", "dummyString"};
 
   // A mock list of strings
   ArrayList<String> mockListString = new ArrayList<>();
@@ -308,41 +307,30 @@ public class ProjectServiceTestSuite {
   }
 
   /**
-   * Test if an exception is thrown if the file size is over set limitation
-   *
-   * <p>Calls the createProjectFromDTO() method using mostly dummy data and a sample file found on
-   * github that is currently 57707774 bytes. It should trigger a FileSizeTooLargeException. <br>
-   * If there is ever any future errors with this test. Make sure to check that the link(s) added to
-   * listZipLink are still valid first.
+   * Verifies behavior of createProjectFromDTO when a project is valid but the multipart file's size
+   * exceeds 1GB (1,000,000 bytes). If operating correctly, a FIleSizeTooLargeException is expected.
    */
-  @Theory
-  public void testCreateProjectFromDTOFileSizeTooLarge(
-      @FromDataPoints("string cases") String dummyString1,
-      @FromDataPoints("string cases") String dummyString2) {
+  @Test
+  public void T_createProjectFromDTO_FileTooLarge() {
 
     when(mockProjectDTO.getUserId()).thenReturn(1);
-    when(mockProjectDTO.getName()).thenReturn(dummyString1);
-    when(mockProjectDTO.getBatch()).thenReturn(dummyString2);
-    when(mockProjectDTO.getTrainer()).thenReturn(dummyString2);
+    when(mockProjectDTO.getName()).thenReturn(dummyString);
+    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
+    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
     when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
-    when(mockProjectDTO.getDescription()).thenReturn(dummyString2);
-    when(mockProjectDTO.getTechStack()).thenReturn(dummyString2);
-    when(mockProjectDTO.getStatus()).thenReturn(dummyString2);
+    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
+    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
+    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
     when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
-    when(mockMultipartFile.getSize()).thenReturn((long) 1000001);
+    when(mockMultipartFile.getSize()).thenReturn(1_000_001L);
 
-    assertThatExceptionOfType(ProjectNotAddedException.class)
+    // System.out.println(counter);
+    assertThatExceptionOfType(FileSizeTooLargeException.class)
         .isThrownBy(
             () -> {
               classUnderTest.createProjectFromDTO(mockProjectDTO);
             });
   }
-
-  /*
-   * Validates the output of createProjectDTO when a valid project is passed in but the file size
-   * exceeds the acceptable limit. If operating correctly, a FileSizeTooLargeException should be
-   * issued.
-   */
 
   /** Testing that validates when the group members are not provided. */
   @Test
