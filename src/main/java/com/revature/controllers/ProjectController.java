@@ -9,8 +9,18 @@ import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 import com.revature.services.StorageService;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.stream.Stream;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,9 +33,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.multipart.MultipartFile;
 
 /** The ProjectController maps service endpoints for essential CRUD operations on Projects */
@@ -34,12 +48,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProjectController {
 
   private ProjectService projectService;
-  private StorageService s3Service;
+  private ByteArrayOutputStream downloadInputStream;
+  
+  @Autowired
+  private ServletContext servletContext;
 
   @Autowired
-  public ProjectController(ProjectService projectService, StorageService s3) {
+  public ProjectController(ProjectService projectService) {
     this.projectService = projectService;
-    this.s3Service = s3;
   }
   /**
    * This methods allows us to hit the endpoint needed to download a requested file from AWS S3
@@ -48,17 +64,67 @@ public class ProjectController {
    * @param keyname
    * @return request file from AWS S3 bucket
    */
-  @GetMapping(value = "/downloads/{keyname}")
+  
+  @GetMapping(value = "/downloads/screenshots/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<byte[]> download(@PathVariable String keyname) {
-
-    ByteArrayOutputStream downloadInputStream = s3Service.downloadFile(keyname);
-
-    return ResponseEntity.ok()
-        .contentType(contentType(keyname))
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + keyname + "\"")
-        .body(downloadInputStream.toByteArray());
+  public ResponseEntity<byte[]> downloadSceenShots(@PathVariable String id)  {
+	  try {
+		  this.downloadInputStream = projectService.codeBaseScreenShots(id);
+		  String test = "test.png";
+		  return ResponseEntity.ok()
+			        .contentType(contentType(test))
+			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
+			        .body(downloadInputStream.toByteArray());
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+System.out.println("Returning null...");
+    return null;
   }
+  
+  @GetMapping(value = "/downloads/datamodels/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
+	  try {
+		  this.downloadInputStream = projectService.codeBaseDataModels(id);
+		  String test = "test.txt";
+		  return ResponseEntity.ok()
+			        .contentType(contentType(test))
+			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
+			        .body(downloadInputStream.toByteArray());
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+System.out.println("Returning null...");
+    return null;
+  }
+  
+  @GetMapping(value = "/downloads/ziplinks/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id)  {
+	  try {
+		  this.downloadInputStream = projectService.codeBaseZipLinks(id);
+		  String test = "test.png";
+		  return ResponseEntity.ok()
+			        .contentType(contentType(""))
+			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
+			        .body(downloadInputStream.toByteArray());
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+System.out.println("Returning null...");
+    return null;
+  }
+  
+  @RequestMapping(value = "/image-resource", method = RequestMethod.GET)
+  @ResponseBody
+  public ResponseEntity<Resource> getImageAsResource() {
+      final HttpHeaders headers = new HttpHeaders();
+      Resource resource = new ServletContextResource(servletContext, "/src/main/resources/screenshot.txt");
+      return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+  }
+  
+  
 
   /**
    * Ensures the proper content type is returned
