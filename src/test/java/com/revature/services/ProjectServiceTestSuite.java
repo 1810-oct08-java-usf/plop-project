@@ -19,7 +19,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -73,6 +75,9 @@ public class ProjectServiceTestSuite {
 
   @DataPoints("string cases")
   public static String[] dummyStrings = {null, "", "dummyString"};
+
+  @DataPoints("Invalid strings")
+  public static String[] invalidStrings = {null, ""};
 
   // A mock list of strings
   ArrayList<String> mockListString = new ArrayList<>();
@@ -166,6 +171,22 @@ public class ProjectServiceTestSuite {
   //  public void shouldReturnNullOnFailedIdSearch() {
   //    assertThat(classUnderTest.findById("test")).isNull();
   //  }
+
+  /**
+   * Tests findByName with invalid inputs. Since the input is a string, the invalid inputs would be
+   * null and "". If operating properly, a BadRequestException should be thrown.
+   *
+   * @param str1 - One of several data points from the @DataPoints(Invalid strings) collection of
+   *     values.
+   */
+  @Theory
+  public void T_findByName_Invalid(@FromDataPoints("Invalid strings") String str1) {
+    assertThatExceptionOfType(BadRequestException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByName(str1);
+            });
+  }
 
   /**
    * Assert that findByName should return an ArrayList given a correct string parameter for
