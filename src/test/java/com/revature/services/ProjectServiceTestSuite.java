@@ -55,6 +55,9 @@ public class ProjectServiceTestSuite {
   // A simulated List<Project>; this can also be accomplished using a spy.
   private List<Project> dummyList = Mockito.mock(List.class);
 
+  // A simulated List<Project> that will remain empty.
+  private List<Project> dummyListEmpty = Mockito.mock(List.class);
+
   // A simulated Project; holds data for the test methods to access during
   // assertion.
   private Project dummyProject = Mockito.mock(Project.class);
@@ -185,6 +188,20 @@ public class ProjectServiceTestSuite {
         .isThrownBy(
             () -> {
               classUnderTest.findByName(str1);
+            });
+  }
+
+  /**
+   * Tests findByName with nonexistent project. With a valid name there's still a possibility that
+   * the project may not be valid. If operating properly, a ProjectNotFound should be thrown.
+   */
+  @Test
+  public void T_findByName_EmptyProject() {
+    when(testRepo.findByName(dummyString)).thenReturn(dummyListEmpty);
+    assertThatExceptionOfType(ProjectNotFoundException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByName("arbitraryString");
             });
   }
 
