@@ -9,16 +9,21 @@ import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 import com.revature.services.StorageService;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Stream;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletContext;
-
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -69,12 +74,16 @@ public class ProjectController {
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<byte[]> downloadSceenShots(@PathVariable String id)  {
 	  try {
-		  this.downloadInputStream = projectService.codeBaseScreenShots(id);
+		  File file = projectService.codeBaseScreenShots(id);
 		  String test = "test.png";
+		  
+		  InputStream in =  new FileInputStream(file.getName());
+	        
+		    byte[] media = IOUtils.toByteArray(in);
 		  return ResponseEntity.ok()
-			        .contentType(contentType(test))
-			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
-			        .body(downloadInputStream.toByteArray());
+			        .contentType(contentType(file.getName()))
+			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + file.getAbsoluteFile())
+			        .body(media);
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
@@ -86,12 +95,16 @@ System.out.println("Returning null...");
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
 	  try {
-		  this.downloadInputStream = projectService.codeBaseDataModels(id);
+		 
+		  File file = projectService.codeBaseDataModels(id);
 		  String test = "test.txt";
+		  InputStream in =  new FileInputStream(file.getName());
+		  byte[] media = IOUtils.toByteArray(in);
+		  
 		  return ResponseEntity.ok()
-			        .contentType(contentType(test))
+			        .contentType(contentType(file.getName()))
 			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
-			        .body(downloadInputStream.toByteArray());
+			        .body(media);
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
@@ -104,7 +117,7 @@ System.out.println("Returning null...");
   public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id)  {
 	  try {
 		  this.downloadInputStream = projectService.codeBaseZipLinks(id);
-		  String test = "test.png";
+		  String test = "test.jpg";
 		  return ResponseEntity.ok()
 			        .contentType(contentType(""))
 			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
@@ -115,14 +128,7 @@ System.out.println("Returning null...");
 System.out.println("Returning null...");
     return null;
   }
-  
-  @RequestMapping(value = "/image-resource", method = RequestMethod.GET)
-  @ResponseBody
-  public ResponseEntity<Resource> getImageAsResource() {
-      final HttpHeaders headers = new HttpHeaders();
-      Resource resource = new ServletContextResource(servletContext, "/src/main/resources/screenshot.txt");
-      return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-  }
+
   
   
 
@@ -142,6 +148,16 @@ System.out.println("Returning null...");
         return MediaType.IMAGE_PNG;
       case "jpg":
         return MediaType.IMAGE_JPEG;
+      case "fd":
+    	  return MediaType.MULTIPART_FORM_DATA;
+      case "gif":
+    	  return MediaType.IMAGE_GIF;  
+      case "pdf":
+    	  return MediaType.APPLICATION_PDF;
+      case "all":
+    	  return MediaType.ALL;
+      case "ios":
+    	  return MediaType.APPLICATION_JSON;
       default:
         return MediaType.APPLICATION_OCTET_STREAM;
     }
