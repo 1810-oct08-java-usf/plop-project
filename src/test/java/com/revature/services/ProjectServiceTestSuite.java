@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -105,13 +104,6 @@ public class ProjectServiceTestSuite {
     mockListString.add("elemtem");
   }
 
-  /** Assertion to verify that findByBatch return contains the dummyProject */
-  @Ignore("To generate coco reports")
-  @Test
-  public void shouldReturnProjectOnGoodBatchSearch() {
-    assertThat(classUnderTest.findByBatch("batchin").contains(dummyProject));
-  }
-
   /** Assertion should verify that searching with a bad id value throws exception */
   @Test
   public void T_findById_Valid() {
@@ -131,28 +123,10 @@ public class ProjectServiceTestSuite {
             });
   }
 
-  /**
-   * Assert that method should return an ArrayList given a correct string parameter for findByName()
-   * .
-   */
-  @Ignore("To generate coco reports")
-  @Test
-  public void shouldReturnArrayListByName() {
-    assertThat(classUnderTest.findByName("string")).isInstanceOf(List.class);
-  }
-
   /** Assert that method should return false on a null parameter for deleteById(). */
   @Test
   public void T_deleteById_Null() {
     assertThat(classUnderTest.deleteById(null)).isEqualTo(Boolean.FALSE);
-  }
-
-  /** Assert that findAllProjects returns a LinkedList */
-  @Test
-  public void shouldReturnLinkedList() {
-    when(testRepo.findAll()).thenReturn(dummyList);
-    when(dummyList.isEmpty()).thenReturn(false);
-    assertThat(classUnderTest.findAllProjects() instanceof List<?>);
   }
 
   /**
@@ -321,22 +295,24 @@ public class ProjectServiceTestSuite {
    */
   @Theory
   public void T_updateProject_Invalid(
-      @FromDataPoints("int cases") int dummyId,
       @FromDataPoints("string cases") String dummyDescription,
       @FromDataPoints("string cases") String dummyName,
       @FromDataPoints("string cases") String dummyBatch,
       @FromDataPoints("string cases") String dummyTechStack,
-      @FromDataPoints("string cases") String dummyTrainer) {
+      @FromDataPoints("string cases") String dummyTrainer,
+      @FromDataPoints("int cases") int dummyId) {
 
     optionalProject = Optional.of(dummySavedProject);
-
     if (dummyId > 0
         && dummyName != null
         && !dummyName.isEmpty()
-        && dummyName == dummyBatch
-        && dummyName == dummyTrainer
-        && dummyName == dummyDescription
-        && dummyName == dummyTechStack) assertTrue("Valid Use Case: Not to be Tested", true);
+        && dummyName.equals(dummyBatch)
+        && dummyName.equals(dummyTrainer)
+        && dummyName.equals(dummyDescription)
+        && dummyName.equals(dummyTechStack)) {
+      assertTrue("Valid Use Case: Not to be Tested", true);
+      return;
+    }
 
     when(dummyProject.getUserId()).thenReturn(dummyId);
     when(dummyProject.getDescription()).thenReturn(dummyDescription);
