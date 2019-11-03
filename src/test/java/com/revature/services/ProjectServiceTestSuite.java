@@ -11,13 +11,11 @@ import com.revature.exceptions.BadRequestException;
 import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
-
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +61,7 @@ public class ProjectServiceTestSuite {
 
   // A simulated List<Project> that will remain empty.
   private List<Project> dummyListEmpty = Mockito.mock(List.class);
-  
+
   // A simulated Project; holds data for the test methods to access during
   // assertion.
   private Project dummyProject = Mockito.mock(Project.class);
@@ -81,9 +79,9 @@ public class ProjectServiceTestSuite {
   // Can't spy or mock final classes
   Optional<Project> optionalProject;
 
-  // A mock string 
+  // A mock string
   private String dummyString = "dummyString";
-  
+
   // All possible string inputs: null, empty, valid
   @DataPoints("string cases")
   public static String[] dummyStrings = {null, "", "dummyString"};
@@ -112,7 +110,7 @@ public class ProjectServiceTestSuite {
   @Before
   public void preTestInit() {
     classUnderTest = new ProjectService(testRepo, testStorage, testFileService);
-
+    dummyList = new ArrayList<>();
     dummyList.add(dummyProject);
     listZipLink.add("link");
     listMultipartFile.add(mockMultipartFile);
@@ -230,7 +228,7 @@ public class ProjectServiceTestSuite {
     when(testRepo.findAll()).thenReturn(dummyList);
     assertThat(classUnderTest.findAllProjects().size()).isGreaterThan(0);
   }
-  
+
   /** Assertion should verify that searching with a bad id value throws exception */
   @Test
   public void T_findById_Valid() {
@@ -255,14 +253,14 @@ public class ProjectServiceTestSuite {
   public void T_deleteById_NullId() {
     assertThat(classUnderTest.deleteById(null)).isEqualTo(Boolean.FALSE);
   }
-  
-   /** Assert that method should return false on a empty parameter for deleteById(). */
+
+  /** Assert that method should return false on a empty parameter for deleteById(). */
   @Test
   public void T_deleteById_EmptyId() {
     assertThat(classUnderTest.deleteById("")).isEqualTo(Boolean.FALSE);
   }
-  
-   /** Assert that method should return true on a valid parameter for deleteById(). */
+
+  /** Assert that method should return true on a valid parameter for deleteById(). */
   @Test
   public void T_deleteById_Valid() {
     assertThat(classUnderTest.deleteById(dummyString)).isEqualTo(Boolean.TRUE);
@@ -430,6 +428,26 @@ public class ProjectServiceTestSuite {
 
   /**
    * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null. The ScreenShots that are passed are an Empty array.
+   */
+  @Test
+  public void T_updateProject_EmptyScreenShots() {
+    optionalProject = Optional.of(dummySavedProject);
+    when(dummyProject.getUserId()).thenReturn(1);
+    when(dummyProject.getDescription()).thenReturn(dummyString);
+    when(dummyProject.getName()).thenReturn(dummyString);
+    when(dummyProject.getBatch()).thenReturn(dummyString);
+    when(dummyProject.getGroupMembers()).thenReturn(mockListString);
+    when(dummyProject.getZipLinks()).thenReturn(mockListString);
+    when(dummyProject.getTechStack()).thenReturn(dummyString);
+    when(dummyProject.getTrainer()).thenReturn(dummyString);
+    when(dummyProject.getDataModel()).thenReturn(mockListString);
+    when(dummyProject.getScreenShots()).thenReturn(new ArrayList<>());
+    assertFalse(classUnderTest.evaluateProject(dummyProject));
+  }
+
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
    * Trainer is Null. All iteratations have at least 1 invalid value.
    */
   @Theory
@@ -474,7 +492,7 @@ public class ProjectServiceTestSuite {
    * @throws IOException
    */
   @Test
-  public void T_CreateProjectFromDTO_InvalidSize() {
+  public void T_createProjectFromDTO_InvalidSize() {
     when(mockProjectDTO.getUserId()).thenReturn(1);
     when(mockProjectDTO.getName()).thenReturn(dummyString);
     when(mockProjectDTO.getBatch()).thenReturn(dummyString);
@@ -495,15 +513,16 @@ public class ProjectServiceTestSuite {
   }
 
   @Test
-  public void T_createProjectFromDTO_NullDescription() {
+  public void T_createProjectFromDTO_Valid() {
 
+    when(mockProjectDTO.getUserId()).thenReturn(1);
     when(mockProjectDTO.getName()).thenReturn(dummyString);
     when(mockProjectDTO.getBatch()).thenReturn(dummyString);
     when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
     when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
     when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
     when(mockProjectDTO.getStatus()).thenReturn(dummyString);
-    when(mockProjectDTO.getDescription()).thenReturn(null);
+    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
     when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
     when(mockProjectDTO.getDataModel()).thenReturn(listMultipartFile);
     when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
