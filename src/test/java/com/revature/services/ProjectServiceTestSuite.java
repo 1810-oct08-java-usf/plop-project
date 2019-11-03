@@ -7,12 +7,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import com.revature.exceptions.BadRequestException;
+import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
+import com.revature.exceptions.ProjectNotFoundException;
+
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
 import java.io.File;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +61,9 @@ public class ProjectServiceTestSuite {
   // A simulated List<Project>; this can also be accomplished using a spy.
   private List<Project> dummyList = Mockito.mock(List.class);
 
+  // A simulated List<Project> that will remain empty.
+  private List<Project> dummyListEmpty = Mockito.mock(List.class);
+  
   // A simulated Project; holds data for the test methods to access during
   // assertion.
   private Project dummyProject = Mockito.mock(Project.class);
@@ -73,16 +81,23 @@ public class ProjectServiceTestSuite {
   // Can't spy or mock final classes
   Optional<Project> optionalProject;
 
-  String dummyString = "Something";
-
+  // A mock string 
+  private String dummyString = "dummyString";
+  
+  // All possible string inputs: null, empty, valid
   @DataPoints("string cases")
   public static String[] dummyStrings = {null, "", "dummyString"};
 
+  // Only invalid string inputs
+  @DataPoints("Invalid strings")
+  public static String[] invalidStrings = {null, ""};
+
+  // All possible int inputs: negative, zero, positive
   @DataPoints("int cases")
   public static int[] dummyNumbers = {-1, 0, 1};
 
   // A mock list of strings
-  ArrayList<String> mockListString = new ArrayList<>();
+  private ArrayList<String> mockListString = new ArrayList<>();
 
   /**
    * + Creating exception rule, this is useful when we are expecting the method to throw an
@@ -104,6 +119,118 @@ public class ProjectServiceTestSuite {
     mockListString.add("elemtem");
   }
 
+  /**
+   * Verifies the output of findByBatch when provided a null value. If operating correctly, a
+   * BadRequestException will be expected.
+   */
+  @Test
+  public void T_findByBatch_Null() {
+    assertThatExceptionOfType(BadRequestException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByBatch(null);
+            });
+  }
+
+  /**
+   * Verifies the output of findByBatch when provided an empty string. If operating correctly, a
+   * BadRequestException will be expected.
+   */
+  @Test
+  public void T_findByBatch_Empty() {
+    assertThatExceptionOfType(BadRequestException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByBatch(null);
+            });
+  }
+
+  /**
+   * Check for invalid names (i.e. the project name does not correspond to an existing project). If
+   * operating properly, a ProjectNotFoundException will be expected.
+   */
+  @Test
+  public void T_findByBatch_Invalid() {
+    assertThatExceptionOfType(ProjectNotFoundException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByBatch("nonExistentName");
+            });
+  }
+
+  /**
+   * Check for valid names (i.e. the project name corresponds to an existing project). If operating
+   * properly, a matching project is excepted.
+   */
+  @Test
+  public void T_findByBatch_Valid() {
+    when(testRepo.findByBatch("batchin")).thenReturn(dummyList);
+    assertThat(classUnderTest.findByBatch("batchin")).contains(dummyProject);
+  }
+
+  /**
+   * Tests findByName with invalid inputs. Since the input is a string, the invalid inputs would be
+   * null and "". If operating properly, a BadRequestException should be thrown.
+   *
+   * @param str1 - One of several data points from the @DataPoints(Invalid strings) collection of
+   *     values.
+   */
+  @Theory
+  public void T_findByName_Invalid(@FromDataPoints("Invalid strings") String str1) {
+    assertThatExceptionOfType(BadRequestException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByName(str1);
+            });
+  }
+
+  /**
+   * Tests findByName with nonexistent project. With a valid name there's still a possibility that
+   * the project may not be valid. If operating properly, a ProjectNotFound should be thrown.
+   */
+  @Test
+  public void T_findByName_EmptyProject() {
+    when(testRepo.findByName(dummyString)).thenReturn(dummyListEmpty);
+    assertThatExceptionOfType(ProjectNotFoundException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByName("arbitraryString");
+            });
+  }
+
+  /**
+   * Assert that findByName should return an ArrayList given a correct string parameter for
+   * findByName(). Given valid input, a list should be returned and it should not be empty.
+   */
+  @Test
+  public void T_findByName_Valid() {
+    when(testRepo.findByName("dummyString")).thenReturn(dummyList);
+    assertThat(classUnderTest.findByName("dummyString")).isInstanceOf(List.class);
+    assertThat(classUnderTest.findByName("dummyString").size()).isGreaterThan(0);
+  }
+
+  /**
+   * Verifies behavior of findAllProjects when no projects exist. If operating correctly, a
+   * ProjectNotFoundException is expected.
+   */
+  @Test
+  public void T_findAllProjects_None() {
+    assertThatExceptionOfType(ProjectNotFoundException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findAllProjects();
+            });
+  }
+
+  /**
+   * Checks that calling findAllProjects on dummyList will return a list of projects greater than 0.
+   */
+  @Test
+  public void T_findAllProjects_Exist() {
+    when(testRepo.findAll()).thenReturn(dummyList);
+    assertThat(classUnderTest.findAllProjects().size()).isGreaterThan(0);
+  }
+  
   /** Assertion should verify that searching with a bad id value throws exception */
   @Test
   public void T_findById_Valid() {
@@ -125,8 +252,20 @@ public class ProjectServiceTestSuite {
 
   /** Assert that method should return false on a null parameter for deleteById(). */
   @Test
-  public void T_deleteById_Null() {
+  public void T_deleteById_NullId() {
     assertThat(classUnderTest.deleteById(null)).isEqualTo(Boolean.FALSE);
+  }
+  
+   /** Assert that method should return false on a empty parameter for deleteById(). */
+  @Test
+  public void T_deleteById_EmptyId() {
+    assertThat(classUnderTest.deleteById("")).isEqualTo(Boolean.FALSE);
+  }
+  
+   /** Assert that method should return true on a valid parameter for deleteById(). */
+  @Test
+  public void T_deleteById_Valid() {
+    assertThat(classUnderTest.deleteById(dummyString)).isEqualTo(Boolean.TRUE);
   }
 
   /**
@@ -335,8 +474,7 @@ public class ProjectServiceTestSuite {
    * @throws IOException
    */
   @Test
-  public void T_CreateProjectFromDTO_Valid() throws IOException {
-
+  public void T_CreateProjectFromDTO_InvalidSize() {
     when(mockProjectDTO.getUserId()).thenReturn(1);
     when(mockProjectDTO.getName()).thenReturn(dummyString);
     when(mockProjectDTO.getBatch()).thenReturn(dummyString);
@@ -344,6 +482,28 @@ public class ProjectServiceTestSuite {
     when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
     when(mockProjectDTO.getDescription()).thenReturn(dummyString);
     when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
+    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
+    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
+    when(mockMultipartFile.getSize()).thenReturn(1_000_001L);
+
+    // System.out.println(counter);
+    assertThatExceptionOfType(FileSizeTooLargeException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.createProjectFromDTO(mockProjectDTO);
+            });
+  }
+
+  @Test
+  public void T_createProjectFromDTO_NullDescription() {
+
+    when(mockProjectDTO.getName()).thenReturn(dummyString);
+    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
+    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
+    when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
+    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
+    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
+    when(mockProjectDTO.getDescription()).thenReturn(null);
     when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
     when(mockProjectDTO.getDataModel()).thenReturn(listMultipartFile);
     when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
@@ -391,7 +551,6 @@ public class ProjectServiceTestSuite {
     when(mockProjectDTO.getStatus()).thenReturn("Pending");
     when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
     when(mockMultipartFile.getSize()).thenReturn((long) 1000000);
-
     assertThatExceptionOfType(ProjectNotAddedException.class)
         .isThrownBy(
             () -> {
