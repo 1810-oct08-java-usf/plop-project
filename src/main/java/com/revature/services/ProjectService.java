@@ -187,12 +187,14 @@ public class ProjectService {
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Boolean deleteById(String id) {
-	  
+
     if (id == null || id == "") {
-    	throw new ProjectNotFoundException(
-  	          "There is no project with: " + id + ", in the database.");
-  	    }
-    
+      // throw new ProjectNotFoundException("There is no project with: " + id + ", in the
+      // database.");
+      System.out.println("Invalid id passed within deleteById");
+      return false;
+    }
+
     projectRepo.deleteById(id);
     return true;
   }
@@ -327,7 +329,7 @@ public class ProjectService {
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public Project findById(String id) {
 
-    if (id == null) {
+    if (id == null || id.trim().isEmpty()) {
       throw new BadRequestException("Invalid fields found on project");
     }
 
@@ -364,8 +366,7 @@ public class ProjectService {
    * @param project
    * @return true on fields are valid
    */
-  public boolean isValidFields(Project project) {
-
+  private boolean isValidFields(Project project) {
     if (project.getUserId() == null
         || project.getUserId() < 1
         || project.getDescription() == null
