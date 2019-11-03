@@ -1,7 +1,6 @@
 package com.revature.services;
 
 import static org.junit.Assert.assertTrue;
-
 import com.revature.exceptions.FileSizeTooLargeException;
 import java.io.File;
 import java.io.IOException;

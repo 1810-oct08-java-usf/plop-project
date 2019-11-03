@@ -2,16 +2,22 @@ package com.revature.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.revature.exceptions.BadRequestException;
 import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
 import com.revature.exceptions.ProjectNotFoundException;
+
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
 import java.io.File;
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +63,7 @@ public class ProjectServiceTestSuite {
 
   // A simulated List<Project> that will remain empty.
   private List<Project> dummyListEmpty = Mockito.mock(List.class);
-
+  
   // A simulated Project; holds data for the test methods to access during
   // assertion.
   private Project dummyProject = Mockito.mock(Project.class);
@@ -74,16 +80,24 @@ public class ProjectServiceTestSuite {
 
   // Can't spy or mock final classes
   Optional<Project> optionalProject;
-  String dummyString = "dummyString";
 
+  // A mock string 
+  private String dummyString = "dummyString";
+  
+  // All possible string inputs: null, empty, valid
   @DataPoints("string cases")
   public static String[] dummyStrings = {null, "", "dummyString"};
 
+  // Only invalid string inputs
   @DataPoints("Invalid strings")
   public static String[] invalidStrings = {null, ""};
 
+  // All possible int inputs: negative, zero, positive
+  @DataPoints("int cases")
+  public static int[] dummyNumbers = {-1, 0, 1};
+
   // A mock list of strings
-  ArrayList<String> mockListString = new ArrayList<>();
+  private ArrayList<String> mockListString = new ArrayList<>();
 
   /**
    * + Creating exception rule, this is useful when we are expecting the method to throw an
@@ -95,14 +109,11 @@ public class ProjectServiceTestSuite {
   ArrayList<MultipartFile> listMultipartFile = new ArrayList<MultipartFile>();
   ArrayList<String> listZipLink = new ArrayList<String>();
 
-  /** Configures data structures prior to each test. */
   @Before
   public void preTestInit() {
     classUnderTest = new ProjectService(testRepo, testStorage, testFileService);
-    dummyProject.setBatch("batchin");
-    dummyList = new ArrayList<Project>();
-    dummyList.add(dummyProject);
 
+    dummyList.add(dummyProject);
     listZipLink.add("link");
     listMultipartFile.add(mockMultipartFile);
     mockListString.add("elemtem");
@@ -157,24 +168,6 @@ public class ProjectServiceTestSuite {
     assertThat(classUnderTest.findByBatch("batchin")).contains(dummyProject);
   }
 
-  /** Assertion should verify that method returns a Project instance */
-  //  @Test
-  //  public void shouldReturnProjectOnGoodIdSearch() {
-  //    when(testRepo.findById("floop")).thenReturn(Optional.of(dummyProject));
-  //    assertThat(classUnderTest.findById("floop")).isInstanceOf(Project.class);
-  //  }
-
-  //  @Test
-  //  public void shouldReturnProjectOnGoodEditSubmission() {
-  //    assertThat(classUnderTest.submitEditRequest(dummySavedProject)).isEqualTo(Boolean.TRUE);
-  //  }
-
-  /** Assertion should verify that searching with a bad id value returns null */
-  //  @Test
-  //  public void shouldReturnNullOnFailedIdSearch() {
-  //    assertThat(classUnderTest.findById("test")).isNull();
-  //  }
-
   /**
    * Tests findByName with invalid inputs. Since the input is a string, the invalid inputs would be
    * null and "". If operating properly, a BadRequestException should be thrown.
@@ -216,24 +209,6 @@ public class ProjectServiceTestSuite {
     assertThat(classUnderTest.findByName("dummyString").size()).isGreaterThan(0);
   }
 
-  /** Assert that method should return a value of true on a valid id parameter for deleteById(). */
-  //  @Test
-  //  public void shouldReturnTrueOnValidDelete() {
-  //    assertThat(classUnderTest.deleteById("floop")).isEqualTo(Boolean.TRUE);
-  //  }
-
-  /** Assert that method should return a value of true on any string parameter for deleteById(). */
-  //  @Test
-  //  public void shouldReturnTrueOnAnyString() {
-  //    assertThat(classUnderTest.deleteById("floop")).isEqualTo(Boolean.TRUE);
-  //  }
-
-  /** Assert that method should return false on a null parameter for deleteById(). */
-  //  @Test
-  //  public void shouldReturnFalseOnNullParameter() {
-  //    assertThat(classUnderTest.deleteById(null)).isEqualTo(Boolean.FALSE);
-  //  }
-
   /**
    * Verifies behavior of findAllProjects when no projects exist. If operating correctly, a
    * ProjectNotFoundException is expected.
@@ -255,100 +230,251 @@ public class ProjectServiceTestSuite {
     when(testRepo.findAll()).thenReturn(dummyList);
     assertThat(classUnderTest.findAllProjects().size()).isGreaterThan(0);
   }
+  
+  /** Assertion should verify that searching with a bad id value throws exception */
+  @Test
+  public void T_findById_Valid() {
+    Optional<Project> localproj = Optional.of(dummyProject);
+    when(testRepo.findById(Mockito.anyString())).thenReturn(localproj);
+    assertEquals("Passed in String that is valid", dummyProject, classUnderTest.findById("id"));
+  }
 
-  /** Check if we can update all parts of a project */
-  //  @Test
-  //  public void testUpdateProject() {
-  //    optionalProject = Optional.of(dummySavedProject);
-  //    when(testRepo.findById("97")).thenReturn(optionalProject);
-  //    when(dummyProject.getName()).thenReturn(dummyString);
-  //    when(dummyProject.getBatch()).thenReturn(dummyString);
-  //    when(dummyProject.getTrainer()).thenReturn(dummyString);
-  //    when(dummyProject.getGroupMembers()).thenReturn(mockListString);
-  //    when(dummyProject.getScreenShots()).thenReturn(mockListString);
-  //    when(dummyProject.getZipLinks()).thenReturn(mockListString);
-  //    when(dummyProject.getDescription()).thenReturn(dummyString);
-  //    when(dummyProject.getTechStack()).thenReturn(dummyString);
-  //    when(dummyProject.getStatus()).thenReturn(dummyString);
-  //    when(dummyProject.getOldProject()).thenReturn(dummySavedProject);
-  //    assertTrue(classUnderTest.evaluateProject(dummyProject));
-  //  }
+  /** Assertion should verify that searching with a bad id value throws exception */
+  @Theory
+  public void T_findById_Invalid_Id(@FromDataPoints("string cases") String dummyId) {
+    when(testRepo.findById(dummyId)).thenReturn(Optional.empty());
+    assertThatExceptionOfType(RuntimeException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findById(dummyId);
+            });
+  }
+
+  /** Assert that method should return false on a null parameter for deleteById(). */
+  @Test
+  public void T_deleteById_NullId() {
+    assertThat(classUnderTest.deleteById(null)).isEqualTo(Boolean.FALSE);
+  }
+  
+   /** Assert that method should return false on a empty parameter for deleteById(). */
+  @Test
+  public void T_deleteById_EmptyId() {
+    assertThat(classUnderTest.deleteById("")).isEqualTo(Boolean.FALSE);
+  }
+  
+   /** Assert that method should return true on a valid parameter for deleteById(). */
+  @Test
+  public void T_deleteById_Valid() {
+    assertThat(classUnderTest.deleteById(dummyString)).isEqualTo(Boolean.TRUE);
+  }
+
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null. All fields are valid.
+   */
+  @Test
+  public void T_updateProject_Valid() {
+    optionalProject = Optional.of(dummySavedProject);
+    when(dummyProject.getUserId()).thenReturn(1);
+    when(dummyProject.getDescription()).thenReturn(dummyString);
+    when(dummyProject.getName()).thenReturn(dummyString);
+    when(dummyProject.getBatch()).thenReturn(dummyString);
+    when(dummyProject.getGroupMembers()).thenReturn(mockListString);
+    when(dummyProject.getZipLinks()).thenReturn(mockListString);
+    when(dummyProject.getTechStack()).thenReturn(dummyString);
+    when(dummyProject.getTrainer()).thenReturn(dummyString);
+    when(dummyProject.getDataModel()).thenReturn(mockListString);
+    when(dummyProject.getScreenShots()).thenReturn(mockListString);
+    assertTrue(classUnderTest.evaluateProject(dummyProject));
+  }
+
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null. The GroupMembers that is passed is null
+   */
+  @Test
+  public void T_updateProject_NullGroupMembers() {
+    optionalProject = Optional.of(dummySavedProject);
+    when(dummyProject.getUserId()).thenReturn(1);
+    when(dummyProject.getDescription()).thenReturn(dummyString);
+    when(dummyProject.getName()).thenReturn(dummyString);
+    when(dummyProject.getBatch()).thenReturn(dummyString);
+    when(dummyProject.getGroupMembers()).thenReturn(null);
+    when(dummyProject.getZipLinks()).thenReturn(mockListString);
+    when(dummyProject.getTechStack()).thenReturn(dummyString);
+    when(dummyProject.getTrainer()).thenReturn(dummyString);
+    when(dummyProject.getDataModel()).thenReturn(mockListString);
+    when(dummyProject.getScreenShots()).thenReturn(mockListString);
+    assertFalse(classUnderTest.evaluateProject(dummyProject));
+  }
+
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null. The GroupMembers that is passed is an Empty List.
+   */
+  @Test
+  public void T_updateProject_EmptyGroupMembers() {
+    optionalProject = Optional.of(dummySavedProject);
+    when(dummyProject.getUserId()).thenReturn(1);
+    when(dummyProject.getDescription()).thenReturn(dummyString);
+    when(dummyProject.getName()).thenReturn(dummyString);
+    when(dummyProject.getBatch()).thenReturn(dummyString);
+    when(dummyProject.getGroupMembers()).thenReturn(new ArrayList<>());
+    when(dummyProject.getZipLinks()).thenReturn(mockListString);
+    when(dummyProject.getTechStack()).thenReturn(dummyString);
+    when(dummyProject.getTrainer()).thenReturn(dummyString);
+    when(dummyProject.getDataModel()).thenReturn(mockListString);
+    when(dummyProject.getScreenShots()).thenReturn(mockListString);
+    assertFalse(classUnderTest.evaluateProject(dummyProject));
+  }
+
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null. The Ziplinks that is passed is null
+   */
+  @Test
+  public void T_updateProject_NullZipLinks() {
+    optionalProject = Optional.of(dummySavedProject);
+    when(dummyProject.getUserId()).thenReturn(1);
+    when(dummyProject.getDescription()).thenReturn(dummyString);
+    when(dummyProject.getName()).thenReturn(dummyString);
+    when(dummyProject.getBatch()).thenReturn(dummyString);
+    when(dummyProject.getGroupMembers()).thenReturn(mockListString);
+    when(dummyProject.getZipLinks()).thenReturn(null);
+    when(dummyProject.getTechStack()).thenReturn(dummyString);
+    when(dummyProject.getTrainer()).thenReturn(dummyString);
+    when(dummyProject.getDataModel()).thenReturn(mockListString);
+    when(dummyProject.getScreenShots()).thenReturn(mockListString);
+    assertFalse(classUnderTest.evaluateProject(dummyProject));
+  }
+
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null. The Ziplinks that is passed is an Empty List.
+   */
+  @Test
+  public void T_updateProject_EmptyZipLinks() {
+    optionalProject = Optional.of(dummySavedProject);
+    when(dummyProject.getUserId()).thenReturn(1);
+    when(dummyProject.getDescription()).thenReturn(dummyString);
+    when(dummyProject.getName()).thenReturn(dummyString);
+    when(dummyProject.getBatch()).thenReturn(dummyString);
+    when(dummyProject.getGroupMembers()).thenReturn(mockListString);
+    when(dummyProject.getZipLinks()).thenReturn(new ArrayList<>());
+    when(dummyProject.getTechStack()).thenReturn(dummyString);
+    when(dummyProject.getTrainer()).thenReturn(dummyString);
+    when(dummyProject.getDataModel()).thenReturn(mockListString);
+    when(dummyProject.getScreenShots()).thenReturn(mockListString);
+    assertFalse(classUnderTest.evaluateProject(dummyProject));
+  }
+
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null. The DataModel that is passed is null
+   */
+  @Test
+  public void T_updateProject_NullDataModel() {
+    optionalProject = Optional.of(dummySavedProject);
+    when(dummyProject.getUserId()).thenReturn(1);
+    when(dummyProject.getDescription()).thenReturn(dummyString);
+    when(dummyProject.getName()).thenReturn(dummyString);
+    when(dummyProject.getBatch()).thenReturn(dummyString);
+    when(dummyProject.getGroupMembers()).thenReturn(mockListString);
+    when(dummyProject.getZipLinks()).thenReturn(mockListString);
+    when(dummyProject.getTechStack()).thenReturn(dummyString);
+    when(dummyProject.getTrainer()).thenReturn(dummyString);
+    when(dummyProject.getDataModel()).thenReturn(null);
+    when(dummyProject.getScreenShots()).thenReturn(mockListString);
+    assertFalse(classUnderTest.evaluateProject(dummyProject));
+  }
+
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null. The DataModel that is passed is an Empty List.
+   */
+  @Test
+  public void T_updateProject_EmptyDataModel() {
+    optionalProject = Optional.of(dummySavedProject);
+    when(dummyProject.getUserId()).thenReturn(1);
+    when(dummyProject.getDescription()).thenReturn(dummyString);
+    when(dummyProject.getName()).thenReturn(dummyString);
+    when(dummyProject.getBatch()).thenReturn(dummyString);
+    when(dummyProject.getGroupMembers()).thenReturn(mockListString);
+    when(dummyProject.getZipLinks()).thenReturn(mockListString);
+    when(dummyProject.getTechStack()).thenReturn(dummyString);
+    when(dummyProject.getTrainer()).thenReturn(dummyString);
+    when(dummyProject.getDataModel()).thenReturn(new ArrayList<>());
+    when(dummyProject.getScreenShots()).thenReturn(mockListString);
+    assertFalse(classUnderTest.evaluateProject(dummyProject));
+  }
+
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null. The ScreenShots that is passed is null
+   */
+  @Test
+  public void T_updateProject_NullScreenShots() {
+    optionalProject = Optional.of(dummySavedProject);
+    when(dummyProject.getUserId()).thenReturn(1);
+    when(dummyProject.getDescription()).thenReturn(dummyString);
+    when(dummyProject.getName()).thenReturn(dummyString);
+    when(dummyProject.getBatch()).thenReturn(dummyString);
+    when(dummyProject.getGroupMembers()).thenReturn(mockListString);
+    when(dummyProject.getZipLinks()).thenReturn(mockListString);
+    when(dummyProject.getTechStack()).thenReturn(dummyString);
+    when(dummyProject.getTrainer()).thenReturn(dummyString);
+    when(dummyProject.getDataModel()).thenReturn(mockListString);
+    when(dummyProject.getScreenShots()).thenReturn(null);
+    assertFalse(classUnderTest.evaluateProject(dummyProject));
+  }
+
+  /**
+   * Checks if userId, description, name, batch, groupmembers, Ziplinks, techStack, Status, or
+   * Trainer is Null. All iteratations have at least 1 invalid value.
+   */
+  @Theory
+  public void T_updateProject_Invalid(
+      @FromDataPoints("string cases") String dummyDescription,
+      @FromDataPoints("string cases") String dummyName,
+      @FromDataPoints("string cases") String dummyBatch,
+      @FromDataPoints("string cases") String dummyTechStack,
+      @FromDataPoints("string cases") String dummyTrainer,
+      @FromDataPoints("int cases") int dummyId) {
+
+    optionalProject = Optional.of(dummySavedProject);
+    if (dummyId > 0
+        && dummyName != null
+        && !dummyName.isEmpty()
+        && dummyName.equals(dummyBatch)
+        && dummyName.equals(dummyTrainer)
+        && dummyName.equals(dummyDescription)
+        && dummyName.equals(dummyTechStack)) {
+      assertTrue("Valid Use Case: Not to be Tested", true);
+      return;
+    }
+
+    when(dummyProject.getUserId()).thenReturn(dummyId);
+    when(dummyProject.getDescription()).thenReturn(dummyDescription);
+    when(dummyProject.getName()).thenReturn(dummyName);
+    when(dummyProject.getBatch()).thenReturn(dummyBatch);
+    when(dummyProject.getGroupMembers()).thenReturn(mockListString);
+    when(dummyProject.getZipLinks()).thenReturn(mockListString);
+    when(dummyProject.getTechStack()).thenReturn(dummyTechStack);
+    when(dummyProject.getTrainer()).thenReturn(dummyTrainer);
+    when(dummyProject.getDataModel()).thenReturn(mockListString);
+    when(dummyProject.getScreenShots()).thenReturn(mockListString);
+
+    assertFalse(classUnderTest.evaluateProject(dummyProject));
+  }
 
   /**
    * Test if we can create a project from a DTO. We need the lists and such to properly mock the
    * implementation.
-   */
-  //  @Test
-  //  public void testCreateProjectFromDTO() {
-  //
-  //    when(mockProjectDTO.getName()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
-  //    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
-  //    when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
-  //    when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
-  //
-  //    try {
-  //      when(testFileService.download("link/archive/master.zip")).thenReturn(mockFile);
-  //      when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
-  //
-  //      assertTrue(classUnderTest.createProjectFromDTO(mockProjectDTO) instanceof Project);
-  //
-  //      // verifying that these methods are being used during this test
-  //      Mockito.verify(testFileService).download("link/archive/master.zip");
-  //      Mockito.verify(testStorage).store(mockMultipartFile);
-  //    } catch (Exception e) {
-  //      System.out.println("Issue with createProjectFromDTO");
-  //      e.printStackTrace();
-  //    }
-  //  }
-
-  /**
-   * This test will start from having an initial state of approved, then it will be set to pending
-   * before we call the save method.
-   */
-  //  @Test
-  //  public void testCreateProjectFromDTO_InitialStatusApproved() throws IOException {
-  //
-  //    // Initializing mock
-  //    when(mockProjectDTO.getName()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
-  //    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
-  //    when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
-  //    when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
-  //    when(testFileService.download("link/archive/master.zip")).thenReturn(mockFile);
-  //    when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
-  //
-  //    // Setting status to approved
-  //    when(mockProjectDTO.getStatus()).thenReturn("Approved");
-  //
-  //    // Calling method to be tested
-  //    Project result = classUnderTest.createProjectFromDTO(mockProjectDTO);
-  //
-  //    // assertions
-  //    assertTrue(result instanceof Project);
-  //    assertEquals("Pending", result.getStatus());
-  //
-  //    // verifying that these methods are being used during this test
-  //    Mockito.verify(testFileService).download("link/archive/master.zip");
-  //    Mockito.verify(testStorage).store(mockMultipartFile);
-  //  }
-
-  /**
-   * Verifies behavior of createProjectFromDTO when a project is valid but the multipart file's size
-   * exceeds 1GB (1,000,000 bytes). If operating correctly, a FIleSizeTooLargeException is expected.
+   *
+   * @throws IOException
    */
   @Test
-  public void T_createProjectFromDTO_FileTooLarge() {
-
+  public void T_CreateProjectFromDTO_InvalidSize() {
     when(mockProjectDTO.getUserId()).thenReturn(1);
     when(mockProjectDTO.getName()).thenReturn(dummyString);
     when(mockProjectDTO.getBatch()).thenReturn(dummyString);
@@ -368,34 +494,6 @@ public class ProjectServiceTestSuite {
             });
   }
 
-  //  /** Testing that validates when the group members are not provided. */
-  //  @Test
-  //  public void testAddProjectIfNoGroupMembersProvided() {
-  //
-  //    // expecting an exception
-  //    exceptionRule.expect(ProjectNotAddedException.class);
-  //    exceptionRule.expectMessage("The 'group members' input cannot be empty when adding
-  // project");
-  //
-  //    // Initializing mock
-  //    when(mockProjectDTO.getName()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getGroupMembers()).thenReturn(null); // Setting this to null
-  //    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
-  //    // when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
-  //    // when(mockMultipartFile.getSize()).thenReturn((long) 1000001);
-  //
-  //    // Call method to be tested
-  //    classUnderTest.createProjectFromDTO(mockProjectDTO);
-  //  }
-
-  /**
-   * Verify that creating a project DTO with a null description raises an exception. If operating
-   * correctly, a ProjectNotAddedException should be raised.
-   */
   @Test
   public void T_createProjectFromDTO_NullDescription() {
 
@@ -406,40 +504,57 @@ public class ProjectServiceTestSuite {
     when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
     when(mockProjectDTO.getStatus()).thenReturn(dummyString);
     when(mockProjectDTO.getDescription()).thenReturn(null);
+    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getDataModel()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
+    when(testRepo.save(Mockito.any())).thenReturn(new Project());
 
+    try {
+      when(testFileService.download(Mockito.anyString())).thenReturn(mockFile);
+      when(mockFile.length()).thenReturn(1_000L);
+      when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
+
+      assertTrue(classUnderTest.createProjectFromDTO(mockProjectDTO) instanceof Project);
+
+    } catch (Exception e) {
+      System.out.println("Issue with createProjectFromDTO");
+      e.printStackTrace();
+      assertFalse(true);
+    }
+  }
+
+  /** Test if an exception is thrown if a invalid field is set within ProjectDTO */
+  @Theory
+  public void T_createProjectFromDTO_Invalid(
+      @FromDataPoints("string cases") String dummyName,
+      @FromDataPoints("string cases") String dummyBatch,
+      @FromDataPoints("string cases") String dummyTrainer,
+      @FromDataPoints("string cases") String dummyDescription,
+      @FromDataPoints("string cases") String dummyTechStack,
+      @FromDataPoints("int cases") int dummyInt) {
+
+    if (dummyInt > 0
+        && dummyName != null
+        && !dummyName.isEmpty()
+        && dummyName == dummyBatch
+        && dummyName == dummyTrainer
+        && dummyName == dummyDescription
+        && dummyName == dummyTechStack) assertTrue("Valid Use Case: Not to be Tested", true);
+
+    when(mockProjectDTO.getUserId()).thenReturn(dummyInt);
+    when(mockProjectDTO.getName()).thenReturn(dummyName);
+    when(mockProjectDTO.getBatch()).thenReturn(dummyBatch);
+    when(mockProjectDTO.getTrainer()).thenReturn(dummyTrainer);
+    when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
+    when(mockProjectDTO.getDescription()).thenReturn(dummyDescription);
+    when(mockProjectDTO.getTechStack()).thenReturn(dummyTechStack);
+    when(mockProjectDTO.getStatus()).thenReturn("Pending");
+    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
+    when(mockMultipartFile.getSize()).thenReturn((long) 1000000);
     assertThatExceptionOfType(ProjectNotAddedException.class)
         .isThrownBy(
             () -> {
               classUnderTest.createProjectFromDTO(mockProjectDTO);
             });
   }
-
-  /**
-   * Testing if project's GitHub links are not provided, if so, test should complete successfully.
-   */
-  //  @Test
-  //  public void testAddProjectIfNoGitHubLinkIsProvided() {
-  //
-  //    // Initializing mock
-  //    when(mockProjectDTO.getName()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
-  //    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
-  //    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
-  //
-  //    // setting zip links to null
-  //    when(mockProjectDTO.getZipLinks()).thenReturn(null);
-  //
-  //    when(testRepo.save(Mockito.any())).thenReturn(dummySavedProject);
-  //
-  //    // Calling method to be tested
-  //    Project result = classUnderTest.createProjectFromDTO(mockProjectDTO);
-  //
-  //    // assert
-  //    assertNotNull(result); // Project should not be null
-  //    Mockito.verify(testRepo, Mockito.times(1)).save(Mockito.any());
-  //  }
 }
