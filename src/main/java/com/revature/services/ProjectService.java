@@ -290,11 +290,11 @@ public class ProjectService {
     // download a zip archive for each repo from github and store them in our s3
     // bucket,
     // populating the project object with links to those zip files
-    if (projectDTO.getZipLinks() == null) newProject.setZipLinks(new ArrayList<String>());
+    if (projectDTO.getZipLinks() == null)
+      throw new ProjectNotAddedException("Ziplinks not present for Project");
     else {
-      for (int i = 0; i < zipLinks.size(); i++) {
+      for (String zipLink : zipLinks) {
         try {
-          String zipLink = zipLinks.get(i);
           System.out.println("Within for loop for Ziplink: " + zipLink);
           File zipArchive = fileService.download(zipLink + "/archive/master.zip");
           if (zipArchive.length() > 1_000_000_000) {

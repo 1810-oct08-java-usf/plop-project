@@ -92,7 +92,7 @@ public class ProjectServiceTestSuite {
 
   // All possible int inputs: negative, zero, positive
   @DataPoints("int cases")
-  public static int[] dummyNumbers = {-1, 0, 1};
+  public static Integer[] dummyNumbers = {-1, 0, 1, null};
 
   // A mock list of strings
   private ArrayList<String> mockListString = new ArrayList<>();
@@ -111,6 +111,7 @@ public class ProjectServiceTestSuite {
   public void preTestInit() {
     classUnderTest = new ProjectService(testRepo, testStorage, testFileService);
     dummyList = new ArrayList<>();
+    dummyListEmpty = new ArrayList<>();
     dummyList.add(dummyProject);
     listZipLink.add("link");
     listMultipartFile.add(mockMultipartFile);
@@ -118,41 +119,16 @@ public class ProjectServiceTestSuite {
   }
 
   /**
-   * Verifies the output of findByBatch when provided a null value. If operating correctly, a
-   * BadRequestException will be expected.
-   */
-  @Test
-  public void T_findByBatch_Null() {
-    assertThatExceptionOfType(BadRequestException.class)
-        .isThrownBy(
-            () -> {
-              classUnderTest.findByBatch(null);
-            });
-  }
-
-  /**
-   * Verifies the output of findByBatch when provided an empty string. If operating correctly, a
-   * BadRequestException will be expected.
-   */
-  @Test
-  public void T_findByBatch_Empty() {
-    assertThatExceptionOfType(BadRequestException.class)
-        .isThrownBy(
-            () -> {
-              classUnderTest.findByBatch(null);
-            });
-  }
-
-  /**
    * Check for invalid names (i.e. the project name does not correspond to an existing project). If
    * operating properly, a ProjectNotFoundException will be expected.
    */
-  @Test
-  public void T_findByBatch_Invalid() {
-    assertThatExceptionOfType(ProjectNotFoundException.class)
+  @Theory
+  public void T_findByBatch_Invalid(@FromDataPoints("string cases") String batchName) {
+    when(testRepo.findByBatch(batchName)).thenReturn(dummyListEmpty);
+    assertThatExceptionOfType(RuntimeException.class)
         .isThrownBy(
             () -> {
-              classUnderTest.findByBatch("nonExistentName");
+              classUnderTest.findByBatch(batchName);
             });
   }
 
@@ -245,6 +221,90 @@ public class ProjectServiceTestSuite {
         .isThrownBy(
             () -> {
               classUnderTest.findById(dummyId);
+            });
+  }
+
+  /** Passing Valid Id to findByTrainer */
+  @Test
+  public void T_findByTrainer_Valid() {
+    when(testRepo.findByTrainer(Mockito.anyString())).thenReturn(dummyList);
+    assertTrue(
+        "Passed in String that is valid", classUnderTest.findByTrainer("id") instanceof List<?>);
+  }
+
+  /** Assertion should verify that searching with a bad id value throws exception */
+  @Theory
+  public void T_findByTrainer_Invalid_Id(@FromDataPoints("string cases") String dummyId) {
+    when(testRepo.findByTrainer(Mockito.anyString())).thenReturn(dummyListEmpty);
+    assertThatExceptionOfType(RuntimeException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByTrainer(dummyId);
+            });
+  }
+
+  /** Assertion should verify that searching with a bad id value throws exception */
+  @Test
+  public void T_findByTechStack_Valid() {
+    when(testRepo.findByTechStack(Mockito.anyString())).thenReturn(dummyList);
+    assertTrue(
+        "Passed in String that is valid", classUnderTest.findByTechStack("id") instanceof List<?>);
+  }
+
+  /** Assertion should verify that searching with a bad id value throws exception */
+  @Theory
+  public void T_findByTechStack_Invalid_Id(@FromDataPoints("string cases") String dummyId) {
+    when(testRepo.findByTechStack(Mockito.anyString())).thenReturn(dummyListEmpty);
+    assertThatExceptionOfType(RuntimeException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByTechStack(dummyId);
+            });
+  }
+
+  /** Assertion should verify that searching with a bad id value throws exception */
+  @Test
+  public void T_findByStatus_Valid() {
+    when(testRepo.findByStatus(Mockito.anyString())).thenReturn(dummyList);
+    assertTrue(
+        "Passed in String that is valid", classUnderTest.findByStatus("id") instanceof List<?>);
+  }
+
+  /** Assertion should verify that searching with a bad id value throws exception */
+  @Theory
+  public void T_findByStatus_Invalid_Id(@FromDataPoints("string cases") String dummyId) {
+    when(testRepo.findByStatus(Mockito.anyString())).thenReturn(dummyListEmpty);
+    assertThatExceptionOfType(RuntimeException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByStatus(dummyId);
+            });
+  }
+
+  /**
+   * Valid Branches of findByUserId()
+   *
+   * @param userId
+   */
+  @Test
+  public void T_findByUserId_Valid() {
+    when(testRepo.findByUserId(1)).thenReturn(dummyList);
+    assertTrue("Passes for UserId", classUnderTest.findByUserId(1) instanceof List<?>);
+  }
+
+  /**
+   * All Invalid Branches of findByUserId()
+   *
+   * @param userId
+   */
+  @Theory
+  public void T_findByUserId_Invalid(@FromDataPoints("int cases") Integer userId) {
+
+    when(testRepo.findByUserId(userId)).thenReturn(dummyListEmpty);
+    assertThatExceptionOfType(RuntimeException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.findByUserId(userId);
             });
   }
 
@@ -487,12 +547,12 @@ public class ProjectServiceTestSuite {
 
   /**
    * Test if we can create a project from a DTO. We need the lists and such to properly mock the
-   * implementation.
+   * implementation. The size of ScreenShots will be too large.
    *
-   * @throws IOException
+   * @throws FileSizeTooLargeException
    */
   @Test
-  public void T_createProjectFromDTO_InvalidSize() {
+  public void T_createProjectFromDTO_InvalidScreenShot_Size() {
     when(mockProjectDTO.getUserId()).thenReturn(1);
     when(mockProjectDTO.getName()).thenReturn(dummyString);
     when(mockProjectDTO.getBatch()).thenReturn(dummyString);
@@ -504,12 +564,80 @@ public class ProjectServiceTestSuite {
     when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
     when(mockMultipartFile.getSize()).thenReturn(1_000_001L);
 
-    // System.out.println(counter);
     assertThatExceptionOfType(FileSizeTooLargeException.class)
         .isThrownBy(
             () -> {
               classUnderTest.createProjectFromDTO(mockProjectDTO);
             });
+  }
+
+  /**
+   * Test if we can create a project from a DTO. We need the lists and such to properly mock the
+   * implementation. The size of Data Models will be too large.
+   *
+   * @throws FileSizeTooLargeException
+   */
+  @Test
+  public void T_createProjectFromDTO_InvalidDataModel_Size() {
+    ArrayList<MultipartFile> listMultipartFile2 = new ArrayList<MultipartFile>();
+    MultipartFile mockMultipartFile2 = Mockito.mock(MultipartFile.class);
+    listMultipartFile2.add(mockMultipartFile2);
+
+    when(mockProjectDTO.getUserId()).thenReturn(1);
+    when(mockProjectDTO.getName()).thenReturn(dummyString);
+    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
+    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
+    when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
+    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
+    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
+    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
+    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getDataModel()).thenReturn(listMultipartFile2);
+    when(mockMultipartFile.getSize()).thenReturn(1_000_000L);
+    when(mockMultipartFile2.getSize()).thenReturn(1_000_001L);
+
+    assertThatExceptionOfType(FileSizeTooLargeException.class)
+        .isThrownBy(
+            () -> {
+              classUnderTest.createProjectFromDTO(mockProjectDTO);
+            });
+  }
+
+  /**
+   * Test if we can create a project from a DTO. We need the lists and such to properly mock the
+   * implementation. The size of ZipLinks will be too large.
+   *
+   * @throws FileSizeTooLargeException
+   */
+  @Test
+  public void T_createProjectFromDTO_InvalidZiplinks_Size() {
+
+    when(mockProjectDTO.getUserId()).thenReturn(1);
+    when(mockProjectDTO.getName()).thenReturn(dummyString);
+    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
+    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
+    when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
+    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
+    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
+    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
+    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getDataModel()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
+    when(mockMultipartFile.getSize()).thenReturn(1_000_000L);
+
+    try {
+      when(testFileService.download(Mockito.anyString())).thenReturn(mockFile);
+      when(mockFile.length()).thenReturn(1_000_000_001L);
+      assertThatExceptionOfType(FileSizeTooLargeException.class)
+          .isThrownBy(
+              () -> {
+                classUnderTest.createProjectFromDTO(mockProjectDTO);
+              });
+    } catch (IOException e) {
+      System.out.println("Exception thrown in Invalid Ziplinks Size");
+      assertFalse(true);
+      e.printStackTrace();
+    }
   }
 
   @Test
@@ -542,6 +670,111 @@ public class ProjectServiceTestSuite {
     }
   }
 
+  /** Passed in Null Ziplink to createProjectFromDTO(). Should throw exception. */
+  @Test
+  public void T_createProjectFromDTO_NullZiplinks() {
+
+    when(mockProjectDTO.getUserId()).thenReturn(1);
+    when(mockProjectDTO.getName()).thenReturn(dummyString);
+    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
+    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
+    when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
+    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
+    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
+    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
+    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getDataModel()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getZipLinks()).thenReturn(null);
+    when(testRepo.save(Mockito.any())).thenReturn(new Project());
+
+    try {
+      when(testFileService.download(Mockito.anyString())).thenReturn(mockFile);
+      when(mockFile.length()).thenReturn(1_000L);
+      when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
+
+      assertThatExceptionOfType(ProjectNotAddedException.class)
+          .isThrownBy(
+              () -> {
+                classUnderTest.createProjectFromDTO(mockProjectDTO);
+              });
+
+    } catch (Exception e) {
+      System.out.println("Issue with createProjectFromDTO");
+      e.printStackTrace();
+      assertFalse(true);
+    }
+  }
+
+  /** Passed in Null ScreenShots to createProjectFromDTO(). Should throw exception. */
+  @Test
+  public void T_createProjectFromDTO_NullScreenShots() {
+
+    when(mockProjectDTO.getUserId()).thenReturn(1);
+    when(mockProjectDTO.getName()).thenReturn(dummyString);
+    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
+    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
+    when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
+    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
+    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
+    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
+    when(mockProjectDTO.getScreenShots()).thenReturn(null);
+    when(mockProjectDTO.getDataModel()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
+    when(testRepo.save(Mockito.any())).thenReturn(new Project());
+
+    try {
+      when(testFileService.download(Mockito.anyString())).thenReturn(mockFile);
+      when(mockFile.length()).thenReturn(1_000L);
+      when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
+
+      assertThatExceptionOfType(ProjectNotAddedException.class)
+          .isThrownBy(
+              () -> {
+                classUnderTest.createProjectFromDTO(mockProjectDTO);
+              });
+
+    } catch (Exception e) {
+      System.out.println("Issue with createProjectFromDTO");
+      e.printStackTrace();
+      assertFalse(true);
+    }
+  }
+
+  /** Passed in Null DataModel to createProjectFromDTO(). Should throw exception. */
+  @Test
+  public void T_createProjectFromDTO_NullDataModel() {
+
+    when(mockProjectDTO.getUserId()).thenReturn(1);
+    when(mockProjectDTO.getName()).thenReturn(dummyString);
+    when(mockProjectDTO.getBatch()).thenReturn(dummyString);
+    when(mockProjectDTO.getTrainer()).thenReturn(dummyString);
+    when(mockProjectDTO.getGroupMembers()).thenReturn(mockListString);
+    when(mockProjectDTO.getTechStack()).thenReturn(dummyString);
+    when(mockProjectDTO.getStatus()).thenReturn(dummyString);
+    when(mockProjectDTO.getDescription()).thenReturn(dummyString);
+    when(mockProjectDTO.getScreenShots()).thenReturn(listMultipartFile);
+    when(mockProjectDTO.getDataModel()).thenReturn(null);
+    when(mockProjectDTO.getZipLinks()).thenReturn(listZipLink);
+    when(testRepo.save(Mockito.any())).thenReturn(new Project());
+
+    try {
+      when(testFileService.download(Mockito.anyString())).thenReturn(mockFile);
+      when(mockFile.length()).thenReturn(1_000L);
+      when(testStorage.store(mockMultipartFile)).thenReturn(dummyString);
+
+      assertThatExceptionOfType(ProjectNotAddedException.class)
+          .isThrownBy(
+              () -> {
+                classUnderTest.createProjectFromDTO(mockProjectDTO);
+              });
+
+    } catch (Exception e) {
+      System.out.println("Issue with createProjectFromDTO");
+      e.printStackTrace();
+      assertFalse(true);
+    }
+  }
+
   /** Test if an exception is thrown if a invalid field is set within ProjectDTO */
   @Theory
   public void T_createProjectFromDTO_Invalid(
@@ -558,7 +791,10 @@ public class ProjectServiceTestSuite {
         && dummyName == dummyBatch
         && dummyName == dummyTrainer
         && dummyName == dummyDescription
-        && dummyName == dummyTechStack) assertTrue("Valid Use Case: Not to be Tested", true);
+        && dummyName == dummyTechStack) {
+      assertTrue("Valid Use Case: Not to be Tested", true);
+      return;
+    }
 
     when(mockProjectDTO.getUserId()).thenReturn(dummyInt);
     when(mockProjectDTO.getName()).thenReturn(dummyName);
