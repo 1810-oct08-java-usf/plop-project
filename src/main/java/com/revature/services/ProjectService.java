@@ -399,8 +399,6 @@ public class ProjectService {
 	    	    file = newFile;
 	    }
 	    
-	
-
 	return file;
   }
 
@@ -439,19 +437,14 @@ public File codeBaseDataModels(String id) throws IOException  {
 	    	this.downloadInputStream.writeTo(outStream); 
 	    	file = newFile;
 	    }
-	    
-//	outStream.close();
-//	boas.close();   
-	
+	outStream.close();
+ 
 	return file;
 }
 
 @Transactional
 public ByteArrayOutputStream codeBaseZipLinks(String id) throws IOException  {
 	Project project =  findById(id);
-	
-	
-	//ZipOutputStream zos = new ZipOutputStream(baos);
 	
 	 List<String> keys =  project.getZipLinks();
 	  List<String> keyNames = new ArrayList<>();
@@ -465,10 +458,10 @@ public ByteArrayOutputStream codeBaseZipLinks(String id) throws IOException  {
 	    	System.out.println("The testkey inside loop is: " + keyNames);
 	    }
 	    System.out.println("The tes key after loop is: " + keyNames);
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    
 	    OutputStream outStream = null;
 	    outStream = new FileOutputStream(keyNames.toString());
-	   ZipOutputStream zos = new ZipOutputStream(baos);
+	   
 	    for(String key : keyNames) {
 	    	this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
 	    	this.downloadInputStream.writeTo(outStream); 
@@ -482,7 +475,7 @@ public ByteArrayOutputStream codeBaseZipLinks(String id) throws IOException  {
 	public ZipOutputStream zipFile(File fileToZip) throws IOException {
 
 		FileOutputStream fos = new FileOutputStream("ScreenShots.zip");
-		//ByteArrayOutputStream boas = new ByteArrayOutputStream();
+		
 		ZipOutputStream zipOut = new ZipOutputStream(fos);
 
 		FileInputStream fis = new FileInputStream(fileToZip);
