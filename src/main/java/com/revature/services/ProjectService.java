@@ -524,19 +524,4 @@ public ByteArrayOutputStream codeBaseZipLinks(String id) throws IOException  {
 		fos.close();
 		return zipOut;
 	}
-
-
-  public boolean isValidFields(Project project) {
-
-    if (project.getDescription() == null || project.getDescription().trim().equals(""))
-      return false;
-    if (project.getName() == null || project.getName().trim().equals("")) return false;
-    if (project.getBatch() == null || project.getBatch().trim().equals("")) return false;
-    if (project.getGroupMembers() == null || project.getGroupMembers().isEmpty()) return false;
-    if (project.getTechStack() == null || project.getTechStack().trim().equals("")) return false;
-    if (project.getTrainer() == null || project.getTrainer().equals("")) return false;
-    if (project.getUserId() == null || project.getUserId().equals(0)) return false;
-
-    return true;
-  }
 }
