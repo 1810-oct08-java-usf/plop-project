@@ -58,71 +58,71 @@ public class TestGetProjectsByBatch {
     assertThat(this.mockMvc).isNotNull();
   }
 
-  /**
-   * This method is going to test if projects will be returned by
-   * getProjectsByBatch() if batch name is valid.
-   *
-   * @throws Exception
-   */
-  @Test
-  public void testGetProjectsByBatchIfBatchNameIsValid() throws Exception {
+  // /**
+  //  * This method is going to test if projects will be returned by
+  //  * getProjectsByBatch() if batch name is valid.
+  //  *
+  //  * @throws Exception
+  //  */
+  // @Test
+  // public void testGetProjectsByBatchIfBatchNameIsValid() throws Exception {
 
-    String uri = "/batch/";
-    String pathVariable = "190422-Java-USF";
+  //   String uri = "/batch/";
+  //   String pathVariable = "190422-Java-USF";
 
-    String p2_name = "Cannons and Goblins";
-    String p2_batch = "190422-Java-USF";
-    String p2_trainer = "Wezley Singleton";
+  //   String p2_name = "Cannons and Goblins";
+  //   String p2_batch = "190422-Java-USF";
+  //   String p2_trainer = "Wezley Singleton";
 
-    List<String> p2_grpMembers = new ArrayList<>(Arrays.asList(new String[] { "Daniel", "Justin", "Aaron" }));
+  //   List<String> p2_grpMembers = new ArrayList<>(Arrays.asList(new String[] { "Daniel", "Justin", "Aaron" }));
 
-    List<String> p2_screens = new ArrayList<String>();
-    p2_screens.add("fake-screen-link");
+  //   List<String> p2_screens = new ArrayList<String>();
+  //   p2_screens.add("fake-screen-link");
 
-    List<String> p2_zips = new ArrayList<String>();
-    p2_zips.add("fake-zip-link");
-    p2_zips.add("fake-zip-link");
+  //   List<String> p2_zips = new ArrayList<String>();
+  //   p2_zips.add("fake-zip-link");
+  //   p2_zips.add("fake-zip-link");
 
-    List<String> p2_dataModel = new ArrayList<String>();
-    p2_dataModel.add("fake-data-model.sql");
+  //   List<String> p2_dataModel = new ArrayList<String>();
+  //   p2_dataModel.add("fake-data-model.sql");
 
-    String p2_desc = "Cannons And Goblins is a simple RPG simulator that can be used for competitive online "
-        + "entertainment. Authenticated users can create and delete a multitude of character cards to be "
-        + "played in “duels” against other users’ characters through a matchmaking system, as well as to "
-        + "fight computer generated monster cards. A ranked score board can be viewed by all users and "
-        + "lists the top characters in the system.";
+  //   String p2_desc = "Cannons And Goblins is a simple RPG simulator that can be used for competitive online "
+  //       + "entertainment. Authenticated users can create and delete a multitude of character cards to be "
+  //       + "played in “duels” against other users’ characters through a matchmaking system, as well as to "
+  //       + "fight computer generated monster cards. A ranked score board can be viewed by all users and "
+  //       + "lists the top characters in the system.";
 
-    String p2_stack = "Java/J2EE";
-    String p2_status = "Pending";
+  //   String p2_stack = "Java/J2EE";
+  //   String p2_status = "Pending";
 
-    Project cannons = new Project.ProjectBuilder().setName(p2_name).setBatch(p2_batch).setTrainer(p2_trainer)
-        .setGroupMembers(p2_grpMembers).setScreenShots(p2_screens).setZipLinks(p2_zips).setDataModel(p2_dataModel)
-        .setDescription(p2_desc).setTechStack(p2_stack).setStatus(p2_status).build();
+  //   Project cannons = new Project.ProjectBuilder().setName(p2_name).setBatch(p2_batch).setTrainer(p2_trainer)
+  //       .setGroupMembers(p2_grpMembers).setScreenShots(p2_screens).setZipLinks(p2_zips).setDataModel(p2_dataModel)
+  //       .setDescription(p2_desc).setTechStack(p2_stack).setStatus(p2_status).build();
 
-    List<Project> projects = new ArrayList<>();
-    projects.add(cannons);
-    when(mockProjectService.findByBatch(pathVariable)).thenReturn(projects);
+  //   List<Project> projects = new ArrayList<>();
+  //   projects.add(cannons);
+  //   when(mockProjectService.findByBatch(pathVariable)).thenReturn(projects);
 
-    this.mockMvc.perform(get(uri + pathVariable)).andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
-  }
+  //   this.mockMvc.perform(get(uri + pathVariable)).andExpect(status().isOk())
+  //       .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+  // }
 
-  /**
-   * This method is going to test if projects will not be returned by
-   * getProjectsByBatch() if batch name is invalid.
-   *
-   * @throws Exception
-   */
-  @Test
-  public void testGetProjectsByBatchIfBatchNameIsNotValid() throws Exception {
+  // /**
+  //  * This method is going to test if projects will not be returned by
+  //  * getProjectsByBatch() if batch name is invalid.
+  //  *
+  //  * @throws Exception
+  //  */
+  // @Test
+  // public void testGetProjectsByBatchIfBatchNameIsNotValid() throws Exception {
 
-    String uri = "/batch/";
-    String pathVariable = "190107-javascript-sparky-uga";
+  //   String uri = "/batch/";
+  //   String pathVariable = "190107-javascript-sparky-uga";
 
-    when(mockProjectService.findByBatch(pathVariable)).thenReturn(null);
+  //   when(mockProjectService.findByBatch(pathVariable)).thenReturn(null);
 
-    mockMvc.perform(get(uri + pathVariable)).andExpect(status().isNotFound());
-  }
+  //   mockMvc.perform(get(uri + pathVariable)).andExpect(status().isNotFound());
+  // }
 
   /**
    * This method is going to test if projects will not be returned by
