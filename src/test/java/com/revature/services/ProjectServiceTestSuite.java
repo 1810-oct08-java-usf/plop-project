@@ -92,7 +92,7 @@ public class ProjectServiceTestSuite {
 
   // All possible int inputs: negative, zero, positive
   @DataPoints("int cases")
-  public static Integer[] dummyNumbers = {-1, 0, 1, null};
+  public static Integer[] dummyNumbers = {null, -1, 0, 1};
 
   // A mock list of strings
   private ArrayList<String> mockListString = new ArrayList<>();
@@ -517,10 +517,11 @@ public class ProjectServiceTestSuite {
       @FromDataPoints("string cases") String dummyBatch,
       @FromDataPoints("string cases") String dummyTechStack,
       @FromDataPoints("string cases") String dummyTrainer,
-      @FromDataPoints("int cases") int dummyId) {
+      @FromDataPoints("int cases") Integer dummyId) {
 
     optionalProject = Optional.of(dummySavedProject);
-    if (dummyId > 0
+    if (dummyId != null
+        && dummyId > 0
         && dummyName != null
         && !dummyName.isEmpty()
         && dummyName.equals(dummyBatch)
@@ -783,9 +784,10 @@ public class ProjectServiceTestSuite {
       @FromDataPoints("string cases") String dummyTrainer,
       @FromDataPoints("string cases") String dummyDescription,
       @FromDataPoints("string cases") String dummyTechStack,
-      @FromDataPoints("int cases") int dummyInt) {
+      @FromDataPoints("int cases") Integer dummyInt) {
 
-    if (dummyInt > 0
+    if (dummyInt != null
+        && dummyInt > 0
         && dummyName != null
         && !dummyName.isEmpty()
         && dummyName == dummyBatch
