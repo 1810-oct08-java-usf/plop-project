@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -391,49 +392,50 @@ public class ProjectService {
         || project.getScreenShots().isEmpty()) return false;
     else return true;
   }
+
 @Transactional
-  public ByteArrayOutputStream codeBaseScreenShots(String id) throws IOException  {
-	Project project =  findById(id);
-	
-	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	ZipOutputStream zos = new ZipOutputStream(baos);
-	
-	 List<String> keys =  project.getScreenShots();
-	  List<String> keyNames = new ArrayList<>();
-	  System.out.println("The test key before loop is: " + keys);
-	   
-	    for(String key : keys) {
-	    	String array1[]= key.split("/");
-	    	String newKey = array1[2].toString();
-	    	System.out.println("The test key after split is: " + newKey);
-	    	keyNames.add(newKey);
-	    	System.out.println("The testkey inside loop is: " + keyNames);
-	    }
-	    System.out.println("The tes key after loop is: " + keyNames);
-	    
-	    File zipFile = new File("screenshot.txt");
-	    if(zipFile.createNewFile()) {
-	    	System.out.println("New file created in the root directory");
-	    }else {
-	    	System.out.println("File already exist");
-	    }
-	    byte [] esc = {'\n'};
-	    OutputStream outStream = null;
-	   outStream = new FileOutputStream(zipFile);	
-	    for(String key : keyNames) {
-	    	this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
-	    
-	    	this.downloadInputStream.write(esc);
-	    	this.downloadInputStream.writeTo(outStream);   
-	    }
-	    
-//	outStream.close();
-//	boas.close();   
-	
-	zos.putNextEntry(new ZipEntry(zipFile(zipFile).toString()));
-	baos.writeTo(zos);
-	System.out.println("boas is: " + baos);
-	return this.downloadInputStream;
+  public File codeBaseScreenShots(String id) throws IOException {
+ // ---------------------------------------------------
+ Project project = findById(id);
+
+ ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+ List<String> keys = project.getScreenShots();
+ List<String> keyNames = new ArrayList<>();
+ System.out.println("The test key before loop is: " + keys);
+// ---------------------------------------------------
+ for (String key : keys) {
+   String array1[] = key.split("/");
+   String newKey = array1[2].toString();
+   System.out.println("The test key after split is: " + newKey);
+   keyNames.add(newKey);
+   System.out.println("The testkey inside loop is: " + keyNames);
+ }
+// ---------------------------------------------------
+ System.out.println("The tes key after loop is: " + keyNames);
+
+ File screenFile = new File("project-service/src/main/resources/screenshot.txt");
+ screenFile.getParentFile().mkdirs();
+ if (screenFile.createNewFile()) {
+   System.out.println("New file created in the root directory");
+ } else {
+   System.out.println("File already exist");
+ }
+
+ byte[] esc = { '\n' };
+ OutputStream outStream = null;
+ outStream = new FileOutputStream(screenFile);
+ // ---------------------------------------------------
+ for (String key : keyNames) {
+   this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+
+   this.downloadInputStream.writeTo(outStream);
+   this.downloadInputStream.write(esc);
+ }
+// ---------------------------------------------------
+System.out.println("boas is: " + baos);
+return zipFile(screenFile);
+ // ---------------------------------------------------
   }
 
 @Transactional
@@ -505,9 +507,11 @@ public ByteArrayOutputStream codeBaseZipLinks(String id) throws IOException  {
 }
 
 	@Transactional
-	public ZipOutputStream zipFile(File fileToZip) throws IOException {
+	public File zipFile(File fileToZip) throws IOException {
 
-		FileOutputStream fos = new FileOutputStream("ScreenShots.zip");
+    File zipper = new File("project-service/src/main/resources/compressed.zip");
+    zipper.getParentFile().mkdirs();
+    FileOutputStream fos = new FileOutputStream(zipper);
 		//ByteArrayOutputStream boas = new ByteArrayOutputStream();
 		ZipOutputStream zipOut = new ZipOutputStream(fos);
 

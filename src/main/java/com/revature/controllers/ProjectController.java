@@ -9,6 +9,8 @@ import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 import com.revature.services.StorageService;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -65,16 +68,14 @@ public class ProjectController {
    * @return request file from AWS S3 bucket
    */
   
-  @GetMapping(value = "/downloads/screenshots/{id}")
+  @GetMapping(value = "/downloads/screenshots/{id}", produces = "application/zip")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<byte[]> downloadSceenShots(@PathVariable String id)  {
+  public byte[] downloadSceenShots(@PathVariable String id)  {
 	  try {
-		  this.downloadInputStream = projectService.codeBaseScreenShots(id);
-		  String test = "test.png";
-		  return ResponseEntity.ok()
-			        .contentType(contentType(test))
-			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
-			        .body(downloadInputStream.toByteArray());
+       FileInputStream out = new FileInputStream(projectService.codeBaseScreenShots(id));
+      System.out.println("got resource from return type");
+      return IOUtils.toByteArray(out);
+      
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
