@@ -1,11 +1,17 @@
 package com.revature.controllers;
 
+import com.revature.exceptions.BadRequestException;
+import com.revature.exceptions.ProjectNotAddedException;
+import com.revature.exceptions.ProjectNotFoundException;
+import com.revature.models.Project;
+import com.revature.models.ProjectDTO;
+import com.revature.models.ProjectErrorResponse;
+import com.revature.services.ProjectService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,18 +23,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.revature.exceptions.BadRequestException;
-import com.revature.exceptions.InvalidStatusException;
-import com.revature.exceptions.ProjectNotAddedException;
-import com.revature.exceptions.ProjectNotFoundException;
-import com.revature.models.Project;
-import com.revature.models.ProjectDTO;
-import com.revature.models.ProjectErrorResponse;
-import com.revature.services.ProjectService;
 
 /** The ProjectController maps service endpoints for essential CRUD operations on Projects */
 @RestController
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
+// @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ProjectController {
 
   private ProjectService projectService;
@@ -38,32 +36,19 @@ public class ProjectController {
     this.projectService = projectService;
   }
 
- 
   @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Project getProjectById(@PathVariable String id) {
-    
-    return projectService.findById(id);
-  }
 
-  /**
-   * This method allows a user to submit an edit request on one of their projects. Uses HTTP method
-   * POST and only consumes JSON data.
-   *
-   * @param project: The new project object for the submitted edit request.
-   */
-  @PutMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(HttpStatus.OK)
-  public boolean submitEditRequest(@RequestBody Project project) {
-    return projectService.submitEditRequest(project);
+    return projectService.findById(id);
   }
 
   /**
    * This method accepts each field of a ProjectDTO object in the form of multipart form data. A
    * ProjectDTO object is created from the fields and sent to the service layer to be converted to a
-   * Project object and saved.
-   *
-   * <p>Added Spring Security annotations to prevent unauthorized users from accessing database
+   * Project object and saved. <br>
+   * <br>
+   * Added Spring Security annotations to prevent unauthorized users from accessing database
    *
    * @param name the name field of the form data
    * @param batch the batch field of the form data
@@ -81,7 +66,7 @@ public class ProjectController {
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  //@PreAuthorize("hasRole('USER')")
+  // @PreAuthorize("hasRole('USER')")
   public Project addProject(
       @RequestParam("name") String name,
       @RequestParam("batch") String batch,
@@ -94,7 +79,7 @@ public class ProjectController {
       @RequestParam("status") String status,
       @RequestParam("dataModel") List<MultipartFile> dataModel,
       @RequestParam("userId") Integer userId) {
-   
+
     ProjectDTO projectDTO =
         new ProjectDTO.ProjectDTOBuilder()
             .setName(name)
@@ -114,27 +99,27 @@ public class ProjectController {
   }
 
   /**
-   * This method is used to delete an entry into the embedded MongoDB based on the ID
-   *
-   * <p>Uses HTTP method DELETE and only retrieves JSON data
-   *
-   * <p>Added Spring Security annotations to prevent unauthorized users from accessing database
+   * This method is used to delete an entry into the embedded MongoDB based on the ID <br>
+   * <br>
+   * Uses HTTP method DELETE and only retrieves JSON data <br>
+   * <br>
+   * Added Spring Security annotations to prevent unauthorized users from accessing database
    *
    * @param id: String that serves as the id for the project
    */
   @DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Boolean deleteById(@PathVariable String id) {
-   
+
     return projectService.deleteById(id);
   }
 
   /**
-   * This method is used to update an entry into the embedded MongoDB based on the ID
-   *
-   * <p>Added Spring Security annotations to prevent unauthorized users from accessing database
-   *
-   * <p>Uses HTTP method PUT. Retrieves and produces JSON data
+   * This method is used to update an entry into the embedded MongoDB based on the ID <br>
+   * <br>
+   * Added Spring Security annotations to prevent unauthorized users from accessing database <br>
+   * <br>
+   * Uses HTTP method PUT. Retrieves and produces JSON data
    *
    * @param project: Requests that the user enters a project
    * @param id: String that serves as the id for the project
@@ -145,60 +130,41 @@ public class ProjectController {
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasRole('ADMIN')")
   public Boolean updateProject(@RequestBody Project project) {
-   
+
     return projectService.evaluateProject(project);
   }
 
-  @GetMapping(value="/q", produces="application/json")
+  @GetMapping(value = "/q", produces = "application/json")
   @ResponseStatus(HttpStatus.OK)
-	public List<Project> getProjectFieldValue(@RequestParam("field") String field, @RequestParam("value") String value) {
-		
-		switch(field) {
-		case "status":
-			return projectService.findByStatus(value);
-		case "name":
-			return projectService.findByName(value);
-		case "trainer":
-			return projectService.findByTrainer(value);
-		case "techStack":
-			return projectService.findByTechStack(value);
-		case "batch": 
-			return projectService.findByBatch(value);
-		case "userId":
-			return projectService.findByUserId(Integer.valueOf(value));
-		case "all":
-			return projectService.findAllProjects();
-		default:
-			throw new BadRequestException("Invalid field param value specified!");
-				
-		}
-		
-	}
+  public List<Project> getProjectFieldValue(
+      @RequestParam("field") String field, @RequestParam("value") String value) {
+
+    switch (field) {
+      case "status":
+        return projectService.findByStatus(value);
+      case "name":
+        return projectService.findByName(value);
+      case "trainer":
+        return projectService.findByTrainer(value);
+      case "techStack":
+        return projectService.findByTechStack(value);
+      case "batch":
+        return projectService.findByBatch(value);
+      case "userId":
+        return projectService.findByUserId(Integer.valueOf(value));
+      case "all":
+        return projectService.findAllProjects();
+      default:
+        throw new BadRequestException("Invalid field param value specified!");
+    }
+  }
   /**
    * This method is used to send a status code into the client based on the validity of the
-   * information sent.
-   *
-   * <p>Exception Handler for Response Status Not found which is used for findById() [/{id}] &
-   * deleteById() [delete/{id}]
-   *
-   * <p>Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
-   * value of the status code returned if thrown(NOT_FOUND) error.setMessage: Defines a custom
-   * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
-   * error was thrown
-   *
-   * <p>/ @ExceptionHandler @ResponseStatus(HttpStatus.NOT_FOUND)
-   *
-   * <p>public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnfe) {
-   * ProjectErrorResponse error = new ProjectErrorResponse();
-   * error.setStatus(HttpStatus.NOT_FOUND.value()); error.setMessage(pnfe.getMessage());
-   * error.setTimeStamp(System.currentTimeMillis()); return error; }
-   *
-   * <p>/** This method is used to send a status code into the client based on the validity of the
-   * information sent.
-   *
-   * <p>Exception Handler for Response Status Bad Request which is used for addProject() [/add]
-   *
-   * <p>Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
+   * information sent. <br>
+   * <br>
+   * Exception Handler for Response Status Bad Request which is used for addProject() [/add] <br>
+   * <br>
+   * Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
    * value of the status code returned if thrown (BAD_REQUEST) error.setMessage: Defines a custom
    * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
    * error was thrown
@@ -225,11 +191,11 @@ public class ProjectController {
 
   /**
    * This method is used to send a status code into the client based on the validity of the
-   * information sent.
-   *
-   * <p>Exception Handler for Invalid Status Response which is used for updateProject()
-   *
-   * <p>Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
+   * information sent. <br>
+   * <br>
+   * Exception Handler for Invalid Status Response which is used for updateProject() <br>
+   * <br>
+   * Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
    * value of the status code returned if thrown(BAD_REQUEST) error.setMessage: Defines a custom
    * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
    * error was thrown

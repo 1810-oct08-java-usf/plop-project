@@ -1,18 +1,5 @@
 package com.revature.services;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.revature.exceptions.BadRequestException;
 import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
@@ -20,6 +7,17 @@ import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 // TODO include transactional annotations to specify propagation and isolation levels
 /** ProjectService provides an interface to interact with a ProjectRepository */
@@ -34,7 +32,8 @@ public class ProjectService {
   private FileService fileService;
 
   @Autowired
-  public ProjectService(ProjectRepository projectRepo, StorageService s3StorageServiceImpl, FileService fileService) {
+  public ProjectService(
+      ProjectRepository projectRepo, StorageService s3StorageServiceImpl, FileService fileService) {
     this.projectRepo = projectRepo;
     this.s3StorageServiceImpl = s3StorageServiceImpl;
     this.fileService = fileService;
@@ -42,18 +41,18 @@ public class ProjectService {
 
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByUserId(Integer userId) {
-	  
-	  if (userId == null || userId <= 0) {
-		  throw new BadRequestException("Invalid fields found on project");
-	    }
+
+    if (userId == null || userId <= 0) {
+      throw new BadRequestException("Invalid fields found on project");
+    }
 
     List<Project> currProject = projectRepo.findByUserId(userId);
 
     if (currProject.isEmpty()) {
-	      throw new ProjectNotFoundException(
-		          "There is no project with id: " + userId + ", in the database.");
-		    }
-    
+      throw new ProjectNotFoundException(
+          "There is no project with id: " + userId + ", in the database.");
+    }
+
     return currProject;
   }
 
@@ -66,15 +65,15 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByName(String name) {
-	  if (name == null || name == "") {
-		  throw new BadRequestException("Invalid fields found on project");
-	    }
-	  
-	  List<Project> project = projectRepo.findByName(name);
-	  if (project.isEmpty()) {
-	      throw new ProjectNotFoundException(
-	          "There is no project named: " + name + ", in the database.");
-	    }
+    if (name == null || name == "") {
+      throw new BadRequestException("Invalid fields found on project");
+    }
+
+    List<Project> project = projectRepo.findByName(name);
+    if (project.isEmpty()) {
+      throw new ProjectNotFoundException(
+          "There is no project named: " + name + ", in the database.");
+    }
     return project;
   }
 
@@ -87,14 +86,14 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByBatch(String batch) {
-	  if (batch == null || batch == "") {
-		  throw new BadRequestException("Invalid fields found on project");
-	    }
-	  List<Project> result = projectRepo.findByBatch(batch);
-	    if (result.isEmpty()) {
-	      throw new ProjectNotFoundException(
-	          "There is no project associated with batch: " + batch + ", in the database.");
-	    }
+    if (batch == null || batch == "") {
+      throw new BadRequestException("Invalid fields found on project");
+    }
+    List<Project> result = projectRepo.findByBatch(batch);
+    if (result.isEmpty()) {
+      throw new ProjectNotFoundException(
+          "There is no project associated with batch: " + batch + ", in the database.");
+    }
     return result;
   }
 
@@ -107,16 +106,16 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByTrainer(String trainer) {
-	  
-	  if (trainer == null || trainer == "") {
-		  throw new BadRequestException("Invalid fields found on project");
-	    }
-	  
-	  List<Project> project = projectRepo.findByTrainer(trainer);
-	  if (project.isEmpty()) {
-	      throw new ProjectNotFoundException(
-	          "There is no trainer named: " + trainer + ", in the database.");
-	    }
+
+    if (trainer == null || trainer == "") {
+      throw new BadRequestException("Invalid fields found on project");
+    }
+
+    List<Project> project = projectRepo.findByTrainer(trainer);
+    if (project.isEmpty()) {
+      throw new ProjectNotFoundException(
+          "There is no trainer named: " + trainer + ", in the database.");
+    }
     return project;
   }
 
@@ -129,16 +128,15 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByTechStack(String techStack) {
-	  if (techStack == null || techStack == "") {
-		  throw new BadRequestException("Invalid fields found on project");
-	  }
-	  List<Project> project = projectRepo.findByTechStack(techStack);
-	  if (project.isEmpty()) {
-	      throw new ProjectNotFoundException(
-	          "There is no tech stack named: " + techStack + ", in the database.");
-	    }
+    if (techStack == null || techStack == "") {
+      throw new BadRequestException("Invalid fields found on project");
+    }
+    List<Project> project = projectRepo.findByTechStack(techStack);
+    if (project.isEmpty()) {
+      throw new ProjectNotFoundException(
+          "There is no tech stack named: " + techStack + ", in the database.");
+    }
     return project;
-    
   }
 
   /**
@@ -150,15 +148,15 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findByStatus(String status) {
-	  
-	  if (status == null || status == "") {
-		  throw new BadRequestException("Invalid fields found on project");
-	    }
-	  List<Project> project = projectRepo.findByStatus(status);
-	  if (project.isEmpty()) {
-	      throw new ProjectNotFoundException(
-	          "There is no project with: " + status + ", in the database.");
-	    }
+
+    if (status == null || status == "") {
+      throw new BadRequestException("Invalid fields found on project");
+    }
+    List<Project> project = projectRepo.findByStatus(status);
+    if (project.isEmpty()) {
+      throw new ProjectNotFoundException(
+          "There is no project with: " + status + ", in the database.");
+    }
     return project;
   }
 
@@ -170,11 +168,12 @@ public class ProjectService {
    */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public List<Project> findAllProjects() {
-	  
-	  List<Project>  projects = projectRepo.findAll();
-	  if (projects.isEmpty()) {
-	      throw new ProjectNotFoundException("There are no projects in the database.");
-	    }
+
+    List<Project> projects = projectRepo.findAll();
+    System.out.println(projects);
+    if (projects.isEmpty()) {
+      throw new ProjectNotFoundException("There are no projects in the database.");
+    }
     return projects;
   }
 
@@ -187,12 +186,14 @@ public class ProjectService {
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Boolean deleteById(String id) {
-	  
+
     if (id == null || id == "") {
-    	throw new ProjectNotFoundException(
-  	          "There is no project with: " + id + ", in the database.");
-  	    }
-    
+      // throw new ProjectNotFoundException("There is no project with: " + id + ", in the
+      // database.");
+      System.out.println("Invalid id passed within deleteById");
+      return false;
+    }
+
     projectRepo.deleteById(id);
     return true;
   }
@@ -208,12 +209,12 @@ public class ProjectService {
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Boolean evaluateProject(Project project) {
- 
-    if(!isValidFields(project)) {
-    	return false;
+
+    if (!isValidFields(project)) {
+      return false;
     }
-    
-      projectRepo.save(project);
+
+    projectRepo.save(project);
     return true;
   }
 
@@ -239,32 +240,24 @@ public class ProjectService {
 
     Project newProject =
         new Project.ProjectBuilder()
+            .setUserId(projectDTO.getUserId())
+            .setDescription(projectDTO.getDescription())
             .setName(projectDTO.getName())
             .setBatch(projectDTO.getBatch())
-            .setTrainer(projectDTO.getTrainer())
             .setGroupMembers(projectDTO.getGroupMembers())
-            .setDescription(projectDTO.getDescription())
             .setTechStack(projectDTO.getTechStack())
-            .setStatus(projectDTO.getStatus())
-            .setUserId(projectDTO.getUserId())
+            .setTrainer(projectDTO.getTrainer())
+            .setStatus(INITIAL_PROJECT_STATUS)
             .build();
-
-    /*
-     * Setting initial status of the project this way we can assure the project will
-     * have this status even if the status is change in the front end.
-     */
-    newProject.setStatus(INITIAL_PROJECT_STATUS);
-
-    if (!isValidFields(newProject)) {
-		  throw new ProjectNotAddedException("Empty/Invalid fields found on project"); 		  
-	    }
 
     // drop screenshot images in s3 and populate project with links to those images
     List<String> screenShotsList = new ArrayList<>();
 
-    if (projectDTO.getScreenShots() == null) newProject.setScreenShots(screenShotsList);
+    if (projectDTO.getScreenShots() == null)
+      throw new ProjectNotAddedException("ScreenShots not Present for Project");
     else {
       for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
+        // System.out.println("Within for loop for screenshot: " + multipartFile.getName());
         if (multipartFile.getSize() > 1_000_000) {
           throw new FileSizeTooLargeException(
               "File size of screenshot: " + multipartFile.getName() + "is greater than 1MB.");
@@ -278,9 +271,11 @@ public class ProjectService {
     // load sql files in s3 and populate project with links to those files
     List<String> dataModelList = new ArrayList<>();
 
-    if (projectDTO.getDataModel() == null) newProject.setDataModel(dataModelList);
+    if (projectDTO.getDataModel() == null)
+      throw new ProjectNotAddedException("ScreenShots not Present for Project");
     else {
       for (MultipartFile multipartFile : projectDTO.getDataModel()) {
+        System.out.println("Within for loop for sql Files: " + multipartFile.getName());
         if (multipartFile.getSize() > 1_000_000) {
           throw new FileSizeTooLargeException(
               "File size of data model: " + multipartFile.getName() + "is greater than 1MB.");
@@ -291,72 +286,90 @@ public class ProjectService {
       newProject.setDataModel(dataModelList);
     }
 
+    List<String> zipLinks = projectDTO.getZipLinks();
     // download a zip archive for each repo from github and store them in our s3
     // bucket,
     // populating the project object with links to those zip files
-    if (projectDTO.getZipLinks() == null) newProject.setZipLinks(new ArrayList<String>());
+    if (projectDTO.getZipLinks() == null)
+      throw new ProjectNotAddedException("Ziplinks not present for Project");
     else {
-      for (String zipLink : projectDTO.getZipLinks()) {
+      for (String zipLink : zipLinks) {
         try {
+          System.out.println("Within for loop for Ziplink: " + zipLink);
           File zipArchive = fileService.download(zipLink + "/archive/master.zip");
           if (zipArchive.length() > 1_000_000_000) {
             throw new FileSizeTooLargeException(
                 "The file size of: " + zipArchive.getName() + "exceeds 1GB");
           }
-          newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));
+          System.out.println("Within for loop for Ziplink: File was not too big");
+          String end = s3StorageServiceImpl.store(zipArchive);
+          System.out.println("Within for loop for Ziplink: File was stored");
+          newProject.addZipLink(end);
+          System.out.println("Within for loop for Ziplink: File was added");
+
         } catch (IOException e) {
+          System.out.println(
+              "Within for loop for Ziplink: Exception was thrown = " + e.getMessage());
           e.printStackTrace();
         }
       }
     }
-    
-   return projectRepo.save(newProject);
+
+    if (!isValidFields(newProject)) {
+      throw new ProjectNotAddedException("Empty/Invalid fields found on project");
+    }
+
+    Project result = projectRepo.save(newProject);
+    System.out.println("Finished result: " + result);
+    return result;
   }
 
   /** the transaction is read-only and only reads committed data */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public Project findById(String id) {
-	  
-	  if (id == null) {
-		  throw new BadRequestException("Invalid fields found on project"); 		  
-	    }
+
+    if (id == null || id.trim().isEmpty()) {
+      throw new BadRequestException("Invalid fields found on project");
+    }
 
     Optional<Project> currProject = projectRepo.findById(id);
 
     if (!currProject.isPresent()) {
-	      throw new ProjectNotFoundException(
-		          "There is no project with id: " + id + ", in the database.");
-		    }
-    
+      throw new ProjectNotFoundException(
+          "There is no project with id: " + id + ", in the database.");
+    }
+
     return currProject.get();
   }
 
   /**
-   * Updates a Project to the database
+   * Checks UserId, Description, Name, Batch, GroupMembers, TechStack, Trainer, and Ziplinks if they
+   * are valid fields.
    *
-   * @param project - The updated project
-   * @return boolean - true if the project was updated
+   * @param project
+   * @return true on fields are valid
    */
-  public boolean submitEditRequest(Project project) {
-   
-	  if (!isValidFields(project)) {
-      return false;
-    }
-    
-	  projectRepo.save(project);
-      return true;
-  }
-  
-  public boolean isValidFields(Project project) {
-	  
-	  if(project.getDescription() == null || project.getDescription().trim().equals("")) return false;
-	  if(project.getName() == null || project.getName().trim().equals("")) return false;
-	  if(project.getBatch() == null || project.getBatch().trim().equals("")) return false;
-	  if(project.getGroupMembers() == null || project.getGroupMembers().isEmpty()) return false;
-	  if(project.getTechStack() == null || project.getTechStack().trim().equals("")) return false;
-	  if(project.getTrainer() == null || project.getTrainer().equals("")) return false;
-	  if(project.getUserId() == null || project.getUserId().equals(0)) return false;
-	  
-	  return true;
+  private boolean isValidFields(Project project) {
+    if (project.getUserId() == null
+        || project.getUserId() < 1
+        || project.getDescription() == null
+        || project.getDescription().trim().equals("")
+        || project.getName() == null
+        || project.getName().trim().equals("")
+        || project.getBatch() == null
+        || project.getBatch().trim().equals("")
+        || project.getGroupMembers() == null
+        || project.getGroupMembers().isEmpty()
+        || project.getTechStack() == null
+        || project.getTechStack().trim().equals("")
+        || project.getTrainer() == null
+        || project.getTrainer().equals("")
+        || project.getZipLinks() == null
+        || project.getZipLinks().isEmpty()
+        || project.getDataModel() == null
+        || project.getDataModel().isEmpty()
+        || project.getScreenShots() == null
+        || project.getScreenShots().isEmpty()) return false;
+    else return true;
   }
 }
