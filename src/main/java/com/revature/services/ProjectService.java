@@ -1,8 +1,5 @@
 package com.revature.services;
 
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.revature.exceptions.BadRequestException;
 import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
@@ -10,27 +7,20 @@ import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
-
-import springfox.documentation.spring.web.paths.RelativePathProvider;
-
-import java.io.BufferedWriter;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
+import javax.imageio.ImageIO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -50,7 +40,7 @@ public class ProjectService {
   private StorageService s3StorageServiceImpl;
   private FileService fileService;
   private ByteArrayOutputStream downloadInputStream;
-  
+
   @Autowired
   public ProjectService(
       ProjectRepository projectRepo, StorageService s3StorageServiceImpl, FileService fileService) {
@@ -393,139 +383,184 @@ public class ProjectService {
     else return true;
   }
 
-@Transactional
+  @Transactional
   public File codeBaseScreenShots(String id) throws IOException {
- // ---------------------------------------------------
- Project project = findById(id);
+    // ---------------------------------------------------
+    Project project = findById(id);
 
- ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
- List<String> keys = project.getScreenShots();
- List<String> keyNames = new ArrayList<>();
- System.out.println("The test key before loop is: " + keys);
-// ---------------------------------------------------
- for (String key : keys) {
-   String array1[] = key.split("/");
-   String newKey = array1[2].toString();
-   System.out.println("The test key after split is: " + newKey);
-   keyNames.add(newKey);
-   System.out.println("The testkey inside loop is: " + keyNames);
- }
-// ---------------------------------------------------
- System.out.println("The tes key after loop is: " + keyNames);
+    List<String> keys = project.getScreenShots();
+    List<String> keyNames = new ArrayList<>();
+    System.out.println("The test key before loop is: " + keys);
+    // ---------------------------------------------------
+    for (String key : keys) {
+      String array1[] = key.split("/");
+      String newKey = array1[2].toString();
+      System.out.println("The test key after split is: " + newKey);
+      keyNames.add(newKey);
+      System.out.println("The testkey inside loop is: " + keyNames);
+    }
+    // ---------------------------------------------------
+    System.out.println("The tes key after loop is: " + keyNames);
 
- File screenFile = new File("project-service/src/main/resources/screenshot.txt");
- screenFile.getParentFile().mkdirs();
- if (screenFile.createNewFile()) {
-   System.out.println("New file created in the root directory");
- } else {
-   System.out.println("File already exist");
- }
+    File screenFile = new File("project-service/src/main/resources/screenshot.txt");
+    screenFile.getParentFile().mkdirs();
+    if (screenFile.createNewFile()) {
+      System.out.println("New file created in the root directory");
+    } else {
+      System.out.println("File already exist");
+    }
 
- byte[] esc = { '\n' };
- OutputStream outStream = null;
- outStream = new FileOutputStream(screenFile);
- // ---------------------------------------------------
- for (String key : keyNames) {
-   this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+    byte[] esc = {'\n'};
+    OutputStream outStream = null;
+    outStream = new FileOutputStream(screenFile);
+    // ---------------------------------------------------
+    for (String key : keyNames) {
+      this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
 
-   this.downloadInputStream.writeTo(outStream);
-   this.downloadInputStream.write(esc);
- }
-// ---------------------------------------------------
-System.out.println("boas is: " + baos);
-return zipFile(screenFile);
- // ---------------------------------------------------
+      this.downloadInputStream.writeTo(outStream);
+      this.downloadInputStream.write(esc);
+    }
+    // ---------------------------------------------------
+    System.out.println("boas is: " + baos);
+    return zipFile(screenFile);
+    // ---------------------------------------------------
+  }
+  // --------------------------------------------------------------------------------------------------------------
+  @Transactional
+  public ByteArrayOutputStream codeBaseDataModels(String id) throws IOException {
+    Project project = findById(id);
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ZipOutputStream zos = new ZipOutputStream(baos);
+
+    List<String> keys = project.getDataModel();
+    List<String> keyNames = new ArrayList<>();
+    System.out.println("The test key before loop is: " + keys);
+
+    for (String key : keys) {
+      String array1[] = key.split("/");
+      String newKey = array1[2].toString();
+      System.out.println("The test key after split is: " + newKey);
+      keyNames.add(newKey);
+      System.out.println("The testkey inside loop is: " + keyNames);
+    }
+    System.out.println("The tes key after loop is: " + keyNames);
+
+    File zipFile = new File("screenshot.txt");
+    if (zipFile.createNewFile()) {
+      System.out.println("New file created in the root directory");
+    } else {
+      System.out.println("File already exist");
+    }
+    byte[] esc = {'\n'};
+    OutputStream outStream = null;
+    outStream = new FileOutputStream(zipFile);
+    for (String key : keyNames) {
+      this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+      System.out.println(key);
+
+      this.downloadInputStream.write(esc);
+      this.downloadInputStream.writeTo(outStream);
+    }
+
+    //	outStream.close();
+    //	boas.close();
+
+    zos.putNextEntry(new ZipEntry(zipFile(zipFile).toString()));
+    baos.writeTo(zos);
+    System.out.println("boas is: " + baos);
+    return this.downloadInputStream;
+  }
+  // --------------------------------------------------------------------------------------------------------------
+  @Transactional
+  public ByteArrayOutputStream codeBaseZipLinks(String id) throws IOException {
+    Project project = findById(id);
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ZipOutputStream zos = new ZipOutputStream(baos);
+
+    List<String> keys = project.getZipLinks();
+    List<String> keyNames = new ArrayList<>();
+    System.out.println("The test key before loop is: " + keys);
+
+    for (String key : keys) {
+      String array1[] = key.split("/");
+      String newKey = array1[2].toString();
+      System.out.println("The test key after split is: " + newKey);
+      keyNames.add(newKey);
+      System.out.println("The testkey inside loop is: " + keyNames);
+    }
+    System.out.println("The tes key after loop is: " + keyNames);
+
+    return this.downloadInputStream;
   }
 
-@Transactional
-public ByteArrayOutputStream codeBaseDataModels(String id) throws IOException  {
-	Project project =  findById(id);
-	
-	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	ZipOutputStream zos = new ZipOutputStream(baos);
-	
-	 List<String> keys =  project.getDataModel();
-	  List<String> keyNames = new ArrayList<>();
-	  System.out.println("The test key before loop is: " + keys);
-	   
-	    for(String key : keys) {
-	    	String array1[]= key.split("/");
-	    	String newKey = array1[2].toString();
-	    	System.out.println("The test key after split is: " + newKey);
-	    	keyNames.add(newKey);
-	    	System.out.println("The testkey inside loop is: " + keyNames);
-	    }
-	    System.out.println("The tes key after loop is: " + keyNames);
-	    
-	    File zipFile = new File("screenshot.txt");
-	    if(zipFile.createNewFile()) {
-	    	System.out.println("New file created in the root directory");
-	    }else {
-	    	System.out.println("File already exist");
-	    }
-	    byte [] esc = {'\n'};
-	    OutputStream outStream = null;
-	   outStream = new FileOutputStream(zipFile);	
-	    for(String key : keyNames) {
-	    	this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
-	    
-	    	this.downloadInputStream.write(esc);
-	    	this.downloadInputStream.writeTo(outStream);   
-	    }
-	    
-//	outStream.close();
-//	boas.close();   
-	
-	zos.putNextEntry(new ZipEntry(zipFile(zipFile).toString()));
-	baos.writeTo(zos);
-	System.out.println("boas is: " + baos);
-	return this.downloadInputStream;
-}
-
-@Transactional
-public ByteArrayOutputStream codeBaseZipLinks(String id) throws IOException  {
-	Project project =  findById(id);
-	
-	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	ZipOutputStream zos = new ZipOutputStream(baos);
-	
-	 List<String> keys =  project.getZipLinks();
-	  List<String> keyNames = new ArrayList<>();
-	  System.out.println("The test key before loop is: " + keys);
-	   
-	    for(String key : keys) {
-	    	String array1[]= key.split("/");
-	    	String newKey = array1[2].toString();
-	    	System.out.println("The test key after split is: " + newKey);
-	    	keyNames.add(newKey);
-	    	System.out.println("The testkey inside loop is: " + keyNames);
-	    }
-	    System.out.println("The tes key after loop is: " + keyNames);
-	
-	return this.downloadInputStream;
-}
-
-	@Transactional
-	public File zipFile(File fileToZip) throws IOException {
+  @Transactional
+  public File zipFile(File fileToZip) throws IOException {
 
     File zipper = new File("project-service/src/main/resources/compressed.zip");
     zipper.getParentFile().mkdirs();
     FileOutputStream fos = new FileOutputStream(zipper);
-		//ByteArrayOutputStream boas = new ByteArrayOutputStream();
-		ZipOutputStream zipOut = new ZipOutputStream(fos);
+    // ByteArrayOutputStream boas = new ByteArrayOutputStream();
+    ZipOutputStream zipOut = new ZipOutputStream(fos);
 
-		FileInputStream fis = new FileInputStream(fileToZip);
-		ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
-		zipOut.putNextEntry(zipEntry);
-		byte[] bytes = new byte[1024];
-		int length;
-		while ((length = fis.read(bytes)) >= 0) {
-			zipOut.write(bytes, 0, length);
-		}
-		zipOut.close();
-		fis.close();
-		fos.close();
-		return zipOut;
-	}
+    FileInputStream fis = new FileInputStream(fileToZip);
+    ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+    zipOut.putNextEntry(zipEntry);
+    byte[] bytes = new byte[1024];
+    int length;
+    while ((length = fis.read(bytes)) >= 0) {
+      zipOut.write(bytes, 0, length);
+    }
+    zipOut.close();
+    fis.close();
+    fos.close();
+    return zipper;
+  }
+
+  @Transactional
+  public File zipFile(File[] files) throws IOException {
+
+    File zipper = new File("project-service/src/main/resources/compressed.zip");
+    zipper.getParentFile().mkdirs();
+    FileOutputStream fos = new FileOutputStream(zipper);
+    ZipOutputStream zipOut = new ZipOutputStream(fos);
+
+    for (File fileToZip : files) {
+      FileInputStream fis = new FileInputStream(fileToZip);
+      ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+      zipOut.putNextEntry(zipEntry);
+      byte[] bytes = new byte[1024];
+      int length = fis.read(bytes);
+
+      while (length >= 0) {
+        zipOut.write(bytes, 0, length);
+      }
+      fis.close();
+    }
+    zipOut.close();
+    fos.close();
+    return zipper;
+  }
+
+  public BufferedImage convertImageFromByteArray(
+      ByteArrayOutputStream fileBStream, String filename) {
+    BufferedImage bImage;
+    try {
+      bImage = ImageIO.read(new File("test.png"));
+      ImageIO.write(bImage, "jpg", fileBStream);
+      byte[] data = fileBStream.toByteArray();
+      ByteArrayInputStream bis = new ByteArrayInputStream(data);
+      BufferedImage bImage2 = ImageIO.read(bis);
+      ImageIO.write(bImage2, "jpg", new File(filename));
+      System.out.println("image created");
+      return bImage2;
+    } catch (IOException e) {
+      System.out.println("Converting Image failed");
+      e.printStackTrace();
+    }
+    return null;
+  }
 }

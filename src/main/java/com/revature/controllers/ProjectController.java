@@ -7,20 +7,11 @@ import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
-import com.revature.services.StorageService;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.stream.Stream;
-import java.util.zip.ZipOutputStream;
-
 import javax.servlet.ServletContext;
-
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -52,9 +43,8 @@ public class ProjectController {
 
   private ProjectService projectService;
   private ByteArrayOutputStream downloadInputStream;
-  
-  @Autowired
-  private ServletContext servletContext;
+
+  @Autowired private ServletContext servletContext;
 
   @Autowired
   public ProjectController(ProjectService projectService) {
@@ -67,65 +57,62 @@ public class ProjectController {
    * @param keyname
    * @return request file from AWS S3 bucket
    */
-  
   @GetMapping(value = "/downloads/screenshots/{id}", produces = "application/zip")
   @ResponseStatus(HttpStatus.OK)
-  public byte[] downloadSceenShots(@PathVariable String id)  {
-	  try {
-       FileInputStream out = new FileInputStream(projectService.codeBaseScreenShots(id));
-      System.out.println("got resource from return type");
+  public byte[] downloadSceenShots(@PathVariable String id) {
+    try {
+      FileInputStream out = new FileInputStream(projectService.codeBaseScreenShots(id));
       return IOUtils.toByteArray(out);
-      
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-System.out.println("Returning null...");
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    System.out.println("Returning null...");
     return null;
   }
-  
+
   @GetMapping(value = "/downloads/datamodels/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
-	  try {
-		  this.downloadInputStream = projectService.codeBaseDataModels(id);
-		  String test = "test.txt";
-		  return ResponseEntity.ok()
-			        .contentType(contentType(test))
-			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
-			        .body(downloadInputStream.toByteArray());
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-System.out.println("Returning null...");
+  public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id) {
+    try {
+      this.downloadInputStream = projectService.codeBaseDataModels(id);
+      String test = "test.txt";
+      return ResponseEntity.ok()
+          .contentType(contentType(test))
+          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "\"")
+          .body(downloadInputStream.toByteArray());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    System.out.println("Returning null...");
     return null;
   }
-  
+
   @GetMapping(value = "/downloads/ziplinks/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id)  {
-	  try {
-		  this.downloadInputStream = projectService.codeBaseZipLinks(id);
-		  String test = "test.png";
-		  return ResponseEntity.ok()
-			        .contentType(contentType(""))
-			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
-			        .body(downloadInputStream.toByteArray());
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-System.out.println("Returning null...");
+  public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id) {
+    try {
+      this.downloadInputStream = projectService.codeBaseZipLinks(id);
+      String test = "test.png";
+      return ResponseEntity.ok()
+          .contentType(contentType(""))
+          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "\"")
+          .body(downloadInputStream.toByteArray());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    System.out.println("Returning null...");
     return null;
   }
-  
+
   @RequestMapping(value = "/image-resource", method = RequestMethod.GET)
   @ResponseBody
   public ResponseEntity<Resource> getImageAsResource() {
-      final HttpHeaders headers = new HttpHeaders();
-      Resource resource = new ServletContextResource(servletContext, "/src/main/resources/screenshot.txt");
-      return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    final HttpHeaders headers = new HttpHeaders();
+    Resource resource =
+        new ServletContextResource(servletContext, "/src/main/resources/screenshot.txt");
+    return new ResponseEntity<>(resource, headers, HttpStatus.OK);
   }
-  
-  
 
   /**
    * Ensures the proper content type is returned
