@@ -15,12 +15,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
+
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -382,9 +387,9 @@ public class ProjectService {
         || project.getScreenShots().isEmpty()) return false;
     else return true;
   }
-
+ // --------------------------------------------------------------------------------------------------------------
   @Transactional
-  public File codeBaseScreenShots(String id) throws IOException {
+  public Byte[] codeBaseScreenShots(String id) throws IOException {
     // ---------------------------------------------------
     Project project = findById(id);
 
@@ -402,31 +407,48 @@ public class ProjectService {
       System.out.println("The testkey inside loop is: " + keyNames);
     }
     // ---------------------------------------------------
-    System.out.println("The tes key after loop is: " + keyNames);
+    System.out.println("The test key after loop is: " + keyNames);
 
-    File screenFile = new File("project-service/src/main/resources/screenshot.txt");
-    screenFile.getParentFile().mkdirs();
-    if (screenFile.createNewFile()) {
-      System.out.println("New file created in the root directory");
-    } else {
-      System.out.println("File already exist");
-    }
+    // File screenFile = new File("project-service/src/main/resources/temp/screenshot.txt");
+    // screenFile.getParentFile().mkdirs();
+    // if (screenFile.createNewFile()) {
+    //   System.out.println("New file created in the root directory");
+    // } else {
+    //   System.out.println("File already exist");
+    // }
 
-    byte[] esc = {'\n'};
-    OutputStream outStream = null;
-    outStream = new FileOutputStream(screenFile);
+    // byte[] esc = {'\n'};
+    // OutputStream outStream = null;
+    // outStream = new FileOutputStream(screenFile);
     // ---------------------------------------------------
+    File[] filesToBeZipped = new File[keyNames.size()];
+    List<File> fList = new ArrayList<>();
+    List<Byte> bList = new ArrayList<>();
+    // System.out.println(filesToBeZipped.length);
+    FileInputStream fis;
     for (String key : keyNames) {
       this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+      // this.downloadInputStream.writeTo(outStream);
+      // this.downloadInputStream.write(esc);
+      // if(!(keyNames.size() == filesToBeZipped.length))
+      // filesToBeZipped[filesToBeZipped.length] = convertImageFromByteArray(this.downloadInputStream, key);
 
-      this.downloadInputStream.writeTo(outStream);
-      this.downloadInputStream.write(esc);
+      fis = new FileInputStream(convertImageFromByteArray(this.downloadInputStream, key));
+      byte[] bArr = IOUtils.toByteArray(fis);
+      List<Byte> byteList = Arrays.asList(ArrayUtils.toObject(bArr));
+      bList.addAll(byteList); 
+      // bList.add(convertImageFromByteArray(this.downloadInputStream, key));
     }
     // ---------------------------------------------------
-    System.out.println("boas is: " + baos);
-    return zipFile(screenFile);
+    // System.out.println("boas is: " + baos);
+    //File rfile = zipFile(fList.toArray(new File[0]));
+    // screenFile.delete();
+    return bList.toArray(new Byte[0]);
+    // return fList;
+    // return this.downloadInputStream;
     // ---------------------------------------------------
   }
+
   // --------------------------------------------------------------------------------------------------------------
   @Transactional
   public ByteArrayOutputStream codeBaseDataModels(String id) throws IOException {
@@ -523,12 +545,19 @@ public class ProjectService {
   @Transactional
   public File zipFile(File[] files) throws IOException {
 
-    File zipper = new File("project-service/src/main/resources/compressed.zip");
+    System.out.println("Entered the Zipping");
+    File zipper = new File("project-service/src/main/resources/temp/compressed.zip");
     zipper.getParentFile().mkdirs();
     FileOutputStream fos = new FileOutputStream(zipper);
     ZipOutputStream zipOut = new ZipOutputStream(fos);
 
     for (File fileToZip : files) {
+      if(fileToZip == null || !fileToZip.exists())
+          {
+            System.out.println("File was not found or created");
+            continue;
+          }
+      System.out.println(fileToZip.getAbsolutePath());
       FileInputStream fis = new FileInputStream(fileToZip);
       ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
       zipOut.putNextEntry(zipEntry);
@@ -545,18 +574,25 @@ public class ProjectService {
     return zipper;
   }
 
-  public BufferedImage convertImageFromByteArray(
+  /**
+   * Converting png Image from a ByteArray
+   * @param fileBStream
+   * @param filename
+   * @return BufferedImage - Returns BufferedImage of png to be used. If no image was created or file does not exist, returns null
+   */
+  public File convertImageFromByteArray(
       ByteArrayOutputStream fileBStream, String filename) {
-    BufferedImage bImage;
-    try {
-      bImage = ImageIO.read(new File("test.png"));
-      ImageIO.write(bImage, "jpg", fileBStream);
+        File file = new File("project-service/src/main/resources/temp/"+filename);
+      try {
+      file.getParentFile().mkdirs();
+      file.createNewFile();
       byte[] data = fileBStream.toByteArray();
       ByteArrayInputStream bis = new ByteArrayInputStream(data);
       BufferedImage bImage2 = ImageIO.read(bis);
-      ImageIO.write(bImage2, "jpg", new File(filename));
+      ImageIO.write(bImage2, "png", file);
       System.out.println("image created");
-      return bImage2;
+      // return bImage2;
+      return file;
     } catch (IOException e) {
       System.out.println("Converting Image failed");
       e.printStackTrace();

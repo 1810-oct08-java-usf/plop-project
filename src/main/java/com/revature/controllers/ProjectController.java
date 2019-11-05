@@ -7,7 +7,10 @@ import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
+
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -36,7 +39,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.multipart.MultipartFile;
 
-/** The ProjectController maps service endpoints for essential CRUD operations on Projects */
+/**
+ * The ProjectController maps service endpoints for essential CRUD operations on
+ * Projects
+ */
 @RestController
 // @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ProjectController {
@@ -44,30 +50,40 @@ public class ProjectController {
   private ProjectService projectService;
   private ByteArrayOutputStream downloadInputStream;
 
-  @Autowired private ServletContext servletContext;
+  @Autowired
+  private ServletContext servletContext;
 
   @Autowired
   public ProjectController(ProjectService projectService) {
     this.projectService = projectService;
   }
+
   /**
-   * This methods allows us to hit the endpoint needed to download a requested file from AWS S3
-   * bucket to present in our CodeBase Viewer
+   * This methods allows us to hit the endpoint needed to download a requested
+   * file from AWS S3 bucket to present in our CodeBase Viewer
    *
    * @param keyname
    * @return request file from AWS S3 bucket
    */
-  @GetMapping(value = "/downloads/screenshots/{id}", produces = "application/zip")
+  @GetMapping(value = "/downloads/screenshots/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public byte[] downloadSceenShots(@PathVariable String id) {
+  public Byte[] downloadSceenShots(@PathVariable String id) {
+  //   try(FileInputStream out = new FileInputStream(projectService.codeBaseScreenShots(id))) {
+  //     if(out != null)
+  //   {
+  //     //System.out.println("out is: " + out);
+  //     return IOUtils.toByteArray(out);
+  //   }
+  //   } catch (IOException e) {
+  //     e.printStackTrace();
+  //   }
+  //   System.out.println("Returning null...");
     try {
-      FileInputStream out = new FileInputStream(projectService.codeBaseScreenShots(id));
-      return IOUtils.toByteArray(out);
-
-    } catch (IOException e) {
+      return projectService.codeBaseScreenShots(id);
+    } catch (Exception e) {
+      //TODO: handle exception
       e.printStackTrace();
     }
-    System.out.println("Returning null...");
     return null;
   }
 
@@ -307,5 +323,12 @@ public class ProjectController {
     error.setMessage(br.getMessage());
     error.setTimeStamp(System.currentTimeMillis());
     return error;
+  }
+
+  @ExceptionHandler
+  @ResponseStatus(HttpStatus.GATEWAY_TIMEOUT)
+  public ProjectErrorResponse handleException(Exception e) {
+    e.printStackTrace();
+    return null;
   }
 }
