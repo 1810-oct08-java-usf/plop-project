@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<!-- Local variable that defines a directory to store logs. -->
+	<!-- 
+		LOG_PATH - defines a directory to store logs.
+		OUTPUT_PATTERN - the pattern log messages are formatted to.
+	 -->
 	<property name="LOG_PATH" value="logs" />
 	<property name="OUTPUT_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
 	
