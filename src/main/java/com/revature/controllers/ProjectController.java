@@ -7,16 +7,6 @@ import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
-import com.revature.services.StorageService;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Stream;
@@ -171,23 +161,11 @@ System.out.println("Returning null...");
   }
 
   /**
-   * This method allows a user to submit an edit request on one of their projects. Uses HTTP method
-   * POST and only consumes JSON data.
-   *
-   * @param project: The new project object for the submitted edit request.
-   */
-  @PutMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(HttpStatus.OK)
-  public boolean submitEditRequest(@RequestBody Project project) {
-    return projectService.submitEditRequest(project);
-  }
-
-  /**
    * This method accepts each field of a ProjectDTO object in the form of multipart form data. A
    * ProjectDTO object is created from the fields and sent to the service layer to be converted to a
-   * Project object and saved.
-   *
-   * <p>Added Spring Security annotations to prevent unauthorized users from accessing database
+   * Project object and saved. <br>
+   * <br>
+   * Added Spring Security annotations to prevent unauthorized users from accessing database
    *
    * @param name the name field of the form data
    * @param batch the batch field of the form data
@@ -238,11 +216,11 @@ System.out.println("Returning null...");
   }
 
   /**
-   * This method is used to delete an entry into the embedded MongoDB based on the ID
-   *
-   * <p>Uses HTTP method DELETE and only retrieves JSON data
-   *
-   * <p>Added Spring Security annotations to prevent unauthorized users from accessing database
+   * This method is used to delete an entry into the embedded MongoDB based on the ID <br>
+   * <br>
+   * Uses HTTP method DELETE and only retrieves JSON data <br>
+   * <br>
+   * Added Spring Security annotations to prevent unauthorized users from accessing database
    *
    * @param id: String that serves as the id for the project
    */
@@ -254,11 +232,11 @@ System.out.println("Returning null...");
   }
 
   /**
-   * This method is used to update an entry into the embedded MongoDB based on the ID
-   *
-   * <p>Added Spring Security annotations to prevent unauthorized users from accessing database
-   *
-   * <p>Uses HTTP method PUT. Retrieves and produces JSON data
+   * This method is used to update an entry into the embedded MongoDB based on the ID <br>
+   * <br>
+   * Added Spring Security annotations to prevent unauthorized users from accessing database <br>
+   * <br>
+   * Uses HTTP method PUT. Retrieves and produces JSON data
    *
    * @param project: Requests that the user enters a project
    * @param id: String that serves as the id for the project
@@ -307,29 +285,11 @@ System.out.println("Returning null...");
   }
   /**
    * This method is used to send a status code into the client based on the validity of the
-   * information sent.
-   *
-   * <p>Exception Handler for Response Status Not found which is used for findById() [/{id}] &
-   * deleteById() [delete/{id}]
-   *
-   * <p>Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
-   * value of the status code returned if thrown(NOT_FOUND) error.setMessage: Defines a custom
-   * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
-   * error was thrown
-   *
-   * <p>/ @ExceptionHandler @ResponseStatus(HttpStatus.NOT_FOUND)
-   *
-   * <p>public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnfe) {
-   * ProjectErrorResponse error = new ProjectErrorResponse();
-   * error.setStatus(HttpStatus.NOT_FOUND.value()); error.setMessage(pnfe.getMessage());
-   * error.setTimeStamp(System.currentTimeMillis()); return error; }
-   *
-   * <p>/** This method is used to send a status code into the client based on the validity of the
-   * information sent.
-   *
-   * <p>Exception Handler for Response Status Bad Request which is used for addProject() [/add]
-   *
-   * <p>Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
+   * information sent. <br>
+   * <br>
+   * Exception Handler for Response Status Bad Request which is used for addProject() [/add] <br>
+   * <br>
+   * Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
    * value of the status code returned if thrown (BAD_REQUEST) error.setMessage: Defines a custom
    * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
    * error was thrown
@@ -356,11 +316,11 @@ System.out.println("Returning null...");
 
   /**
    * This method is used to send a status code into the client based on the validity of the
-   * information sent.
-   *
-   * <p>Exception Handler for Invalid Status Response which is used for updateProject()
-   *
-   * <p>Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
+   * information sent. <br>
+   * <br>
+   * Exception Handler for Invalid Status Response which is used for updateProject() <br>
+   * <br>
+   * Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
    * value of the status code returned if thrown(BAD_REQUEST) error.setMessage: Defines a custom
    * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
    * error was thrown
