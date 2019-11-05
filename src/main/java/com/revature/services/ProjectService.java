@@ -1,5 +1,9 @@
 package com.revature.services;
 
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+
 import com.revature.exceptions.BadRequestException;
 import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
@@ -7,6 +11,13 @@ import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
+
+
+import springfox.documentation.spring.web.paths.RelativePathProvider;
+
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,6 +30,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.compress.utils.IOUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -178,7 +195,6 @@ public class ProjectService {
   public List<Project> findAllProjects() {
 
     List<Project> projects = projectRepo.findAll();
-    System.out.println(projects);
     if (projects.isEmpty()) {
       throw new ProjectNotFoundException("There are no projects in the database.");
     }
@@ -196,10 +212,8 @@ public class ProjectService {
   public Boolean deleteById(String id) {
 
     if (id == null || id == "") {
-      // throw new ProjectNotFoundException("There is no project with: " + id + ", in the
-      // database.");
-      System.out.println("Invalid id passed within deleteById");
-      return false;
+
+      throw new ProjectNotFoundException("There is no project with: " + id + ", in the database.");
     }
 
     projectRepo.deleteById(id);
@@ -258,6 +272,17 @@ public class ProjectService {
             .setStatus(INITIAL_PROJECT_STATUS)
             .build();
 
+
+    /*
+     * Setting initial status of the project this way we can assure the project will
+     * have this status even if the status is change in the front end.
+     */
+    newProject.setStatus(INITIAL_PROJECT_STATUS);
+
+    if (!isValidFields(newProject)) {
+      throw new ProjectNotAddedException("Empty/Invalid fields found on project");
+    }
+    
     // drop screenshot images in s3 and populate project with links to those images
     List<String> screenShotsList = new ArrayList<>();
 
@@ -322,19 +347,13 @@ public class ProjectService {
         }
       }
     }
-
-    if (!isValidFields(newProject)) {
-      throw new ProjectNotAddedException("Empty/Invalid fields found on project");
-    }
-
-    Project result = projectRepo.save(newProject);
-    System.out.println("Finished result: " + result);
-    return result;
+    return projectRepo.save(newProject);
   }
 
   /** the transaction is read-only and only reads committed data */
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public Project findById(String id) {
+
 
     if (id == null || id.trim().isEmpty()) {
       throw new BadRequestException("Invalid fields found on project");
@@ -357,6 +376,143 @@ public class ProjectService {
    * @param project
    * @return true on fields are valid
    */
+  public boolean submitEditRequest(Project project) {
+
+    if (!isValidFields(project)) {
+      return false;
+    }
+
+    projectRepo.save(project);
+    return true;
+  }
+@Transactional
+  public File codeBaseScreenShots(String id) throws IOException  {
+	Project project =  findById(id);
+	
+	File file = null;
+	
+	 List<String> keys =  project.getScreenShots();
+	  List<String> keyNames = new ArrayList<>();
+	  System.out.println("The test key before loop is: " + keys);
+	   
+	    for(String key : keys) {
+	    	String array1[]= key.split("/");
+	    	String newKey = array1[2].toString();
+	    	System.out.println("The test key after split is: " + newKey);
+	    	keyNames.add(newKey);
+	    	System.out.println("The testkey inside loop is: " + keyNames);
+	    }
+	    System.out.println("The tes key after loop is: " + keyNames);
+	    
+	    File newFile = new File("screenshot.png");
+	    if(newFile.createNewFile()) {
+	    	System.out.println("New file created in the root directory");
+	    }else {
+	    	System.out.println("File already exist");
+	    }
+	    byte [] esc = {'\n'};
+	    OutputStream outStream = null;
+	   outStream = new FileOutputStream(newFile);	
+	    for(String key : keyNames) {
+	    	this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+	    
+	    	this.downloadInputStream.write(esc);
+	    	this.downloadInputStream.writeTo(outStream);  
+	    	    file = newFile;
+	    }
+	    
+	return file;
+  }
+
+@Transactional
+public File codeBaseDataModels(String id) throws IOException  {
+	Project project =  findById(id);
+	
+	File file = null;
+	
+	 List<String> keys =  project.getDataModel();
+	  List<String> keyNames = new ArrayList<>();
+	  System.out.println("The test key before loop is: " + keys);
+	   
+	    for(String key : keys) {
+	    	String array1[]= key.split("/");
+	    	String newKey = array1[2].toString();
+	    	System.out.println("The test key after split is: " + newKey);
+	    	keyNames.add(newKey);
+	    	System.out.println("The testkey inside loop is: " + keyNames);
+	    }
+	    System.out.println("The tes key after loop is: " + keyNames);
+	    
+	    File newFile = new File("datamodels.txt");
+	    if(newFile.createNewFile()) {
+	    	System.out.println("New file created in the root directory");
+	    }else {
+	    	System.out.println("File already exist");
+	    }
+	    byte [] esc = {'\n', 'E', 'N', 'D', 'O', 'F', 'F', 'I', 'L', 'E'};
+	    OutputStream outStream = null;
+	   outStream = new FileOutputStream(newFile);	
+	    for(String key : keyNames) {
+	    	this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+	    
+	    	this.downloadInputStream.write(esc);
+	    	this.downloadInputStream.writeTo(outStream); 
+	    	file = newFile;
+	    }
+	outStream.close();
+ 
+	return file;
+}
+
+@Transactional
+public ByteArrayOutputStream codeBaseZipLinks(String id) throws IOException  {
+	Project project =  findById(id);
+	
+	 List<String> keys =  project.getZipLinks();
+	  List<String> keyNames = new ArrayList<>();
+	  System.out.println("The test key before loop is: " + keys);
+	   
+	    for(String key : keys) {
+	    	String array1[]= key.split("/");
+	    	String newKey = array1[2].toString();
+	    	System.out.println("The test key after split is: " + newKey);
+	    	keyNames.add(newKey);
+	    	System.out.println("The testkey inside loop is: " + keyNames);
+	    }
+	    System.out.println("The tes key after loop is: " + keyNames);
+	    
+	    OutputStream outStream = null;
+	    outStream = new FileOutputStream(keyNames.toString());
+	   
+	    for(String key : keyNames) {
+	    	this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+	    	this.downloadInputStream.writeTo(outStream); 
+	    	
+	    }
+	    outStream.close();
+	return downloadInputStream;
+}
+
+	@Transactional
+	public ZipOutputStream zipFile(File fileToZip) throws IOException {
+
+		FileOutputStream fos = new FileOutputStream("ScreenShots.zip");
+		
+		ZipOutputStream zipOut = new ZipOutputStream(fos);
+
+		FileInputStream fis = new FileInputStream(fileToZip);
+		ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+		zipOut.putNextEntry(zipEntry);
+		byte[] bytes = new byte[1024];
+		int length;
+		while ((length = fis.read(bytes)) >= 0) {
+			zipOut.write(bytes, 0, length);
+		}
+		zipOut.close();
+		fis.close();
+		fos.close();
+		return zipOut;
+	}
   private boolean isValidFields(Project project) {
     if (project.getUserId() == null
         || project.getUserId() < 1
@@ -379,5 +535,6 @@ public class ProjectService {
         || project.getScreenShots() == null
         || project.getScreenShots().isEmpty()) return false;
     else return true;
+
   }
 }
