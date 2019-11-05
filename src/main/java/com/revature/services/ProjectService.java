@@ -258,17 +258,6 @@ public class ProjectService {
             .setStatus(INITIAL_PROJECT_STATUS)
             .build();
 
-
-    /*
-     * Setting initial status of the project this way we can assure the project will
-     * have this status even if the status is change in the front end.
-     */
-    newProject.setStatus(INITIAL_PROJECT_STATUS);
-//
-//    if (!isValidFields(newProject)) {
-//      throw new ProjectNotAddedException("Empty/Invalid fields found on project");
-//    }
-    
     // drop screenshot images in s3 and populate project with links to those images
     List<String> screenShotsList = new ArrayList<>();
 
@@ -333,7 +322,14 @@ public class ProjectService {
         }
       }
     }
-    return projectRepo.save(newProject);
+
+    if (!isValidFields(newProject)) {
+      throw new ProjectNotAddedException("Empty/Invalid fields found on project");
+    }
+
+    Project result = projectRepo.save(newProject);
+    System.out.println("Finished result: " + result);
+    return result;
   }
 
   /** the transaction is read-only and only reads committed data */
