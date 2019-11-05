@@ -3,6 +3,7 @@ package com.revature.services;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+
 import com.revature.exceptions.BadRequestException;
 import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
@@ -11,10 +12,12 @@ import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
 
+
 import springfox.documentation.spring.web.paths.RelativePathProvider;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,10 +30,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.compress.utils.IOUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -207,6 +212,7 @@ public class ProjectService {
   public Boolean deleteById(String id) {
 
     if (id == null || id == "") {
+
       throw new ProjectNotFoundException("There is no project with: " + id + ", in the database.");
     }
 
@@ -256,15 +262,16 @@ public class ProjectService {
 
     Project newProject =
         new Project.ProjectBuilder()
+            .setUserId(projectDTO.getUserId())
+            .setDescription(projectDTO.getDescription())
             .setName(projectDTO.getName())
             .setBatch(projectDTO.getBatch())
-            .setTrainer(projectDTO.getTrainer())
             .setGroupMembers(projectDTO.getGroupMembers())
-            .setDescription(projectDTO.getDescription())
             .setTechStack(projectDTO.getTechStack())
-            .setStatus(projectDTO.getStatus())
-            .setUserId(projectDTO.getUserId())
+            .setTrainer(projectDTO.getTrainer())
+            .setStatus(INITIAL_PROJECT_STATUS)
             .build();
+
 
     /*
      * Setting initial status of the project this way we can assure the project will
@@ -275,13 +282,15 @@ public class ProjectService {
     if (!isValidFields(newProject)) {
       throw new ProjectNotAddedException("Empty/Invalid fields found on project");
     }
-
+    
     // drop screenshot images in s3 and populate project with links to those images
     List<String> screenShotsList = new ArrayList<>();
 
-    if (projectDTO.getScreenShots() == null) newProject.setScreenShots(screenShotsList);
+    if (projectDTO.getScreenShots() == null)
+      throw new ProjectNotAddedException("ScreenShots not Present for Project");
     else {
       for (MultipartFile multipartFile : projectDTO.getScreenShots()) {
+        // System.out.println("Within for loop for screenshot: " + multipartFile.getName());
         if (multipartFile.getSize() > 1_000_000) {
           throw new FileSizeTooLargeException(
               "File size of screenshot: " + multipartFile.getName() + "is greater than 1MB.");
@@ -295,9 +304,11 @@ public class ProjectService {
     // load sql files in s3 and populate project with links to those files
     List<String> dataModelList = new ArrayList<>();
 
-    if (projectDTO.getDataModel() == null) newProject.setDataModel(dataModelList);
+    if (projectDTO.getDataModel() == null)
+      throw new ProjectNotAddedException("ScreenShots not Present for Project");
     else {
       for (MultipartFile multipartFile : projectDTO.getDataModel()) {
+        System.out.println("Within for loop for sql Files: " + multipartFile.getName());
         if (multipartFile.getSize() > 1_000_000) {
           throw new FileSizeTooLargeException(
               "File size of data model: " + multipartFile.getName() + "is greater than 1MB.");
@@ -308,25 +319,34 @@ public class ProjectService {
       newProject.setDataModel(dataModelList);
     }
 
+    List<String> zipLinks = projectDTO.getZipLinks();
     // download a zip archive for each repo from github and store them in our s3
     // bucket,
     // populating the project object with links to those zip files
-    if (projectDTO.getZipLinks() == null) newProject.setZipLinks(new ArrayList<String>());
+    if (projectDTO.getZipLinks() == null)
+      throw new ProjectNotAddedException("Ziplinks not present for Project");
     else {
-      for (String zipLink : projectDTO.getZipLinks()) {
+      for (String zipLink : zipLinks) {
         try {
+          System.out.println("Within for loop for Ziplink: " + zipLink);
           File zipArchive = fileService.download(zipLink + "/archive/master.zip");
           if (zipArchive.length() > 1_000_000_000) {
             throw new FileSizeTooLargeException(
                 "The file size of: " + zipArchive.getName() + "exceeds 1GB");
           }
-          newProject.addZipLink(s3StorageServiceImpl.store(zipArchive));
+          System.out.println("Within for loop for Ziplink: File was not too big");
+          String end = s3StorageServiceImpl.store(zipArchive);
+          System.out.println("Within for loop for Ziplink: File was stored");
+          newProject.addZipLink(end);
+          System.out.println("Within for loop for Ziplink: File was added");
+
         } catch (IOException e) {
+          System.out.println(
+              "Within for loop for Ziplink: Exception was thrown = " + e.getMessage());
           e.printStackTrace();
         }
       }
     }
-
     return projectRepo.save(newProject);
   }
 
@@ -334,7 +354,8 @@ public class ProjectService {
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public Project findById(String id) {
 
-    if (id == null) {
+
+    if (id == null || id.trim().isEmpty()) {
       throw new BadRequestException("Invalid fields found on project");
     }
 
@@ -349,10 +370,11 @@ public class ProjectService {
   }
 
   /**
-   * Updates a Project to the database
+   * Checks UserId, Description, Name, Batch, GroupMembers, TechStack, Trainer, and Ziplinks if they
+   * are valid fields.
    *
-   * @param project - The updated project
-   * @return boolean - true if the project was updated
+   * @param project
+   * @return true on fields are valid
    */
   public boolean submitEditRequest(Project project) {
 
@@ -491,19 +513,28 @@ public ByteArrayOutputStream codeBaseZipLinks(String id) throws IOException  {
 		fos.close();
 		return zipOut;
 	}
+  private boolean isValidFields(Project project) {
+    if (project.getUserId() == null
+        || project.getUserId() < 1
+        || project.getDescription() == null
+        || project.getDescription().trim().equals("")
+        || project.getName() == null
+        || project.getName().trim().equals("")
+        || project.getBatch() == null
+        || project.getBatch().trim().equals("")
+        || project.getGroupMembers() == null
+        || project.getGroupMembers().isEmpty()
+        || project.getTechStack() == null
+        || project.getTechStack().trim().equals("")
+        || project.getTrainer() == null
+        || project.getTrainer().equals("")
+        || project.getZipLinks() == null
+        || project.getZipLinks().isEmpty()
+        || project.getDataModel() == null
+        || project.getDataModel().isEmpty()
+        || project.getScreenShots() == null
+        || project.getScreenShots().isEmpty()) return false;
+    else return true;
 
-
-  public boolean isValidFields(Project project) {
-
-    if (project.getDescription() == null || project.getDescription().trim().equals(""))
-      return false;
-    if (project.getName() == null || project.getName().trim().equals("")) return false;
-    if (project.getBatch() == null || project.getBatch().trim().equals("")) return false;
-    if (project.getGroupMembers() == null || project.getGroupMembers().isEmpty()) return false;
-    if (project.getTechStack() == null || project.getTechStack().trim().equals("")) return false;
-    if (project.getTrainer() == null || project.getTrainer().equals("")) return false;
-    if (project.getUserId() == null || project.getUserId().equals(0)) return false;
-
-    return true;
   }
 }
