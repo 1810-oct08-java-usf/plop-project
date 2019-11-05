@@ -9,7 +9,6 @@ import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
 
 import java.io.ByteArrayOutputStream;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,7 +17,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -41,7 +39,7 @@ public class ProjectService {
   private StorageService s3StorageServiceImpl;
   private FileService fileService;
   private ByteArrayOutputStream downloadInputStream;
-  
+
   @Autowired
   public ProjectService(
       ProjectRepository projectRepo, StorageService s3StorageServiceImpl, FileService fileService) {
@@ -181,6 +179,7 @@ public class ProjectService {
   public List<Project> findAllProjects() {
 
     List<Project> projects = projectRepo.findAll();
+    System.out.println(projects);
     if (projects.isEmpty()) {
       throw new ProjectNotFoundException("There are no projects in the database.");
     }
@@ -198,7 +197,9 @@ public class ProjectService {
   public Boolean deleteById(String id) {
 
     if (id == null || id == "") {
-
+      // throw new ProjectNotFoundException("There is no project with: " + id + ", in the
+      // database.");
+      System.out.println("Invalid id passed within deleteById");
       return false;
     }
 
@@ -336,7 +337,6 @@ public class ProjectService {
   @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
   public Project findById(String id) {
 
-
     if (id == null || id.trim().isEmpty()) {
       throw new BadRequestException("Invalid fields found on project");
     }
@@ -350,7 +350,6 @@ public class ProjectService {
 
     return currProject.get();
   }
-
   /**
    * Checks UserId, Description, Name, Batch, GroupMembers, TechStack, Trainer, and Ziplinks if they
    * are valid fields.
