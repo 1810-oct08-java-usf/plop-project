@@ -421,7 +421,7 @@ public File codeBaseDataModels(String id) throws IOException  {
 	    }
 	    System.out.println("The tes key after loop is: " + keyNames);
 	    
-	    File newFile = new File("screenshot.txt");
+	    File newFile = new File("datamodels.txt");
 	    if(newFile.createNewFile()) {
 	    	System.out.println("New file created in the root directory");
 	    }else {

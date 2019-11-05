@@ -82,7 +82,7 @@ public class ProjectController {
 		    byte[] media = IOUtils.toByteArray(in);
 		  return ResponseEntity.ok()
 			        .contentType(contentType(file.getName()))
-			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + file.getAbsoluteFile())
+			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + file.getName())
 			        .body(media);
 	} catch (IOException e) {
 		e.printStackTrace();
@@ -100,10 +100,10 @@ System.out.println("Returning null...");
 		  String test = "test.txt";
 		  InputStream in =  new FileInputStream(file.getName());
 		  byte[] media = IOUtils.toByteArray(in);
-		  
+		  file.deleteOnExit();
 		  return ResponseEntity.ok()
 			        .contentType(contentType(file.getName()))
-			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
+			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + file.getName())
 			        .body(media);
 	} catch (IOException e) {
 		e.printStackTrace();
