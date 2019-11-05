@@ -8,25 +8,15 @@ import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 
-import com.revature.services.StorageService;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.stream.Stream;
-import java.util.zip.ZipOutputStream;
 
-import javax.servlet.ServletContext;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,13 +29,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.multipart.MultipartFile;
 
 /** The ProjectController maps service endpoints for essential CRUD operations on Projects */
@@ -56,9 +42,6 @@ public class ProjectController {
   private ProjectService projectService;
   private ByteArrayOutputStream downloadInputStream;
   
-  @Autowired
-  private ServletContext servletContext;
-
   @Autowired
   public ProjectController(ProjectService projectService) {
     this.projectService = projectService;
@@ -76,7 +59,6 @@ public class ProjectController {
   public ResponseEntity<byte[]> downloadSceenShots(@PathVariable String id)  {
 	  try {
 		  File file = projectService.codeBaseScreenShots(id);
-		  String test = "test.png";
 		  
 		  InputStream in =  new FileInputStream(file.getName());
 	        
@@ -98,10 +80,9 @@ System.out.println("Returning null...");
 	  try {
 		 
 		  File file = projectService.codeBaseDataModels(id);
-		  String test = "test.txt";
 		  InputStream in =  new FileInputStream(file.getName());
 		  byte[] media = IOUtils.toByteArray(in);
-		  file.deleteOnExit();
+		  
 		  return ResponseEntity.ok()
 			        .contentType(contentType(file.getName()))
 			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + file.getName())
@@ -118,7 +99,6 @@ System.out.println("Returning null...");
   public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id)  {
 	  try {
 		  this.downloadInputStream = projectService.codeBaseZipLinks(id);
-		  String test = "test.jpg";
 		  return ResponseEntity.ok()
 			        .contentType(contentType(""))
 			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")

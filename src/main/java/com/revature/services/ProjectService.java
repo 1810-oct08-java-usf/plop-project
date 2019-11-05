@@ -1,9 +1,5 @@
 package com.revature.services;
 
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
-
 import com.revature.exceptions.BadRequestException;
 import com.revature.exceptions.FileSizeTooLargeException;
 import com.revature.exceptions.ProjectNotAddedException;
@@ -12,29 +8,19 @@ import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
 
-
-import springfox.documentation.spring.web.paths.RelativePathProvider;
-
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import org.apache.commons.compress.utils.IOUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -278,10 +264,10 @@ public class ProjectService {
      * have this status even if the status is change in the front end.
      */
     newProject.setStatus(INITIAL_PROJECT_STATUS);
-
-    if (!isValidFields(newProject)) {
-      throw new ProjectNotAddedException("Empty/Invalid fields found on project");
-    }
+//
+//    if (!isValidFields(newProject)) {
+//      throw new ProjectNotAddedException("Empty/Invalid fields found on project");
+//    }
     
     // drop screenshot images in s3 and populate project with links to those images
     List<String> screenShotsList = new ArrayList<>();
