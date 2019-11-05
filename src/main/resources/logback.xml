@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<!-- Include necessary appenders and default configurations:
-		defaults.xml - Conversion rules, pattern properties, common configurations.
-		console-appender.xml - Adds a ConsoleAppender that uses the CONSOLE_LOG_PATTERN
-		file-appender.xml - Adds a RollingFileAppender that uses FILE_LOG_PATTERN and ROLLING_FILE_NAME_PATTERN
-			with sensible settings.
-	 -->
-	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
-	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
-	<include resource="org/springframework/boot/logging/logback/file-appender.xml" />
-	
+
 	<!-- Local variable that defines a directory to store logs. -->
-	<property name="LOG_DIR" value="./logs" />
+	<property name="LOG_PATH" value="logs" />
+	<property name="OUTPUT_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
 	
 	<!-- 
 		Appenders are the basic unit of loggers. They allow for custom patterns, encoders, rolling policies 
@@ -24,16 +16,14 @@
 			Patterns allow us to create tailored strings for log messages.
 		-->
 		<encoder>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
-			</pattern>
+			<pattern>${OUTPUT_PATTERN}</pattern>
 		</encoder>
 	</appender>
 	
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${LOG_DIR}/ProjectService.log</file>
+		<file>${LOG_PATH:-.}/ProjectService.log</file>
 		<encoder>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
-			</pattern>
+			<pattern>${OUTPUT_PATTERN}</pattern>
 		</encoder>
 		<!-- 
 			Defines when the log file will be overwritten (rolled over).
@@ -52,7 +42,7 @@
 		-->
 		<rollingPolicy
             class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/archive/ProjectService-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/archived/ProjectService-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>60</maxHistory>
             <totalSizeCap>20GB</totalSizeCap>
