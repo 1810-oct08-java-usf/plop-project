@@ -199,7 +199,7 @@ public class ProjectService {
 
     if (id == null || id == "") {
 
-      throw new ProjectNotFoundException("There is no project with: " + id + ", in the database.");
+      return false;
     }
 
     projectRepo.deleteById(id);
@@ -358,16 +358,7 @@ public class ProjectService {
    * @param project
    * @return true on fields are valid
    */
-  public boolean submitEditRequest(Project project) {
-
-    if (!isValidFields(project)) {
-      return false;
-    }
-
-    projectRepo.save(project);
-    return true;
-  }
-@Transactional
+  @Transactional
   public File codeBaseScreenShots(String id) throws IOException  {
 	Project project =  findById(id);
 	
