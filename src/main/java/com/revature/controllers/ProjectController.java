@@ -46,72 +46,40 @@ public class ProjectController {
   public ProjectController(ProjectService projectService) {
     this.projectService = projectService;
   }
-  /**
-   * This methods allows us to hit the endpoint needed to download a requested file from AWS S3
-   * bucket to present in our CodeBase Viewer
-   *
-   * @param keyname
-   * @return request file from AWS S3 bucket
-   */
   
-  @GetMapping(value = "/downloads/screenshots/{id}")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<byte[]> downloadSceenShots(@PathVariable String id)  {
-	  try {
-		  File file = projectService.codeBaseScreenShots(id);
-		  
-		  InputStream in =  new FileInputStream(file.getName());
-	        
-		    byte[] media = IOUtils.toByteArray(in);
-		  return ResponseEntity.ok()
-			        .contentType(contentType(file.getName()))
-			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + file.getName())
-			        .body(media);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-System.out.println("Returning null...");
-    return null;
-  }
-  
+/**
+ * This method provides and endpoint to fetch datamodels from S3 bucket
+ * @param id
+ * @return datamodel in a response entity 
+ */
   @GetMapping(value = "/downloads/datamodels/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
-	  try {
-		 
-		  File file = projectService.codeBaseDataModels(id);
-		  InputStream in =  new FileInputStream(file.getName());
-		  byte[] media = IOUtils.toByteArray(in);
+		 String name = "datamodel.txt";
+		  byte[] media = projectService.codeBaseDataModels(id);
+
 		  
 		  return ResponseEntity.ok()
-			        .contentType(contentType(file.getName()))
-			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + file.getName())
+			        .contentType(contentType(name))
+			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + name )
 			        .body(media);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-System.out.println("Returning null...");
-    return null;
   }
-  
+  /**
+   * This method provides and endpoint to fetch ziplinks from S3 bucket
+   * @param id
+   * @return ziplinks in a response entity
+   */
   @GetMapping(value = "/downloads/ziplinks/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id)  {
-	  try {
-		  this.downloadInputStream = projectService.codeBaseZipLinks(id);
+	 
+		  downloadInputStream = projectService.codeBaseZipLinks(id);
+		  
 		  return ResponseEntity.ok()
-			        .contentType(contentType(""))
+			        .contentType(contentType("Oct-stream"))
 			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
 			        .body(downloadInputStream.toByteArray());
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-System.out.println("Returning null...");
-    return null;
   }
-
-  
-  
 
   /**
    * Ensures the proper content type is returned
@@ -129,21 +97,27 @@ System.out.println("Returning null...");
         return MediaType.IMAGE_PNG;
       case "jpg":
         return MediaType.IMAGE_JPEG;
-      case "fd":
-    	  return MediaType.MULTIPART_FORM_DATA;
-      case "gif":
-    	  return MediaType.IMAGE_GIF;  
-      case "pdf":
-    	  return MediaType.APPLICATION_PDF;
-      case "all":
-    	  return MediaType.ALL;
-      case "ios":
-    	  return MediaType.APPLICATION_JSON;
       default:
         return MediaType.APPLICATION_OCTET_STREAM;
     }
   }
+  
+  /**
+   * This method returns all projects from the database
+   * 
+   * @return All projects
+   */
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public List<Project> getAllProject() {
+	  return projectService.findAllProjects();
+  }
 
+  /**
+   *This method takes finds a project by its id from the database 
+   * @param id
+   * @return a projects with given id 
+   */
   @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Project getProjectById(@PathVariable String id) {
@@ -269,7 +243,7 @@ System.out.println("Returning null...");
       case "userId":
         return projectService.findByUserId(Integer.valueOf(value));
       case "all":
-        return projectService.findAllProjects();
+          return projectService.findAllProjects();
       default:
         throw new BadRequestException("Invalid field param value specified!");
     }
