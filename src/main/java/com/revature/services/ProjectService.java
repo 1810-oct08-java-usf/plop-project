@@ -7,11 +7,27 @@ import com.revature.exceptions.ProjectNotFoundException;
 import com.revature.models.Project;
 import com.revature.models.ProjectDTO;
 import com.revature.repositories.ProjectRepository;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import javax.imageio.ImageIO;
+
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -30,6 +46,7 @@ public class ProjectService {
   private ProjectRepository projectRepo;
   private StorageService s3StorageServiceImpl;
   private FileService fileService;
+  private ByteArrayOutputStream downloadInputStream;
 
   @Autowired
   public ProjectService(
@@ -371,5 +388,200 @@ public class ProjectService {
         || project.getScreenShots() == null
         || project.getScreenShots().isEmpty()) return false;
     else return true;
+  }
+ // --------------------------------------------------------------------------------------------------------------
+  /**
+   * Download all screenshots for a single project and returns them in a byte[]. 
+   * 
+   * @param String Project Id
+   * @return Byte[] - Byte[] containing all screenshots bytes combined together
+   */
+  @Transactional
+  public Byte[] codeBaseScreenShots(String id) throws IOException, FileNotFoundException {
+    Project project = findById(id);
+    List<String> keys = project.getScreenShots();
+    List<String> keyNames = s3KeySplitting(keys);
+    List<Byte> bList = s3downloadScreenshots(keyNames);
+    return bList.toArray(new Byte[0]);
+  }
+
+ /**
+	 * This methods takes datamodels downloaded from the S3 bucket and put the in a single file 
+	 * @param id
+	 * @return name of file that data models are stored in
+	 * @throws IOException
+	 */
+	@Transactional
+	public byte[] codeBaseDataModels(String id){
+		Project project = findById(id);
+		File file = null;
+		List<String> keys = project.getDataModel();
+		List<String> keyNames = new ArrayList<>();
+		for (String key : keys) {
+			String array1[] = key.split("/");
+			String newKey = array1[2].toString();
+			keyNames.add(newKey);
+		}
+		try {
+		File newFile = new File("datamodels.txt");
+		if (newFile.createNewFile()) {
+			System.out.println("New file created in the root directory");
+		} else {
+			System.out.println("File already exist");
+		}
+		byte[] esc = { '\n', 'E', 'N', 'D', 'O', 'F', 'F', 'I', 'L', 'E' };
+		OutputStream outStream = null;
+		outStream = new FileOutputStream(newFile);
+		for (String key : keyNames) {
+			this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+			this.downloadInputStream.write(esc);
+			this.downloadInputStream.writeTo(outStream);
+			file = newFile;
+		}
+		outStream.close();
+		InputStream in =  new FileInputStream(file.getName());
+	    byte[] media = IOUtils.toByteArray(in);
+	    return media;
+		}catch(IOException ioe) {
+			ioe.getMessage();
+		}
+		return null;
+	}
+	/**
+	 * This methods takes ziplinks downloaded from S3 buck and put then as a stream of bytes
+	 * @param id
+	 * @return a stream of byes representing the ziplinks
+	 * @throws IOException
+	 */
+	@Transactional
+	public ByteArrayOutputStream codeBaseZipLinks(String id) {
+		Project project = findById(id);
+		List<String> keys = project.getZipLinks();
+		List<String> keyNames = new ArrayList<>();
+		for (String key : keys) {
+			String array1[] = key.split("/");
+			String newKey = array1[2].toString();
+			keyNames.add(newKey);
+		}
+		try {
+		OutputStream outStream = null;
+		outStream = new FileOutputStream(keyNames.toString());
+		for (String key : keyNames) {
+			this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+			this.downloadInputStream.writeTo(outStream);
+		}
+		outStream.close();
+		return downloadInputStream;
+		}catch(IOException ioe) {
+			ioe.getMessage();
+		}
+		return null;
+  }
+  
+  /**
+   * Zips passed in file[] into a single zipped folder
+   * 
+   * @param files
+   * @return Zipped Folder
+   * @throws IOException
+   */
+  @Transactional
+  public File zipFile(File[] files) throws IOException {
+
+    System.out.println("Entered the Zipping");
+    File zipper = new File("project-service/src/main/resources/tmp/compressed.zip");
+    zipper.getParentFile().mkdirs();
+    FileOutputStream fos = new FileOutputStream(zipper);
+    ZipOutputStream zipOut = new ZipOutputStream(fos);
+
+    for (File fileToZip : files) {
+      if(fileToZip == null || !fileToZip.exists())
+          {
+            System.out.println("File was not found or created");
+            continue;
+          }
+      System.out.println(fileToZip.getAbsolutePath());
+      FileInputStream fis = new FileInputStream(fileToZip);
+      ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+      zipOut.putNextEntry(zipEntry);
+      byte[] bytes = new byte[1024];
+      int length = fis.read(bytes);
+
+      while (length >= 0) {
+        zipOut.write(bytes, 0, length);
+      }
+      fis.close();
+    }
+    zipOut.close();
+    fos.close();
+    return zipper;
+  }
+
+  /**
+   * Converting png Image from a ByteArray
+   * @param fileBStream
+   * @param filename
+   * @return BufferedImage - Returns BufferedImage of png to be used. If no image was created or file does not exist, returns null
+   */
+  public File convertImageFromByteArray(
+      ByteArrayOutputStream fileBStream, File file) {
+      try {
+      byte[] data = fileBStream.toByteArray();
+      ByteArrayInputStream bis = new ByteArrayInputStream(data);
+      BufferedImage bImage2 = ImageIO.read(bis);
+      ImageIO.write(bImage2, "png", file);
+      System.out.println("image created: "+ file.getName());
+      return file;
+    } catch (IOException e) {
+      System.out.println("Converting Image failed");
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  
+  /**
+   * Downloads screenshots from a s3 bucket using the StorageService. All screenshots downloaded should be a png file
+   * so that we can not worry about compression.
+   * @param keyNames
+   * @return List<Byte> - list of all bytes of the screenshots together in sequential order.
+   * @throws IOException
+   */
+  private List<Byte> s3downloadScreenshots(List<String> keyNames) throws IOException {
+    List<Byte> bList = new ArrayList<>();
+    FileInputStream fis = null;
+    for (String key : keyNames) {
+      this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+      File file = new File("project-service/src/main/resources/tmp/"+key);
+      file.getParentFile().mkdirs();
+      file.createNewFile();
+      fis = new FileInputStream(convertImageFromByteArray(this.downloadInputStream, file));
+      byte[] bArr = IOUtils.toByteArray(fis);
+      List<Byte> byteList = Arrays.asList(ArrayUtils.toObject(bArr));
+      bList.addAll(byteList); 
+    }
+    if(fis != null)
+      fis.close();
+    return bList;
+  }
+
+  /**
+   * Screenshots urls are parsed to get their filename(keys) split from the url.
+   * 
+   * @param _screenshotUrls
+   * @return List<String> - file names of all screenshots
+   */
+  private List<String> s3KeySplitting(List<String> _screenshotUrls) {
+    List<String> _screenshotNames = new ArrayList<>();
+    System.out.println("The keys before loop is: " + _screenshotUrls);
+    for (String key : _screenshotUrls) {
+      System.out.println("The key before split is: " + key);
+      String[] keySplit = key.split("/");
+      String newKey = keySplit[(keySplit.length - 1)];
+      System.out.println("The key after split is: " + newKey);
+      _screenshotNames.add(newKey);
+    }
+    System.out.println("The keys after loop is: " + _screenshotNames);
+    return _screenshotNames;
   }
 }
