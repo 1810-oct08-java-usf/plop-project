@@ -829,20 +829,4 @@ public class ProjectServiceTestSuite {
               classUnderTest.createProjectFromDTO(mockProjectDTO);
             });
   }
-
-  @Ignore("In middle of writing, code freeze. Might be pushed off to next Sprint")
-  @Test
-  public void T_codeBaseScreenShots_Valid() throws IOException {
-    listZipLink = new ArrayList<>();
-    listZipLink.add("test/dummyString");
-    when(testRepo.findById("1")).thenReturn(Optional.of(dummyProject));
-    when(dummyProject.getScreenShots()).thenReturn(listZipLink);
-    assertTrue(classUnderTest.codeBaseScreenShots("1") instanceof Byte[]);
-  }
-
-  @Ignore("In middle of writing, code freeze. Might be pushed off to next Sprint")
-  @Theory
-  public void T_codeBaseScreenShots_InvalidId(@FromDataPoints("string cases") String id) {
-
-  }
 }
