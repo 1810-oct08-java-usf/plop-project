@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -404,76 +405,79 @@ public class ProjectService {
     return bList.toArray(new Byte[0]);
   }
 
-  // --------------------------------------------------------------------------------------------------------------
-  @Transactional
-  public ByteArrayOutputStream codeBaseDataModels(String id) throws IOException {
-    Project project = findById(id);
-
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    ZipOutputStream zos = new ZipOutputStream(baos);
-
-    List<String> keys = project.getDataModel();
-    List<String> keyNames = new ArrayList<>();
-    System.out.println("The test key before loop is: " + keys);
-
-    for (String key : keys) {
-      String array1[] = key.split("/");
-      String newKey = array1[2].toString();
-      System.out.println("The test key after split is: " + newKey);
-      keyNames.add(newKey);
-      System.out.println("The testkey inside loop is: " + keyNames);
-    }
-    System.out.println("The tes key after loop is: " + keyNames);
-
-    File zipFile = new File("screenshot.txt");
-    if (zipFile.createNewFile()) {
-      System.out.println("New file created in the root directory");
-    } else {
-      System.out.println("File already exist");
-    }
-    byte[] esc = {'\n'};
-    OutputStream outStream = null;
-    outStream = new FileOutputStream(zipFile);
-    for (String key : keyNames) {
-      this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
-      System.out.println(key);
-
-      this.downloadInputStream.write(esc);
-      this.downloadInputStream.writeTo(outStream);
-    }
-
-    //	outStream.close();
-    //	boas.close();
-
-    // zos.putNextEntry(new ZipEntry(zipFile(zipFile).toString()));
-    baos.writeTo(zos);
-    System.out.println("boas is: " + baos);
-    return this.downloadInputStream;
+ /**
+	 * This methods takes datamodels downloaded from the S3 bucket and put the in a single file 
+	 * @param id
+	 * @return name of file that data models are stored in
+	 * @throws IOException
+	 */
+	@Transactional
+	public byte[] codeBaseDataModels(String id){
+		Project project = findById(id);
+		File file = null;
+		List<String> keys = project.getDataModel();
+		List<String> keyNames = new ArrayList<>();
+		for (String key : keys) {
+			String array1[] = key.split("/");
+			String newKey = array1[2].toString();
+			keyNames.add(newKey);
+		}
+		try {
+		File newFile = new File("datamodels.txt");
+		if (newFile.createNewFile()) {
+			System.out.println("New file created in the root directory");
+		} else {
+			System.out.println("File already exist");
+		}
+		byte[] esc = { '\n', 'E', 'N', 'D', 'O', 'F', 'F', 'I', 'L', 'E' };
+		OutputStream outStream = null;
+		outStream = new FileOutputStream(newFile);
+		for (String key : keyNames) {
+			this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+			this.downloadInputStream.write(esc);
+			this.downloadInputStream.writeTo(outStream);
+			file = newFile;
+		}
+		outStream.close();
+		InputStream in =  new FileInputStream(file.getName());
+	    byte[] media = IOUtils.toByteArray(in);
+	    return media;
+		}catch(IOException ioe) {
+			ioe.getMessage();
+		}
+		return null;
+	}
+	/**
+	 * This methods takes ziplinks downloaded from S3 buck and put then as a stream of bytes
+	 * @param id
+	 * @return a stream of byes representing the ziplinks
+	 * @throws IOException
+	 */
+	@Transactional
+	public ByteArrayOutputStream codeBaseZipLinks(String id) {
+		Project project = findById(id);
+		List<String> keys = project.getZipLinks();
+		List<String> keyNames = new ArrayList<>();
+		for (String key : keys) {
+			String array1[] = key.split("/");
+			String newKey = array1[2].toString();
+			keyNames.add(newKey);
+		}
+		try {
+		OutputStream outStream = null;
+		outStream = new FileOutputStream(keyNames.toString());
+		for (String key : keyNames) {
+			this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
+			this.downloadInputStream.writeTo(outStream);
+		}
+		outStream.close();
+		return downloadInputStream;
+		}catch(IOException ioe) {
+			ioe.getMessage();
+		}
+		return null;
   }
-  // --------------------------------------------------------------------------------------------------------------
-  @Transactional
-  public ByteArrayOutputStream codeBaseZipLinks(String id) throws IOException {
-    Project project = findById(id);
-
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    ZipOutputStream zos = new ZipOutputStream(baos);
-
-    List<String> keys = project.getZipLinks();
-    List<String> keyNames = new ArrayList<>();
-    System.out.println("The test key before loop is: " + keys);
-
-    for (String key : keys) {
-      String array1[] = key.split("/");
-      String newKey = array1[2].toString();
-      System.out.println("The test key after split is: " + newKey);
-      keyNames.add(newKey);
-      System.out.println("The testkey inside loop is: " + keyNames);
-    }
-    System.out.println("The tes key after loop is: " + keyNames);
-
-    return this.downloadInputStream;
-  }
-
+  
   /**
    * Zips passed in file[] into a single zipped folder
    * 
