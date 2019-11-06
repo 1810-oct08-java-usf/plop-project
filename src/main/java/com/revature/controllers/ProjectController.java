@@ -59,67 +59,55 @@ public class ProjectController {
   }
 
   /**
-   * This methods allows us to hit the endpoint needed to download a requested
-   * file from AWS S3 bucket to present in our CodeBase Viewer
+   * This methods allows us to hit the endpoint needed to download a project's screenshots. 
    *
-   * @param keyname
-   * @return request file from AWS S3 bucket
+   * @param String Project Id
+   * @return Screenshots - JSON object with a decimal ASCII representation of all screenshots for the project.
    */
   @GetMapping(value = "/downloads/screenshots/{id}")
   @ResponseStatus(HttpStatus.OK)
   public Byte[] downloadSceenShots(@PathVariable String id) {
-  //   try(FileInputStream out = new FileInputStream(projectService.codeBaseScreenShots(id))) {
-  //     if(out != null)
-  //   {
-  //     //System.out.println("out is: " + out);
-  //     return IOUtils.toByteArray(out);
-  //   }
+    try {
+      return projectService.codeBaseScreenShots(id);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  // @GetMapping(value = "/downloads/datamodels/{id}")
+  // @ResponseStatus(HttpStatus.OK)
+  // public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id) {
+  //   try {
+  //     this.downloadInputStream = projectService.codeBaseDataModels(id);
+  //     String test = "test.txt";
+  //     return ResponseEntity.ok()
+  //         .contentType(contentType(test))
+  //         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "\"")
+  //         .body(downloadInputStream.toByteArray());
   //   } catch (IOException e) {
   //     e.printStackTrace();
   //   }
   //   System.out.println("Returning null...");
-    try {
-      return projectService.codeBaseScreenShots(id);
-    } catch (Exception e) {
-      //TODO: handle exception
-      e.printStackTrace();
-    }
-    return null;
-  }
+  //   return null;
+  // }
 
-  @GetMapping(value = "/downloads/datamodels/{id}")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id) {
-    try {
-      this.downloadInputStream = projectService.codeBaseDataModels(id);
-      String test = "test.txt";
-      return ResponseEntity.ok()
-          .contentType(contentType(test))
-          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "\"")
-          .body(downloadInputStream.toByteArray());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    System.out.println("Returning null...");
-    return null;
-  }
-
-  @GetMapping(value = "/downloads/ziplinks/{id}")
-  @ResponseStatus(HttpStatus.OK)
-  public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id) {
-    try {
-      this.downloadInputStream = projectService.codeBaseZipLinks(id);
-      String test = "test.png";
-      return ResponseEntity.ok()
-          .contentType(contentType(""))
-          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "\"")
-          .body(downloadInputStream.toByteArray());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    System.out.println("Returning null...");
-    return null;
-  }
+  // @GetMapping(value = "/downloads/ziplinks/{id}")
+  // @ResponseStatus(HttpStatus.OK)
+  // public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id) {
+  //   try {
+  //     this.downloadInputStream = projectService.codeBaseZipLinks(id);
+  //     String test = "test.png";
+  //     return ResponseEntity.ok()
+  //         .contentType(contentType(""))
+  //         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "\"")
+  //         .body(downloadInputStream.toByteArray());
+  //   } catch (IOException e) {
+  //     e.printStackTrace();
+  //   }
+  //   System.out.println("Returning null...");
+  //   return null;
+  // }
 
   @RequestMapping(value = "/image-resource", method = RequestMethod.GET)
   @ResponseBody
@@ -323,12 +311,5 @@ public class ProjectController {
     error.setMessage(br.getMessage());
     error.setTimeStamp(System.currentTimeMillis());
     return error;
-  }
-
-  @ExceptionHandler
-  @ResponseStatus(HttpStatus.GATEWAY_TIMEOUT)
-  public ProjectErrorResponse handleException(Exception e) {
-    e.printStackTrace();
-    return null;
   }
 }
