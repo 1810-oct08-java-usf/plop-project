@@ -8,54 +8,60 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * This is a tentative outline for future batches to use to help log what is happening across
- * methods. Uses Spring AOP to log the inputs and outputs of ALL methods in ALL packages. This class
- * is mirrored in the project-service and should be updated similarly to this one.
+ * Manages the logging aspect of this microservice. Currently set up to log method invocations,
+ * successful completion of methods, and the throwing of exceptions during method execution.
  */
 @Aspect
 @Component
 public class ProjectAspects {
 
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
   /**
-   * This AOP annotation is used to parameterize pointcut expressions. Currently, this pointcut
-   * joins to ALL methods in ALL packages. This can be too much information and should be edited as
-   * needed.
+   * This AOP annotation is used to parameterize pointcut expressions. This pointcut joins to all
+   * joinpoints in the com.revature package and all of its subpackages.
    */
-  @Pointcut("execution(* com.revature..*(..))")
+  @Pointcut("within(com.revature..*)")
   public void logAll() {}
 
   /**
-   * beforeExec() logs basic information before a function is even executed. This includes the local
-   * time the method was called, the name of the method, and the input arguments.
+   * Logs basic information when a method is invoked, before its execution is allowed. Information
+   * logged includes the qualified name of the method invoked and the local time of its invocation.
+   * The values of the input arguments are present as well for debugging purposes.
    */
   @Before("logAll()")
-  public void beforeExec(JoinPoint jp) {
-    System.out.println("[LOG] - [project-service]");
-    System.out.println("	Timestamp: " + LocalTime.now());
-    System.out.println("	Before method: " + jp.getSignature().getName());
-    System.out.println("	Input arguments: " + Arrays.toString(jp.getArgs()));
+  public void logMethodStart(JoinPoint jp) {
+    String methodSig = jp.getTarget().getClass().toString() + "." + jp.getSignature().getName();
+    String argStr = Arrays.toString(jp.getArgs());
+    logger.info("{} invoked at {}", methodSig, LocalTime.now());
+    logger.info("Input arguments: {}", argStr);
   }
 
   /**
-   * afterReturn() logs basic information after a function returns successfully. This includes the
-   * local time the method was finished, the name of the method, and the returned outputs.
+   * Logs basic information when a method successfully returns after. Information logged includes
+   * the qualified name of the method invoked and the local time of its successful completion. The
+   * value of the returned object is present as well for debugging purposes.
    */
-  @AfterReturning(pointcut = "logAll()", returning = "result")
-  public void afterReturn(JoinPoint jp, Object result) {
-    System.out.println("[LOG] - [project-service]");
-    System.out.println("	Timestamp: " + LocalTime.now());
-    System.out.println("	After method: " + jp.getSignature().getName());
-    System.out.println("	Returned values: " + result + "\n");
+  @AfterReturning(pointcut = "logAll()", returning = "rtrn")
+  public void logMethodReturn(JoinPoint jp, Object rtrn) {
+    String methodSig = jp.getTarget().getClass().toString() + "." + jp.getSignature().getName();
+    logger.info("{} successfully returned at {}", methodSig, LocalTime.now());
+    logger.info("Object returned: {}", rtrn);
   }
 
-  /** errorOccurance() is built on legacy code and logs when and where an error is caught. */
-  @AfterThrowing(pointcut = "logAll()", throwing = "ex")
-  public void errorOccurance(JoinPoint jp, Exception ex) {
-    System.out.println("[ERROR] - [project-service]");
-    System.out.println("	Errored method: " + jp.getSignature().getName());
-    System.out.println("	Error caught: " + ex.getMessage());
+  /**
+   * Logs basic information when a method throws any exception during its execution. Information
+   * logged includes the qualified name of the method invoked and the local time when the exception
+   * was thrown.
+   */
+  @AfterThrowing(pointcut = "logAll()", throwing = "e")
+  public void errorOccurrence(JoinPoint jp, Exception e) {
+    String methodSig = jp.getTarget().getClass().toString() + "." + jp.getSignature().getName();
+    logger.info("{} thrown in method: {}", e.getMessage(), methodSig);
   }
 }
