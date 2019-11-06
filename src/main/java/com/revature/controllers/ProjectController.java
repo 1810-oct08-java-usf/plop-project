@@ -8,14 +8,9 @@ import com.revature.models.ProjectDTO;
 import com.revature.models.ProjectErrorResponse;
 import com.revature.services.ProjectService;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletContext;
-import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -75,39 +70,36 @@ public class ProjectController {
     return null;
   }
 
-  // @GetMapping(value = "/downloads/datamodels/{id}")
-  // @ResponseStatus(HttpStatus.OK)
-  // public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id) {
-  //   try {
-  //     this.downloadInputStream = projectService.codeBaseDataModels(id);
-  //     String test = "test.txt";
-  //     return ResponseEntity.ok()
-  //         .contentType(contentType(test))
-  //         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "\"")
-  //         .body(downloadInputStream.toByteArray());
-  //   } catch (IOException e) {
-  //     e.printStackTrace();
-  //   }
-  //   System.out.println("Returning null...");
-  //   return null;
-  // }
+/**
+ * This method provides and endpoint to fetch datamodels from S3 bucket
+ * @param id
+ * @return datamodel in a response entity 
+ */
+@GetMapping(value = "/downloads/datamodels/{id}")
+@ResponseStatus(HttpStatus.OK)
+public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
+   String name = "datamodel.txt";
+    byte[] media = projectService.codeBaseDataModels(id);
+    return ResponseEntity.ok()
+            .contentType(contentType(name))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + name )
+            .body(media);
+}
 
-  // @GetMapping(value = "/downloads/ziplinks/{id}")
-  // @ResponseStatus(HttpStatus.OK)
-  // public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id) {
-  //   try {
-  //     this.downloadInputStream = projectService.codeBaseZipLinks(id);
-  //     String test = "test.png";
-  //     return ResponseEntity.ok()
-  //         .contentType(contentType(""))
-  //         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "\"")
-  //         .body(downloadInputStream.toByteArray());
-  //   } catch (IOException e) {
-  //     e.printStackTrace();
-  //   }
-  //   System.out.println("Returning null...");
-  //   return null;
-  // }
+/**
+   * This method provides and endpoint to fetch ziplinks from S3 bucket
+   * @param id
+   * @return ziplinks in a response entity
+   */
+  @GetMapping(value = "/downloads/ziplinks/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id)  {
+		  downloadInputStream = projectService.codeBaseZipLinks(id);
+		  return ResponseEntity.ok()
+			        .contentType(contentType("Oct-stream"))
+			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""  + "\"")
+			        .body(downloadInputStream.toByteArray());
+  }
 
   @RequestMapping(value = "/image-resource", method = RequestMethod.GET)
   @ResponseBody
