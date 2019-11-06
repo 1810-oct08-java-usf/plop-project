@@ -445,7 +445,7 @@ public class ProjectService {
     //	outStream.close();
     //	boas.close();
 
-    zos.putNextEntry(new ZipEntry(zipFile(zipFile).toString()));
+    // zos.putNextEntry(new ZipEntry(zipFile(zipFile).toString()));
     baos.writeTo(zos);
     System.out.println("boas is: " + baos);
     return this.downloadInputStream;
