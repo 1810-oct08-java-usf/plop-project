@@ -399,14 +399,17 @@ public class ProjectService {
   @Transactional
   public Byte[] codeBaseScreenShots(String id) throws IOException, FileNotFoundException {
     Project project = findById(id);
-    List<String> keys = project.getScreenShots();
-    List<String> keyNames = s3KeySplitting(keys);
+    List<String> keyNames = s3KeySplitting(project.getScreenShots());
     List<Byte> bList = s3downloadScreenshots(keyNames);
     return bList.toArray(new Byte[0]);
   }
 
- /**
-	 * This methods takes datamodels downloaded from the S3 bucket and put the in a single file 
+  /**
+	 * This methods takes project id as a param to fetch the correct project datamodels
+	 * and then download these files from the S3 bucket and put the in a
+	 * single file and then return them as a stream of bytes
+	 * <br>
+	 * 
 	 * @param id
 	 * @return name of file that data models are stored in
 	 * @throws IOException
@@ -414,18 +417,12 @@ public class ProjectService {
 	@Transactional
 	public byte[] codeBaseDataModels(String id){
 		Project project = findById(id);
-		File file = null;
-		List<String> keys = project.getDataModel();
-		List<String> keyNames = new ArrayList<>();
-		for (String key : keys) {
-			String array1[] = key.split("/");
-			String newKey = array1[2].toString();
-			keyNames.add(newKey);
-		}
+		List<String> keyNames = s3KeySplitting(project.getDataModel());
+		
 		try {
-		File newFile = new File("datamodels.txt");
+		File newFile = new File("project-service/src/main/resources/tmp/datamodels.txt");
 		if (newFile.createNewFile()) {
-			System.out.println("New file created in the root directory");
+			System.out.println("New file created in the resource directory");
 		} else {
 			System.out.println("File already exist");
 		}
@@ -436,10 +433,9 @@ public class ProjectService {
 			this.downloadInputStream = s3StorageServiceImpl.downloadFile(key);
 			this.downloadInputStream.write(esc);
 			this.downloadInputStream.writeTo(outStream);
-			file = newFile;
 		}
 		outStream.close();
-		InputStream in =  new FileInputStream(file.getName());
+		InputStream in =  new FileInputStream(newFile.getName());
 	    byte[] media = IOUtils.toByteArray(in);
 	    return media;
 		}catch(IOException ioe) {
@@ -447,8 +443,12 @@ public class ProjectService {
 		}
 		return null;
 	}
+	
 	/**
-	 * This methods takes ziplinks downloaded from S3 buck and put then as a stream of bytes
+	 * This methods takes project id as a param to fetch the correct project ziplinks 
+	 * and then download these files from the S3 bucket and return them as a stream of bytes
+	 * <br>
+	 * 
 	 * @param id
 	 * @return a stream of byes representing the ziplinks
 	 * @throws IOException
@@ -456,13 +456,8 @@ public class ProjectService {
 	@Transactional
 	public ByteArrayOutputStream codeBaseZipLinks(String id) {
 		Project project = findById(id);
-		List<String> keys = project.getZipLinks();
-		List<String> keyNames = new ArrayList<>();
-		for (String key : keys) {
-			String array1[] = key.split("/");
-			String newKey = array1[2].toString();
-			keyNames.add(newKey);
-		}
+		List<String> keyNames = s3KeySplitting(project.getZipLinks());
+		
 		try {
 		OutputStream outStream = null;
 		outStream = new FileOutputStream(keyNames.toString());
@@ -572,16 +567,16 @@ public class ProjectService {
    * @return List<String> - file names of all screenshots
    */
   private List<String> s3KeySplitting(List<String> _screenshotUrls) {
-    List<String> _screenshotNames = new ArrayList<>();
+    List<String> fileNames = new ArrayList<>();
     System.out.println("The keys before loop is: " + _screenshotUrls);
     for (String key : _screenshotUrls) {
       System.out.println("The key before split is: " + key);
       String[] keySplit = key.split("/");
       String newKey = keySplit[(keySplit.length - 1)];
       System.out.println("The key after split is: " + newKey);
-      _screenshotNames.add(newKey);
+      fileNames.add(newKey);
     }
-    System.out.println("The keys after loop is: " + _screenshotNames);
-    return _screenshotNames;
+    System.out.println("The keys after loop is: " + fileNames);
+    return fileNames;
   }
 }
