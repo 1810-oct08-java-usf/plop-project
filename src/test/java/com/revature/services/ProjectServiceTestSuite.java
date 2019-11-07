@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -104,8 +107,8 @@ public class ProjectServiceTestSuite {
    */
   @Rule public ExpectedException exceptionRule = ExpectedException.none();
 
-  ArrayList<MultipartFile> listMultipartFile = new ArrayList<MultipartFile>();
-  ArrayList<String> listZipLink = new ArrayList<String>();
+  ArrayList<MultipartFile> listMultipartFile;
+  ArrayList<String> listZipLink;
 
   @Before
   public void preTestInit() {
@@ -113,9 +116,21 @@ public class ProjectServiceTestSuite {
     dummyList = new ArrayList<>();
     dummyListEmpty = new ArrayList<>();
     dummyList.add(dummyProject);
+    listZipLink = new ArrayList<String>();
     listZipLink.add("link");
+    listMultipartFile = new ArrayList<MultipartFile>();
     listMultipartFile.add(mockMultipartFile);
+    mockListString = new ArrayList<String>();
     mockListString.add("elemtem");
+  }
+
+  @After
+  public void postTestCleanUp() {
+    dummyList = null;
+    dummyListEmpty = null;
+    listZipLink = null;
+    listMultipartFile = null;
+    mockListString = null;
   }
 
   /**
