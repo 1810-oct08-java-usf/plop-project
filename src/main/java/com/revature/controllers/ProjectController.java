@@ -10,9 +10,7 @@ import com.revature.services.ProjectService;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,13 +23,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -44,9 +38,6 @@ public class ProjectController {
 
   private ProjectService projectService;
   private ByteArrayOutputStream downloadInputStream;
-
-  @Autowired
-  private ServletContext servletContext;
 
   @Autowired
   public ProjectController(ProjectService projectService) {
@@ -70,11 +61,14 @@ public class ProjectController {
     return null;
   }
 
-/**
- * This method provides and endpoint to fetch datamodels from S3 bucket
- * @param id
- * @return datamodel in a response entity 
- */
+  /**
+  * This method provides and endpoint to fetch datamodels from S3 bucket
+  * as a text file
+  * <br>
+  * 
+  * @param id
+  * @return datamodel in a response entity 
+  */
 @GetMapping(value = "/downloads/datamodels/{id}")
 @ResponseStatus(HttpStatus.OK)
 public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
@@ -87,10 +81,13 @@ public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
 }
 
 /**
-   * This method provides and endpoint to fetch ziplinks from S3 bucket
-   * @param id
-   * @return ziplinks in a response entity
-   */
+ * This method provides and endpoint to fetch ziplinks from S3 bucket
+ * as a stream of byte
+ * <br>
+ * 
+ * @param id
+ * @return ziplinks in a response entity
+ */
   @GetMapping(value = "/downloads/ziplinks/{id}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<byte[]> downloadZipLinks(@PathVariable String id)  {
@@ -101,17 +98,10 @@ public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
 			        .body(downloadInputStream.toByteArray());
   }
 
-  @RequestMapping(value = "/image-resource", method = RequestMethod.GET)
-  @ResponseBody
-  public ResponseEntity<Resource> getImageAsResource() {
-    final HttpHeaders headers = new HttpHeaders();
-    Resource resource =
-        new ServletContextResource(servletContext, "/src/main/resources/screenshot.txt");
-    return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-  }
-
   /**
-   * Ensures the proper content type is returned
+   * Ensures the proper content type is returned for conversion
+   *to the proper file type
+   *<br> 
    *
    * @param keyname
    * @return content type of the key we are looking for
@@ -130,7 +120,26 @@ public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
         return MediaType.APPLICATION_OCTET_STREAM;
     }
   }
+  
+  /**
+   * This method returns all projects from the database
+   * <br>
+   * 
+   * @return All projects
+   */
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public List<Project> getAllProject() {
+	  return projectService.findAllProjects();
+  }
 
+  /**
+   *This method takes finds a project by its id from the database 
+   *<br>
+   *
+   * @param id
+   * @return a projects with given id 
+   */
   @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Project getProjectById(@PathVariable String id) {
@@ -229,6 +238,15 @@ public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
     return projectService.evaluateProject(project);
   }
 
+  /**
+   * This method takes in a query param and returns the proper get method based on the field and
+   * <br>
+   * value provided
+   *
+   * @param field
+   * @param value
+   * @return - proper get method
+   */
   @GetMapping(value = "/q", produces = "application/json")
   @ResponseStatus(HttpStatus.OK)
   public List<Project> getProjectFieldValue(
@@ -305,3 +323,5 @@ public ResponseEntity<byte[]> downloadDataModels(@PathVariable String id)  {
     return error;
   }
 }
+
+
