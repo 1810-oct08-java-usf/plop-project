@@ -38,7 +38,7 @@ public class CustomAuthenticationFilterTestSuite {
    * to stub validate header to return true when our valid response is passed to it.
    */
   @Test
-  public void testDoFilterActuatorTrue() {
+  public void T_doFilter_Valid() {
 
     // Getting past the first if statement.
     when(mockHttpServletRequest.getRequestURI()).thenReturn("/project/actuator");
@@ -60,7 +60,7 @@ public class CustomAuthenticationFilterTestSuite {
 
   /** This is if the actuator is false, on doFilter */
   @Test
-  public void testDoFilterActuatorFalse() {
+  public void T_doFilter_InvalidActuator() {
 
     // Getting past the first if statement.
     when(mockHttpServletRequest.getRequestURI()).thenReturn("/somethingElse");
@@ -82,7 +82,7 @@ public class CustomAuthenticationFilterTestSuite {
   }
   /** Testing for invalid credentials */
   @Test
-  public void testDoFilterInvalidHeader() {
+  public void T_doFilter_InvalidHeader() {
     when(mockHttpServletRequest.getRequestURI()).thenReturn("/somethingElse");
     try {
       testClass.doFilter(mockHttpServletRequest, mockHttpServletResponse, mockFilterChain);
