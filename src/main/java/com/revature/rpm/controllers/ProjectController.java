@@ -9,9 +9,7 @@ import com.revature.rpm.exceptions.ProjectNotFoundException;
 import com.revature.rpm.services.ProjectService;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,13 +22,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.multipart.MultipartFile;
 
 /** The ProjectController maps service endpoints for essential CRUD operations on Projects */
@@ -41,8 +35,6 @@ public class ProjectController {
   private ProjectService projectService;
   private ByteArrayOutputStream downloadInputStream;
 
-  @Autowired private ServletContext servletContext;
-
   @Autowired
   public ProjectController(ProjectService projectService) {
     this.projectService = projectService;
@@ -51,9 +43,8 @@ public class ProjectController {
   /**
    * This methods allows us to hit the endpoint needed to download a project's screenshots.
    *
-   * @param String Project Id
-   * @return Screenshots - JSON object with a decimal ASCII representation of all screenshots for
-   *     the project.
+   * @param id - An ID used to uniquely identify a project.
+   * @return JSON object with a decimal ASCII representation of all screenshots for the project.
    */
   @GetMapping(value = "/downloads/screenshots/{id}")
   @ResponseStatus(HttpStatus.OK)
@@ -69,8 +60,8 @@ public class ProjectController {
   /**
    * This method provides and endpoint to fetch datamodels from S3 bucket
    *
-   * @param id
-   * @return datamodel in a response entity
+   * @param id - An ID used to uniquely identify a project.
+   * @return data model in a response entity
    */
   @GetMapping(value = "/downloads/datamodels/{id}")
   @ResponseStatus(HttpStatus.OK)
@@ -86,8 +77,8 @@ public class ProjectController {
   /**
    * This method provides and endpoint to fetch ziplinks from S3 bucket
    *
-   * @param id
-   * @return ziplinks in a response entity
+   * @param id - An ID used to uniquely identify a project.
+   * @return ziplinks in a response entity.
    */
   @GetMapping(value = "/downloads/ziplinks/{id}")
   @ResponseStatus(HttpStatus.OK)
@@ -99,36 +90,10 @@ public class ProjectController {
         .body(downloadInputStream.toByteArray());
   }
 
-  @RequestMapping(value = "/image-resource", method = RequestMethod.GET)
-  @ResponseBody
-  public ResponseEntity<Resource> getImageAsResource() {
-    final HttpHeaders headers = new HttpHeaders();
-    Resource resource =
-        new ServletContextResource(servletContext, "/src/main/resources/screenshot.txt");
-    return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-  }
-
   /**
-   * Ensures the proper content type is returned
-   *
-   * @param keyname
-   * @return content type of the key we are looking for
+   * @param id - An ID used to uniquely identify a project.
+   * @return the updated project.
    */
-  private MediaType contentType(String keyname) {
-    String[] arr = keyname.split("\\.");
-    String type = arr[arr.length - 1];
-    switch (type) {
-      case "txt":
-        return MediaType.TEXT_PLAIN;
-      case "png":
-        return MediaType.IMAGE_PNG;
-      case "jpg":
-        return MediaType.IMAGE_JPEG;
-      default:
-        return MediaType.APPLICATION_OCTET_STREAM;
-    }
-  }
-
   @GetMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public Project getProjectById(@PathVariable String id) {
@@ -137,25 +102,52 @@ public class ProjectController {
   }
 
   /**
+   * @param field - A project property to target.
+   * @param value - A project property's value that will be used to locate a project.
+   * @return Project(s) that match the field and value.
+   */
+  @GetMapping(value = "/q", produces = "application/json")
+  @ResponseStatus(HttpStatus.OK)
+  public List<Project> getProjectFieldValue(
+      @RequestParam("field") String field, @RequestParam("value") String value) {
+
+    switch (field) {
+      case "status":
+        return projectService.findByStatus(value);
+      case "name":
+        return projectService.findByName(value);
+      case "trainer":
+        return projectService.findByTrainer(value);
+      case "techStack":
+        return projectService.findByTechStack(value);
+      case "batch":
+        return projectService.findByBatch(value);
+      case "userId":
+        return projectService.findByUserId(Integer.valueOf(value));
+      case "all":
+        return projectService.findAllProjects();
+      default:
+        throw new BadRequestException("Invalid field param value specified!");
+    }
+  }
+
+  /**
    * This method accepts each field of a ProjectDTO object in the form of multipart form data. A
    * ProjectDTO object is created from the fields and sent to the service layer to be converted to a
-   * Project object and saved. <br>
-   * <br>
-   * Added Spring Security annotations to prevent unauthorized users from accessing database
+   * Project object and saved,
    *
-   * @param name the name field of the form data
-   * @param batch the batch field of the form data
-   * @param trainer the trainer field of the form data
-   * @param groupMembers the groupMembers field of the form data
-   * @param screenShots the screenShots field of the form data
-   * @param zipLinks the zipLinks field of the form data
-   * @param description the description field of the form data
-   * @param techStack the techStack field of the form data
-   * @param status the status field of the form data
-   * @return project: The Project object derived from ProjectDTO in the service layer.
+   * @param name - The name field of the form data
+   * @param batch - The batch field of the form data
+   * @param trainer - The trainer field of the form data
+   * @param groupMembers - The groupMembers field of the form data
+   * @param screenShots - The screenShots field of the form data
+   * @param zipLinks - The zipLinks field of the form data
+   * @param description - The description field of the form data
+   * @param techStack - The techStack field of the form data
+   * @param status - The status field of the form data
+   * @return A project object created from ProjectDTO in the service layer.
    */
   @PostMapping(
-      value = "/",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
@@ -192,30 +184,10 @@ public class ProjectController {
   }
 
   /**
-   * This method is used to delete an entry into the embedded MongoDB based on the ID <br>
-   * <br>
-   * Uses HTTP method DELETE and only retrieves JSON data <br>
-   * <br>
-   * Added Spring Security annotations to prevent unauthorized users from accessing database
+   * This method is used to update an entry into the embedded MongoDB based on the ID via an HTTP
+   * PUT request.
    *
-   * @param id: String that serves as the id for the project
-   */
-  @DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseStatus(HttpStatus.OK)
-  public Boolean deleteById(@PathVariable String id) {
-
-    return projectService.deleteById(id);
-  }
-
-  /**
-   * This method is used to update an entry into the embedded MongoDB based on the ID <br>
-   * <br>
-   * Added Spring Security annotations to prevent unauthorized users from accessing database <br>
-   * <br>
-   * Uses HTTP method PUT. Retrieves and produces JSON data
-   *
-   * @param project: Requests that the user enters a project
-   * @param id: String that serves as the id for the project
+   * @param project - A project with valid properties.
    */
   @PutMapping(
       produces = MediaType.APPLICATION_JSON_VALUE,
@@ -227,40 +199,48 @@ public class ProjectController {
     return projectService.evaluateProject(project);
   }
 
-  @GetMapping(value = "/q", produces = "application/json")
+  /**
+   * This method is used to delete an entry into the embedded MongoDB based on the ID.
+   *
+   * @param id - An ID used to uniquely identify a project.
+   * @return a boolean that signifies whether or not the delete was successful.
+   */
+  @DeleteMapping(value = "/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
-  public List<Project> getProjectFieldValue(
-      @RequestParam("field") String field, @RequestParam("value") String value) {
+  public Boolean deleteById(@PathVariable String id) {
 
-    switch (field) {
-      case "status":
-        return projectService.findByStatus(value);
-      case "name":
-        return projectService.findByName(value);
-      case "trainer":
-        return projectService.findByTrainer(value);
-      case "techStack":
-        return projectService.findByTechStack(value);
-      case "batch":
-        return projectService.findByBatch(value);
-      case "userId":
-        return projectService.findByUserId(Integer.valueOf(value));
-      case "all":
-        return projectService.findAllProjects();
+    return projectService.deleteById(id);
+  }
+
+  /**
+   * Ensures the proper content type is returned
+   *
+   * @param keyname - An AWS key/object.
+   * @return content type of the key.
+   */
+  private MediaType contentType(String keyname) {
+    String[] arr = keyname.split("\\.");
+    String type = arr[arr.length - 1];
+    switch (type) {
+      case "txt":
+        return MediaType.TEXT_PLAIN;
+      case "png":
+        return MediaType.IMAGE_PNG;
+      case "jpg":
+        return MediaType.IMAGE_JPEG;
       default:
-        throw new BadRequestException("Invalid field param value specified!");
+        return MediaType.APPLICATION_OCTET_STREAM;
     }
   }
+
   /**
-   * This method is used to send a status code into the client based on the validity of the
-   * information sent. <br>
-   * <br>
-   * Exception Handler for Response Status Bad Request which is used for addProject() [/add] <br>
-   * <br>
    * Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
    * value of the status code returned if thrown (BAD_REQUEST) error.setMessage: Defines a custom
    * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
-   * error was thrown
+   * error was thrown. Is triggered in response to a ProjectNotAddedException.
+   *
+   * @param br - An instance of ProjectNotAddedException
+   * @return an error with the appropriate response.
    */
   @ExceptionHandler
   @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -272,26 +252,33 @@ public class ProjectController {
     return error;
   }
 
+  /**
+   * Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
+   * value of the status code returned if thrown(NOT_FOUND) error.setMessage: Defines a custom
+   * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
+   * error was thrown. Is triggered in response to a ProjectNotFoundException.
+   *
+   * @param pnfe - An instance of ProjectNotFoundException.
+   * @return an error with the appropriate response.
+   */
   @ExceptionHandler
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnae) {
+  public ProjectErrorResponse handleExceptions(ProjectNotFoundException pnfe) {
     ProjectErrorResponse error = new ProjectErrorResponse();
     error.setStatus(HttpStatus.NOT_FOUND.value());
-    error.setMessage(pnae.getMessage());
+    error.setMessage(pnfe.getMessage());
     error.setTimeStamp(System.currentTimeMillis());
     return error;
   }
 
   /**
-   * This method is used to send a status code into the client based on the validity of the
-   * information sent. <br>
-   * <br>
-   * Exception Handler for Invalid Status Response which is used for updateProject() <br>
-   * <br>
    * Uses @ExceptionHandler annotation. Creates a new error response error.setStatus: Defines the
    * value of the status code returned if thrown(BAD_REQUEST) error.setMessage: Defines a custom
    * message sent to the client if the exception is thrown error.setTimeStamp: Defines the time this
-   * error was thrown
+   * error was thrown. Is triggered in response to a BadRequestException.
+   *
+   * @param br - An instance of BadRequestException
+   * @return an error with the appropriate response.
    */
   @ExceptionHandler
   @ResponseStatus(HttpStatus.BAD_REQUEST)
