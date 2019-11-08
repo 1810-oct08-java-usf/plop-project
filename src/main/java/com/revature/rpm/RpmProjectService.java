@@ -13,17 +13,17 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @EnableEurekaClient
 @SpringBootApplication
-public class ProjectServiceApplication implements CommandLineRunner {
+public class RpmProjectService implements CommandLineRunner {
 
   private ProjectRepository projectRepo;
 
   @Autowired
-  public ProjectServiceApplication(ProjectRepository projectRepo) {
+  public RpmProjectService(ProjectRepository projectRepo) {
     this.projectRepo = projectRepo;
   }
 
   public static void main(String[] args) {
-    SpringApplication.run(ProjectServiceApplication.class, args);
+    SpringApplication.run(RpmProjectService.class, args);
   }
 
   /**
