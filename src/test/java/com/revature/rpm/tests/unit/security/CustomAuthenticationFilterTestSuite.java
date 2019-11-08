@@ -1,4 +1,4 @@
-package com.revature.unitTests.security;
+package com.revature.rpm.tests.unit.security;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

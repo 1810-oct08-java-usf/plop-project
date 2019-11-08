@@ -1,4 +1,4 @@
-package com.revature.unitTests.controllers;
+package com.revature.rpm.tests.integration.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;

@@ -1,4 +1,4 @@
-package com.revature.unitTests.services;
+package com.revature.rpm.tests.unit.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
