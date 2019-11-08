@@ -47,8 +47,7 @@ public class CreateProjectIntegrationTest {
    */
   @Test
   @WithMockUser(roles = {"ADMIN"})
-  public void createProject_ShouldReturnCreatedStatus() throws Exception {
-
+  public void T_addProject_Valid() throws Exception {
     // Setting the mock request
     this.mockMvc
         .perform(
@@ -76,7 +75,7 @@ public class CreateProjectIntegrationTest {
    */
   @Test
   @WithMockUser(roles = {"ADMIN"})
-  public void createProject_ShouldReturnBadRequestStatus() throws Exception {
+  public void T_addProject_InvalidBatch() throws Exception {
     String batch = null;
 
     //
