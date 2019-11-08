@@ -117,4 +117,4 @@ target/
 .hook-deps/
 
 # Log directory
-/[Ll]ogs
+[Ll]ogs/
