@@ -111,6 +111,7 @@ public class ProjectServiceTestSuite {
   ArrayList<MultipartFile> listMultipartFile;
   ArrayList<String> listZipLink;
 
+  /** Ran before each test */
   @Before
   public void preTestInit() {
     classUnderTest = new ProjectService(testRepo, testStorage, testFileService);
@@ -125,6 +126,7 @@ public class ProjectServiceTestSuite {
     mockListString.add("elemtem");
   }
 
+  /** Ran after each test */
   @After
   public void postTestCleanUp() {
     dummyList = null;
@@ -657,6 +659,7 @@ public class ProjectServiceTestSuite {
     }
   }
 
+  /** Test to see if createProjectFromDTO works as intended with valid parameters */
   @Test
   public void T_createProjectFromDTO_Valid() {
 
