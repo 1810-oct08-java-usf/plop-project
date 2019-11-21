@@ -112,3 +112,9 @@ application.yml
 target/
 
 .vscode/
+
+# hook-deps
+.hook-deps/
+
+# Log directory
+[Ll]ogs/
