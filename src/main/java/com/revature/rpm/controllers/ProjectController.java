@@ -188,11 +188,11 @@ public class ProjectController {
 
     return projectService.createProjectFromDTO(projectDTO);
   }
-  
+
   @GetMapping("/{id}/screenshots")
   @ResponseStatus(HttpStatus.OK)
-  public List<String> generatePreSignedUrls(@PathVariable String id) throws IOException{
-	  return projectService.generatePreSignedUrls(id);
+  public List<String> generatePreSignedUrls(@PathVariable String id) throws IOException {
+    return projectService.generatePreSignedUrls(id);
   }
 
   /**

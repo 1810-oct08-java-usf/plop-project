@@ -31,5 +31,5 @@ public interface StorageService {
 
   ByteArrayOutputStream downloadFile(String keyName);
 
-List<String> getPreSignedUrls(List<String> urls) throws IOException;
+  List<String> getPreSignedUrls(List<String> urls) throws IOException;
 }

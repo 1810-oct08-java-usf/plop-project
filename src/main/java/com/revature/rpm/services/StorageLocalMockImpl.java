@@ -143,9 +143,9 @@ public class StorageLocalMockImpl implements StorageService {
     return null;
   }
 
-@Override
-public List<String> getPreSignedUrls(List<String> urls) throws IOException {
-	// TODO Auto-generated method stub
-	return null;
-}
+  @Override
+  public List<String> getPreSignedUrls(List<String> urls) throws IOException {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }
