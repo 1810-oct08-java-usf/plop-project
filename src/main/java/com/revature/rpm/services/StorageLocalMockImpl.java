@@ -14,6 +14,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -140,4 +142,10 @@ public class StorageLocalMockImpl implements StorageService {
 
     return null;
   }
+
+@Override
+public List<String> getPreSignedUrls(List<String> urls) throws IOException {
+	// TODO Auto-generated method stub
+	return null;
+}
 }

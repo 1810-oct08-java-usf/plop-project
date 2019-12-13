@@ -7,9 +7,14 @@ import com.revature.rpm.exceptions.BadRequestException;
 import com.revature.rpm.exceptions.ProjectNotAddedException;
 import com.revature.rpm.exceptions.ProjectNotFoundException;
 import com.revature.rpm.services.ProjectService;
+import com.revature.rpm.services.S3StorageServiceImpl;
+
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -182,6 +187,12 @@ public class ProjectController {
             .build();
 
     return projectService.createProjectFromDTO(projectDTO);
+  }
+  
+  @GetMapping("/{id}/screenshots")
+  @ResponseStatus(HttpStatus.OK)
+  public List<String> generatePreSignedUrls(@PathVariable String id) throws IOException{
+	  return projectService.generatePreSignedUrls(id);
   }
 
   /**

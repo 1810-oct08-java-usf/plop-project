@@ -2,6 +2,9 @@ package com.revature.rpm.services;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 /** init draws on environment variables setting up an s3Client used to store objects */
@@ -27,4 +30,6 @@ public interface StorageService {
   String store(File file);
 
   ByteArrayOutputStream downloadFile(String keyName);
+
+List<String> getPreSignedUrls(List<String> urls) throws IOException;
 }
